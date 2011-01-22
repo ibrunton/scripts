@@ -340,7 +340,7 @@ Written by Ian D. Brunton
 
 =head1 REPORTING BUGS
 
-Report Log bugs to ibrunton@accesswave.ca
+Report Log bugs to wolfshift@gmail.com
 
 =head1 COPYRIGHT
 
