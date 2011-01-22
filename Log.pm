@@ -1,0 +1,463 @@
+package Log;
+use strict;
+use Date::Calc 'Add_Delta_Days';
+use Time::Local 'timelocal_nocheck';
+use IDB;
+
+=head1 NAME
+
+Log
+
+=head1 SYNOPSIS
+
+Class to implement log/journal processing
+
+=head1 Methods
+
+=head2 new
+
+Constructor. Requires no arguments.
+
+=cut
+
+sub new {
+    my $class = shift;
+    my $self = {};
+    bless( $self, "Log" );
+    $self->_init();
+    return $self;
+}
+
+sub _init {
+    my $self = shift;
+
+    # set default options:
+    $self->{log_dir} = $ENV{HOME} . '/docs/log/';
+    $self->{snippet_dir} = $ENV{HOME} . '/docs/log/.snippets/';
+    $self->{state_file} = $self->{log_dir} . '.state';
+    $self->{auto_round} = 0;
+    $self->{auto_echo} = 0;
+    $self->{comment_char} = ';;';
+    $self->{end_of_line} = "\n";
+    $self->{training_extension} = '.training';
+    $self->{journal_extension} = '.journal';
+    $self->{indent_char} = "\t";
+    $self->{line_length} = 70;
+    $self->{tag}->{end} = '\033[m';
+    $self->{tag}->{t} = '\033[32m';
+    $self->{tag}->{h} = '\033[43m\033[30m';
+    $self->{tag}->{d} = '\033[41m\033[30m';
+    $self->{tag}->{c} = '\033[36m';
+    $self->{tag}->{o} = '\033[1;35m';
+    $self->{tag}->{x} = '\033[1;35m';
+    $self->{tag}->{n} = '\033[36m';
+
+    return $self;
+}
+
+=head2 getopts
+
+Parses command-line -options.
+
+=cut
+sub getopts {
+    my $self = shift;
+    my $allowed = shift;
+    my $string = shift;
+    my $tags;
+
+#    print "Log.pm: \$\$string = '$$string'\n";
+    if ( $$string !~ /^-/ ) { # no options passed
+	return $self;
+    }
+    elsif ( $$string =~ /^(-[$allowed]+\s?)(?!-)/o ) {
+	    $tags = $1;
+	    $$string =~ s/$tags//;
+    }
+    else {
+	$self->set_opt( 'h' );
+	return $self;
+    }
+
+#    print "Log.pm: \$tags = $tags\n";
+    my $t;
+    for ( my $i = 1; $i < length( $tags ); $i++ ) {
+	$t = substr( $tags, $i, 1 );
+	if ( $t =~ /[$allowed]/ ) { $self->set_opt( $t ); }
+    }
+    $self->process_options;
+    return $self;
+}
+
+sub process_options {
+    my $self = shift;
+
+    if ( $self->opt( 'a' ) ) { $self->{end_of_line} = ''; }
+    if ( $self->opt( 'c' ) ) {
+	$self->set_opt( 'T' );
+	$self->indent_char( $self->{comment_char} . $self->{indent_char} ) ;
+    }
+    if ( $self->opt( 'i' ) ) { $self->set_opt( 'T' ); }
+    if ( $self->opt( 'n' ) ) { $self->set_opt( 'T' ); }
+    if ( $self->opt( 'R' ) ) { $self->unset_opt( 'r' ); }
+    if ( $self->opt( 'r' ) ) { $self->unset_opt( 'R' ); }
+
+    if ( $self->opt( 'j' ) ) {
+	$self->{end_of_line} = "\n\n";
+	$self->{indent_char} = '';
+	$self->set_opt( 'T' );
+	$self->set_opt( 'r' );
+    }
+    
+    if ( $self->opt( 'j' ) && $self->opt( 't' ) ) {
+    	$self->error( 'Cannot pass both -j and -t.' );
+    }
+
+    return $self;
+}
+
+=head2 parse_rc_file [FILE]
+
+Reads in a configuration file (F<~/.logrc> by default, but other
+values may be passed) and parses its values into a hash structure.
+
+=cut
+
+# sub parse_rc_file {
+#     my $self = shift;
+#     $self->{rc_file} = shift // $ENV{'HOME'} . '.logrc';
+#     if ( -s $self->{rc_file} ) {
+# 	open( FILE, $self->{rc_file} ) || die();
+# 	while ( <FILE> ) {
+# 	    next if ( $_ =~ /^#/ || $_ =~ /^$/ );
+# 	    $_ =~ s/ ?#.*?$//o;
+# 	    if ( $_ =~ /^(\w+?)=['"]?([a-zA-Z0-9\.\/]+?)["']?$/ ) { $self->{$1} = $2; }
+# 	    if ( $_ =~ /^tag:(\w{1})=['"]?([\\0-9m;]+?)["']?$/ ) { $self->{tag}->{$1} = $2; }
+# 	}
+# 	close( FILE );
+#     }
+
+#     if ( $self->{auto_round} ) { $self->set_opt('r'); }
+#     return $self;
+# }
+
+=head2 parse_state [FILE]
+
+Reads data previously stored by the script in order to influence
+the current instance. By default the file is F<.state> within the
+directory specified by log_dir, unless another filename is passed.
+
+=cut
+sub parse_state {
+    my $self = shift;
+    $self->{state_file} // $self->{log_dir} . '.state';
+    if ( -s $self->{state_file} ) {
+	open( FILE, $self->{state_file} ) || die();
+	while ( <FILE> ) {
+	    push( @{$self->{state}}, $_ );
+	}
+	close( FILE );
+    }
+    return $self;
+}
+
+sub state {
+    my $self = shift;
+    return shift @{$self->{state}};
+}
+
+=head2 parse_datetime [STRING]
+
+Reads input data and extracts date, time, and comments for separate
+processing from remaining text.
+
+=cut
+sub parse_datetime {
+    my $self = shift;
+    my $string = shift;
+
+#    print "Log.pm->parse_datetime: $$string\n";
+
+    # date:
+    if ( $$string =~ m|^((\d{4}/)?(\d{2}/)?\d{2})\b|o ) {
+	$self->{date} = $1;
+	$$string =~ s/$1 *//o;
+	$self->{has_date} = 1;
+    }
+    # date differential:
+    if ( $$string =~ m|\b(n\d+?)\b| ) {
+	$self->{date_diff} = $1;
+	$$string =~ s/$1 *//o;
+	$self->{date_diff} =~ s/\D//g;
+	$self->{has_diff} = 1;
+    }
+    # time:
+    if ( $$string =~ s/^(\[?\d{4}[~?]?):? */$1:\t/o ) {
+	$self->{time} = $1;
+	$self->{has_time} = 1;
+	$self->set_opt( 'T' );
+#	print "Log.pm->parse_datetime: has time\n";
+    }
+    elsif ( $$string =~ s/^(\w{1,6}:) +/$1\t/o ) {
+    	$self->set_opt( 'T' );
+    }
+
+#    print "Log.pm->parse_datetime: date=" . $self->{date},"\n";
+#    $self->{input} = $$string;
+#    print ">>Log.pm->parse_datetime: " . $self->{date} . "\n";
+    $self->get_date;
+#    print ">>Log.pm->parse_datetime: " . $self->{date} . "\n";
+    $self->set_time;
+
+    return $self;
+}
+
+=head2 get_date
+
+Takes date parsed by parse_datetime and calculates the date to use, as
+well as setting the file_path and date_string.
+
+=cut
+sub get_date {
+    my $self = shift;
+
+    my $key = join( '/', &IDB::year( (localtime(time))[5] ),
+		    &IDB::double_digit( (localtime(time))[4] + 1 ),
+		    &IDB::double_digit( (localtime(time))[3] ) );
+
+    if ( $self->{has_date} ) {
+	if ( $self->{date} ne $key ) {
+	    if ( $self->{date} =~ m|^(\d{2}/\d{2})$| ) { # MM/DD provided, use current year
+		$self->{date} = substr( $key, 0, 5 ) .= $1;
+	    }
+	    elsif ( $self->{date} =~ m|^(\d{2})$| ) { # DD provided, use current year and month
+		$self->{date} = substr( $key, 0, 8 ) .= $1;
+	    }
+	    else { $self->error( 'Incorrently formatted date: ' . $self->{date} ); }
+	}
+	else { $self->{date} = $key; }
+    }
+    else {
+	$self->{date} = $key;
+    }
+
+    if ( $self->{has_diff} ) {
+	my @newdate = Add_Delta_Days( split( /\//, $self->{date} ), 0 - $self->{date_diff} );
+	$newdate[2] = &IDB::double_digit( $newdate[2] );
+	$newdate[1] = &IDB::double_digit( $newdate[1] );
+	$newdate[0] = &IDB::double_digit( $newdate[0] );;
+
+	$self->{date} = join( '/', @newdate );
+    }
+
+    # set file_paths:
+    $self->{file_path} = $self->{log_dir} . $self->{date};
+    $self->{base_path} = $self->{log_dir} . $self->{date};
+
+    if ( $self->opt( 't' ) ) { $self->{file_path} .= $self->{training_extension}; }
+    elsif ( $self->opt( 'j' ) ) { $self->{file_path} .= $self->{journal_extension}; }
+
+    if ( ! -e $self->{file_path} ) { $self->{is_new} = 1; }
+
+    $self->{year} = substr( $self->{date}, 0, 4 );
+    $self->{month} = substr( $self->{date}, 5, 2 );
+    $self->{day} = substr( $self->{date}, 8, 2 );
+
+    my $months = [ 'January', 'February', 'March', 'April', 'May', 'June',
+		   'July', 'August', 'September', 'October', 'November', 'December' ];
+    my $weekdays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday',
+		     'Friday', 'Saturday' ];
+    my $weekday = (localtime(timelocal_nocheck(0, 0, 0, $self->{day},
+					       $self->{month} - 1, $self->{year})))[6];
+
+    $self->{date_string} = $weekdays->[$weekday] . ', ' . $self->{day} . ' '
+	. $months->[$self->{month} - 1] . ', ' . $self->{year};
+
+    return $self;
+}
+
+
+
+=head2 set_time
+
+According to set options, sets the time for the current entry.
+
+=cut
+sub set_time {
+    my $self = shift;
+
+    if ( $self->{has_time} && ! $self->opt( 'n' ) ) { return $self; } # so as not to overwrite
+
+    my $hour = (localtime)[2];
+    my $min = (localtime)[1];
+
+    if ( $self->opt('r') ) {
+	if ( $min % 5 == 1 ) { $min -= 1; }
+	if ( $min % 5 == 2 ) { $min -= 2; }
+	if ( $min % 5 == 3 ) { $min += 2; }
+	if ( $min % 5 == 4 ) { $min += 1; }
+
+	if ( $min == 60 ) {
+	    $min = 0;
+	    $hour++;
+	}
+    }
+
+    # $hour = &IDB::double_digit( $hour );
+    # $min = &IDB::double_digit( $min );
+    # $self->{time} = $hour . $min;
+    $self->{time} = &IDB::double_digit( $hour ) . &IDB::double_digit( $min );
+
+    $self->{has_time} = 1;
+#    print "Log.pm->set_time: $hour, $min, " . $self->{time} . "\n";
+
+    return $self;
+}
+
+=head2 opt OPTION
+
+Returns the value of OPTION.
+
+=cut
+sub opt {
+    my $self = shift;
+    my $which = shift;
+    return $self->{opt}->{$which};
+}
+
+=head2 set_opt OPTION
+
+Sets OPTION to 1.
+
+=cut
+sub set_opt {
+    my $self = shift;
+    my $which = shift;
+    $self->{opt}->{$which} = 1;
+
+    # if certain options are set, others should also be set
+    return $self;
+}
+
+=head2 unset_opt OPTION
+
+Sets OPTION to 0.
+
+=cut
+sub unset_opt {
+    my $self = shift;
+    my $which = shift;
+    delete $self->{opt}->{$which};
+    return $self;
+}
+
+# various methods to return object properties:
+sub log_dir { my $self = shift; return $self->{log_dir}; }
+sub snippet_dir { my $self = shift; return $self->{snippet_dir}; }
+sub state_file { my $self = shift; return $self->{state_file}; }
+sub comment_char { my $self = shift; return $self->{comment_char}; }
+sub end_of_line { my $self = shift; return $self->{end_of_line}; }
+sub line_length { my $self = shift; return $self->{line_length}; }
+sub training_extension { my $self = shift; return $self->{training_extension}; }
+sub journal_extension { my $self = shift; return $self->{journal_extension}; }
+sub date { my $self = shift; return $self->{date}; }
+sub date_string { my $self = shift; return $self->{date_string}; }
+sub year { my $self = shift; return $self->{year}; }
+sub month { my $self = shift; return $self->{month}; }
+sub time { my $self = shift; return $self->{time}; }
+sub has_time { my $self = shift; return $self->{has_time}; }
+sub file_path { my $self = shift; return $self->{file_path}; }
+sub is_new { my $self = shift; return $self->{is_new}; }
+
+sub indent_char {
+    my $self = shift;
+    if ( @_ ) { $self->{indent_char} = shift; return $self; }
+    else { return $self->{indent_char}; }
+}
+
+sub replace_tags {
+    my $self = shift;
+    my $string = shift;
+
+    # date:
+    $$string =~ s/^((\w+), \d{2} (\w+), \d{4})$/$self->date_tag($1)/egi;
+    # inline tag:
+    $$string =~ s/\$([a-z]){1}(.+?)\$(?=\W)/$self->tag($1,$2)/eg;
+    # tag from start of line:
+    $$string =~ s/^(.+)\$([A-Z])/$self->tag($2,$1)/e;
+    # comment:
+    $$string =~ s/(;;.+)$/$self->comment_tag($1)/e;
+
+#    print "replace_tags: $$string\n";
+
+    return $self;
+}
+
+sub tag {
+    my $self = shift;
+    my $tag = lc( shift );
+    my $text = shift;
+    if ( ! exists $self->{tag}->{$tag} ) { return $text; }
+    return `echo -en "$self->{tag}->{$tag}"` . $text . $self->end_tag;
+}
+
+sub end_tag {
+    my $self = shift;
+    return `echo -en "\033[m"`;
+}
+
+sub date_tag {
+    my $self = shift;
+    return `echo -en "\033[1;34m"` . ">> " . shift . $self->end_tag;
+}
+
+sub comment_tag {
+    my $self = shift;
+    return `echo -en "\033[33m"` . shift . $self->end_tag;
+}
+
+
+sub AUTOLOAD {
+    my $self = shift;
+    our $AUTOLOAD;
+    my $subname = $AUTOLOAD;
+    return $self->{$subname};
+}
+
+sub error {
+    my $self = shift;
+    my $err = shift;
+    print "Error: Log.pm: $err\n\n";
+    exit 0;
+}
+
+1;
+
+=head1 AUTHOR
+
+Written by Ian D. Brunton
+
+=head1 REPORTING BUGS
+
+Report Log bugs to ibrunton@accesswave.ca
+
+=head1 COPYRIGHT
+
+Copyright 2011 Ian Brunton.
+
+This file is part of Log.
+
+Log is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Log is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Log.  If not, see <http://www.gnu.org/licenses/>.
+
+=cut  
