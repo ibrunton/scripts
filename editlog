@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Shell script to load log file in editor
+# Usage: editlog [-etj] [YYYY/MM/YY] [DIFFERENTIAL]
+# Options: -e loads file in emacsclient
+#          -t loads training file
+#	   -j loads journal file
+
+editor=vi
+
+if [ -z "$1" ]
+then
+    $editor "$(clog -f)"
+else
+    if [ $(echo "$1" | grep "^-" ) ]
+    then
+	if [ $(echo "$1" | grep "e" ) ]
+	then
+	    editor=emacsclient
+	fi
+	args=$(echo "$@" | sed 's/e//' | sed 's/-\([jt]\)/-\1f/')
+    else
+	args="-f $@"
+    fi
+    
+    action=$(clog $args)
+    
+    if [ -e "$action" ]
+    then
+    	$editor "$action"
+    else
+    	echo "File $action does not exist"
+    fi
+fi
+exit 0
