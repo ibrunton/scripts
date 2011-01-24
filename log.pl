@@ -42,6 +42,7 @@ $input =~ s/(?<=\W)-c(\s)/ $log->comment_char.$1/eo;
 my $cc = $log->comment_char;
 if ( $input =~ m/$cc/ ) {
     ( $output, $comment ) = split( /$cc/, $input );
+    $comment = $cc . $comment;
 }
 else { $output = $input; }
 
@@ -98,13 +99,13 @@ unless ( $log->opt( 'w' ) ) {
     my @output_lines = split( /\n/, $output );
     my $len = $log->line_length - length( $output_lines[$#output_lines] ) - 8;
     my $short = '';
-    if ( $len > 0 ) {
-	if ( $comment =~ /^(.{1,$len})(\b | \b)/ ) {
+    if ( $len > 0 && length( $comment ) > 0 ) {
+	if ( $comment =~ /^(;; .{1,$len})(\b | \b)/ ) {
 	    $short = $1;
 	    $comment =~ s/$short//o;
-	    print "\$short = $short\n";
+	    $comment =~ s/^ //o;
 	}
-	$output .= $log->comment_char . $short . "\n";
+	$output .= $short . "\n";
     }
 
     $comment = wrap( $log->comment_char . "\t", $log->comment_char . "\t", $comment );

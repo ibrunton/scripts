@@ -13,13 +13,13 @@ if [ -z "$1" ]
 then
     $editor "$(clog -f)"
 else
-    if [ $(echo "$1" | grep "^-" ) ]
+    if [ $(expr match "$1" "^-") ]
     then
-	if [ $(echo "$1" | grep "e" ) ]
+	if [ $(expr match "$1" "a") ]
 	then
-	    editor=alternate
+	    editor=$alternate
 	fi
-	args=$(echo "$@" | sed 's/e//' | sed 's/-\([jt]\)/-\1f/')
+	args=$(echo "$@" | sed 's/-/-f/' | sed 's/a//')
     else
 	args="-f $@"
     fi
