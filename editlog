@@ -2,11 +2,12 @@
 
 # Shell script to load log file in editor
 # Usage: editlog [-etj] [YYYY/MM/YY] [DIFFERENTIAL]
-# Options: -e loads file in emacsclient
+# Options: -e loads file in alternate editor
 #          -t loads training file
 #	   -j loads journal file
 
 editor=vi
+alternate=emacsclient
 
 if [ -z "$1" ]
 then
@@ -16,7 +17,7 @@ else
     then
 	if [ $(echo "$1" | grep "e" ) ]
 	then
-	    editor=emacsclient
+	    editor=alternate
 	fi
 	args=$(echo "$@" | sed 's/e//' | sed 's/-\([jt]\)/-\1f/')
     else

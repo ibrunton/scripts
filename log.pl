@@ -42,7 +42,6 @@ $input =~ s/(?<=\W)-c(\s)/ $log->comment_char.$1/eo;
 my $cc = $log->comment_char;
 if ( $input =~ m/$cc/ ) {
     ( $output, $comment ) = split( /$cc/, $input );
-    $comment = $cc . $comment;
 }
 else { $output = $input; }
 
@@ -93,7 +92,22 @@ unless ( $log->opt( 'T' ) ) {
 # wrap...
 unless ( $log->opt( 'w' ) ) {
     $output = wrap( "", $log->indent_char, $output );
-    $comment = wrap( "", $log->comment_char . "\t", $comment );
+
+    # make sure that if a comment begins partway through a line and wraps,
+    # it will wrap at the right place:
+    my @output_lines = split( /\n/, $output );
+    my $len = $log->line_length - length( $output_lines[$#output_lines] ) - 8;
+    my $short = '';
+    if ( $len > 0 ) {
+	if ( $comment =~ /^(.{1,$len})(\b | \b)/ ) {
+	    $short = $1;
+	    $comment =~ s/$short//o;
+	    print "\$short = $short\n";
+	}
+	$output .= $log->comment_char . $short . "\n";
+    }
+
+    $comment = wrap( $log->comment_char . "\t", $log->comment_char . "\t", $comment );
 }
 
 my $file = $log->file_path;
