@@ -9,11 +9,13 @@
 editor=vi
 alternate=emacsclient
 
+# going to need to try getopt/s
+
 if [ -z "$1" ]
 then
     $editor "$(clog -f)"
 else
-    if [ $(expr match "$1" "^-") ]
+    if [ $(expr match "$1" "-") ]
     then
 	if [ $(expr match "$1" "a") ]
 	then

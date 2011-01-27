@@ -96,19 +96,21 @@ unless ( $log->opt( 'w' ) ) {
 
     # make sure that if a comment begins partway through a line and wraps,
     # it will wrap at the right place:
-    my @output_lines = split( /\n/, $output );
-    my $len = $log->line_length - length( $output_lines[$#output_lines] ) - 8;
-    my $short = '';
-    if ( $len > 0 && length( $comment ) > 0 ) {
-	if ( $comment =~ /^(;; .{1,$len})(\b | \b)/ ) {
-	    $short = $1;
-	    $comment =~ s/$short//o;
-	    $comment =~ s/^ //o;
+    if ( length( $output ) > 1 && $comment ) {
+	my @output_lines = split( /\n/, $output );
+	my $len = $log->line_length - length( $output_lines[$#output_lines] ) - 8;
+	my $short = '';
+	if ( $len > 0 && length( $comment ) > 0 ) {
+	    if ( $comment =~ /^(;; .{1,$len})(\b | \b)/ ) {
+		$short = $1;
+		$comment =~ s/$short//o;
+		$comment =~ s/^ //o;
+	    }
+	    $output .= $short . "\n";
 	}
-	$output .= $short . "\n";
     }
 
-    $comment = wrap( $log->comment_char . "\t", $log->comment_char . "\t", $comment );
+    $comment = wrap( "", $log->comment_char . "\t", $comment );
 }
 
 my $file = $log->file_path;
