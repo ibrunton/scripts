@@ -100,7 +100,7 @@ unless ( $log->opt( 'w' ) ) {
 	my @output_lines = split( /\n/, $output );
 	my $len = $log->line_length - length( $output_lines[$#output_lines] ) - 8;
 	my $short = '';
-	if ( $len > 0 && length( $comment ) > 0 ) {
+	if ( $len > 0 && length( $comment ) > $len ) {
 	    if ( $comment =~ /^(;; .{1,$len})(\b | \b)/ ) {
 		$short = $1;
 		$comment =~ s/$short//o;
