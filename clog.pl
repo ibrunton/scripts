@@ -18,7 +18,7 @@ if ( $log->opt( 'h' ) ) { pod2usage( -exitstatus => 0, -verbose => 2 ); }
 #print $input, "\n";
 
 # uncomment these lines of you want to use them:
-#$log->parse_rc_file;
+$log->parse_rc;
 #$log->parse_state;
 
 $log->parse_datetime( \$input ); # pass by reference so method can modify $input

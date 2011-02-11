@@ -31,7 +31,7 @@ sub new {
 sub _init {
     my $self = shift;
 
-    # set default options:
+    # set default options (all of these can be set in .logrc):
     $self->{log_dir} = $ENV{HOME} . '/docs/log/';
     $self->{snippet_dir} = $ENV{HOME} . '/docs/log/.snippets/';
     $self->{state_file} = $self->{log_dir} . '.state';
@@ -43,14 +43,15 @@ sub _init {
     $self->{journal_extension} = '.journal';
     $self->{indent_char} = "\t";
     $self->{line_length} = 70;
-    $self->{tag}->{end} = '\033[m';
-    $self->{tag}->{t} = '\033[32m';
-    $self->{tag}->{h} = '\033[43m\033[30m';
-    $self->{tag}->{d} = '\033[41m\033[30m';
-    $self->{tag}->{c} = '\033[36m';
-    $self->{tag}->{o} = '\033[1;35m';
-    $self->{tag}->{x} = '\033[1;35m';
-    $self->{tag}->{n} = '\033[36m';
+    $self->{tag}->{end} = '\033[m'; # don't change this unless you know what you're doing
+    # $self->{tag}->{comment} = '\033[32m';
+    # $self->{tag}->{t} = '\033[32m';
+    # $self->{tag}->{h} = '\033[43m\033[30m';
+    # $self->{tag}->{d} = '\033[41m\033[30m';
+    # $self->{tag}->{c} = '\033[36m';
+    # $self->{tag}->{o} = '\033[1;35m';
+    # $self->{tag}->{x} = '\033[1;35m';
+    # $self->{tag}->{n} = '\033[36m';
 
     return $self;
 }
@@ -123,23 +124,31 @@ values may be passed) and parses its values into a hash structure.
 
 =cut
 
-# sub parse_rc_file {
-#     my $self = shift;
-#     $self->{rc_file} = shift // $ENV{'HOME'} . '.logrc';
-#     if ( -s $self->{rc_file} ) {
-# 	open( FILE, $self->{rc_file} ) || die();
-# 	while ( <FILE> ) {
-# 	    next if ( $_ =~ /^#/ || $_ =~ /^$/ );
-# 	    $_ =~ s/ ?#.*?$//o;
-# 	    if ( $_ =~ /^(\w+?)=['"]?([a-zA-Z0-9\.\/]+?)["']?$/ ) { $self->{$1} = $2; }
-# 	    if ( $_ =~ /^tag:(\w{1})=['"]?([\\0-9m;]+?)["']?$/ ) { $self->{tag}->{$1} = $2; }
-# 	}
-# 	close( FILE );
-#     }
+sub parse_rc {
+    my $self = shift;
+    $self->{rc_file} = shift // $ENV{'HOME'} . '/.logrc';
+    if ( -s $self->{rc_file} ) {
+	open( FILE, $self->{rc_file} ) || die();
+	while ( <FILE> ) {
+	    next if ( $_ =~ /^#/ || $_ =~ /^$/ );
+	    $_ =~ s/ ?#.*?$//o;
+#	    if ( $_ =~ /^(\w+?)=['"]?([a-zA-Z0-9\.\/]+?)["']?$/ ) { $self->{$1} = $2; }
+	    if ( $_ =~ /^(\w+?)=['"]?(.+?)["']?$/ ) {
+		my $key = $1;
+		my $val = $2;
+		$val =~ s/\$HOME/$ENV{HOME}/e;
+		$self->{$key} = $val;
+	    }
+	    if ( $_ =~ /^tag:(\w+?)=['"]?((\\033\[[0-9m;]+?){1,2})["']?$/ ) {
+		$self->{tag}->{$1} = $2;
+	    }
+	}
+	close( FILE );
+    }
 
-#     if ( $self->{auto_round} ) { $self->set_opt('r'); }
-#     return $self;
-# }
+    if ( $self->{auto_round} ) { $self->set_opt('r'); }
+    return $self;
+}
 
 =head2 parse_state [FILE]
 
@@ -397,7 +406,7 @@ sub tag {
     my $self = shift;
     my $tag = lc( shift );
     my $text = shift;
-    if ( ! exists $self->{tag}->{$tag} ) { return $text; }
+    if ( ! exists $self->{tag}->{$tag} ) { return $text . '#'; }
     return `echo -en "$self->{tag}->{$tag}"` . $text . $self->end_tag;
 }
 
@@ -413,7 +422,8 @@ sub date_tag {
 
 sub comment_tag {
     my $self = shift;
-    return `echo -en "\033[33m"` . shift . $self->end_tag;
+#    return `echo -en "\033[33m"` . shift . $self->end_tag;
+    return `echo -en "$self->{tag}->{comment}"` . shift . $self->end_tag;
 }
 
 

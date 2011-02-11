@@ -19,7 +19,7 @@ $log->getopts( 'acehijnqrstTw', \$input );
 if ( $log->opt( 'h' ) ) { pod2usage( -exitstatus => 0, -verbose => 2 ); }
 
 # uncomment these lines of you want to use them:
-#$log->parse_rc_file;
+$log->parse_rc;
 #$log->parse_state;
 
 $Text::Wrap::columns = $log->line_length;
