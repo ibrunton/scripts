@@ -71,7 +71,8 @@ sub getopts {
     if ( $$string !~ /^-/ ) { # no options passed
 	return $self;
     }
-    elsif ( $$string =~ /^(-[$allowed]+\s?)(?!-)/o ) {
+#    elsif ( $$string =~ /^(-[$allowed]+\s?)(?!-)/o ) {
+    elsif ( $$string =~ /^((-[a-zA-Z]+ ?)+)(?!-)/ ) {
 	    $tags = $1;
 	    $$string =~ s/$tags//;
     }
@@ -80,11 +81,13 @@ sub getopts {
 	return $self;
     }
 
-#    print "Log.pm: \$tags = $tags\n";
+    $tags =~ s/[^a-zA-Z]//g;
+    # print "Log.pm: \$tags = $tags\n";
     my $t;
-    for ( my $i = 1; $i < length( $tags ); $i++ ) {
+    for ( my $i = 0; $i < length( $tags ); $i++ ) {
 	$t = substr( $tags, $i, 1 );
 	if ( $t =~ /[$allowed]/ ) { $self->set_opt( $t ); }
+	else { $self->error( "Unknown command-line option `$t'." ); }
     }
     $self->process_options;
     return $self;
@@ -417,7 +420,7 @@ sub end_tag {
 
 sub date_tag {
     my $self = shift;
-    return `echo -en "\033[1;34m"` . ">> " . shift . $self->end_tag;
+    return `echo -en "$self->{tag}->{date}"` . ">> " . shift . $self->end_tag;
 }
 
 sub comment_tag {
@@ -437,7 +440,8 @@ sub AUTOLOAD {
 sub error {
     my $self = shift;
     my $err = shift;
-    print "Error: Log.pm: $err\n\n";
+    $err =~ s/\n$//o;
+    print "Log.pm/Error: $err\n\n";
     exit 0;
 }
 

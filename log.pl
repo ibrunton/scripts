@@ -12,14 +12,15 @@ if ( ! $ARGV[0] ) { pod2usage( -exitval => 1, -verbose => 1 ); }
 
 my $log = Log->new();
 
+$log->parse_rc;
+
 my $input = join( ' ', @ARGV );
 
-$log->getopts( 'acehijnqrstTw', \$input );
+$log->getopts( 'acehijnqRrstTw', \$input );
 
 if ( $log->opt( 'h' ) ) { pod2usage( -exitstatus => 0, -verbose => 2 ); }
 
 # uncomment these lines of you want to use them:
-$log->parse_rc;
 #$log->parse_state;
 
 $Text::Wrap::columns = $log->line_length;
