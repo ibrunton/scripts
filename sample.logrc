@@ -1,0 +1,32 @@
+# logrc file
+# by Ian Brunton
+# <2011-02-11 Fri>
+
+# base locations:
+log_dir=$HOME/docs/log/
+log_snippet_dir=$HOME/.log/snippets/
+
+# tag colours:
+tag:comment='\033[33m'
+tag:date='\033[1;34m'
+
+# custom tags (can be any single letter)
+tag:t='\033[32m'
+tag:h='\033[43m\033[30m'
+tag:d='\033[41m\033[30m'
+tag:c='\033[36m'
+tag:o='\033[1;35m'
+tag:x='\033[1;35m'
+
+# automatically round to nearest 5 minutes:
+auto_round=0
+
+comment_char=;;
+line_length=70
+
+editor=vim
+alternate_editor=emacsclient
+
+# extensions for journal and training files:
+training_extension=".training"
+journal_extension=".journal"
