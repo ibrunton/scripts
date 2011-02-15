@@ -111,7 +111,7 @@ unless ( $log->opt( 'w' ) ) {
 	}
     }
 
-    $comment = wrap( "", $log->comment_char . "\t", $comment );
+    $comment = wrap( $log->comment_char . "\t", $log->comment_char . "\t", $comment );
 }
 
 my $file = $log->file_path;
