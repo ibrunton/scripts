@@ -93,7 +93,9 @@ unless ( $log->opt( 'T' ) ) {
 
 # wrap...
 unless ( $log->opt( 'w' ) ) {
-    $output = wrap( "", $log->indent_char, $output );
+    unless ( $log->opt('c') ) {
+	$output = wrap( "", $log->indent_char, $output );
+    }
 
     # make sure that if a comment begins partway through a line and wraps,
     # it will wrap at the right place:
@@ -106,12 +108,15 @@ unless ( $log->opt( 'w' ) ) {
 		$short = $1;
 		$comment =~ s/$short//o;
 		$comment =~ s/^ //o;
+		$output .= $short . "\n";
+		if ( $comment !~ /^$cc\t/ ) {
+		    $comment = $cc . "\t" . $comment;
+		}
 	    }
-	    $output .= $short . "\n";
 	}
     }
 
-    $comment = wrap( $log->comment_char . "\t", $log->comment_char . "\t", $comment );
+    $comment = wrap( "", $log->comment_char . "\t", $comment );
 }
 
 my $file = $log->file_path;
