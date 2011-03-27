@@ -44,14 +44,14 @@ sub _init {
     $self->{indent_char} = "\t";
     $self->{line_length} = 70;
     $self->{tag}->{end} = '\033[m'; # don't change this unless you know what you're doing
-    # $self->{tag}->{comment} = '\033[32m';
-    # $self->{tag}->{t} = '\033[32m';
-    # $self->{tag}->{h} = '\033[43m\033[30m';
-    # $self->{tag}->{d} = '\033[41m\033[30m';
-    # $self->{tag}->{c} = '\033[36m';
-    # $self->{tag}->{o} = '\033[1;35m';
-    # $self->{tag}->{x} = '\033[1;35m';
-    # $self->{tag}->{n} = '\033[36m';
+    $self->{tag}->{comment} = '\033[32m';
+    $self->{tag}->{t} = '\033[32m';
+    $self->{tag}->{h} = '\033[43m\033[30m';
+    $self->{tag}->{d} = '\033[41m\033[30m';
+    $self->{tag}->{c} = '\033[36m';
+    $self->{tag}->{o} = '\033[1;35m';
+    $self->{tag}->{x} = '\033[1;35m';
+    $self->{tag}->{n} = '\033[36m';
 
     return $self;
 }
@@ -391,17 +391,16 @@ sub replace_tags {
     my $self = shift;
     my $string = shift;
 
-    # date:
-    $$string =~ s/^((\w+), \d{2} (\w+), \d{4})$/$self->date_tag($1)/egi;
-    # inline tag:
-    $$string =~ s/\$([a-z]){1}(.+?)\$(?=\W)/$self->tag($1,$2)/eg;
-    # tag from start of line:
-    $$string =~ s/^(.+)\$([A-Z])/$self->tag($2,$1)/e;
-    # comment:
-    $$string =~ s/(;;.+)$/$self->comment_tag($1)/e;
-
-#    print "replace_tags: $$string\n";
-
+    unless ( $self->{tags_off} ) {
+	# date:
+	$$string =~ s/^((\w+), \d{2} (\w+), \d{4})$/$self->date_tag($1)/egi;
+	# inline tag:
+	$$string =~ s/\$([a-z]){1}(.+?)\$(?=\W)/$self->tag($1,$2)/eg;
+	# tag from start of line:
+	$$string =~ s/^(.+)\$([A-Z])/$self->tag($2,$1)/e;
+	# comment:
+	$$string =~ s/(;;.+)$/$self->comment_tag($1)/e;
+	     }
     return $self;
 }
 
@@ -420,13 +419,13 @@ sub end_tag {
 
 sub date_tag {
     my $self = shift;
-    return `echo -en "$self->{tag}->{date}"` . ">> " . shift . $self->end_tag;
+    return `echo -en "$self->{tag}->{date}"` . ">> " . shift() . $self->end_tag;
 }
 
 sub comment_tag {
     my $self = shift;
 #    return `echo -en "\033[33m"` . shift . $self->end_tag;
-    return `echo -en "$self->{tag}->{comment}"` . shift . $self->end_tag;
+    return `echo -en "$self->{tag}->{comment}"` . shift() . $self->end_tag;
 }
 
 
