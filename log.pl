@@ -3,7 +3,7 @@
 use Modern::Perl;
 use Pod::Usage;
 use Text::Wrap;
-use lib qw( . );
+
 use Log;
 
 my $VERSION = '2.0';

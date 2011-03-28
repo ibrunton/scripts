@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 use Modern::Perl;
-use lib qw( . );
+
 use Log;
 
 my $input = join( ' ', @ARGV );

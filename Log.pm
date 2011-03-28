@@ -43,15 +43,15 @@ sub _init {
     $self->{journal_extension} = '.journal';
     $self->{indent_char} = "\t";
     $self->{line_length} = 70;
-    $self->{tag}->{end} = '\033[m'; # don't change this unless you know what you're doing
-    $self->{tag}->{comment} = '\033[32m';
-    $self->{tag}->{t} = '\033[32m';
-    $self->{tag}->{h} = '\033[43m\033[30m';
-    $self->{tag}->{d} = '\033[41m\033[30m';
-    $self->{tag}->{c} = '\033[36m';
-    $self->{tag}->{o} = '\033[1;35m';
-    $self->{tag}->{x} = '\033[1;35m';
-    $self->{tag}->{n} = '\033[36m';
+    $self->{tag}->{end} = '[m'; # don't change this unless you know what you're doing
+    # $self->{tag}->{comment} = '\033[32m';
+    # $self->{tag}->{t} = '\033[32m';
+    # $self->{tag}->{h} = '\033[43m\033[30m';
+    # $self->{tag}->{d} = '\033[41m\033[30m';
+    # $self->{tag}->{c} = '\033[36m';
+    # $self->{tag}->{o} = '\033[1;35m';
+    # $self->{tag}->{x} = '\033[1;35m';
+    # $self->{tag}->{n} = '\033[36m';
 
     return $self;
 }
@@ -142,8 +142,11 @@ sub parse_rc {
 		$val =~ s/\$HOME/$ENV{HOME}/e;
 		$self->{$key} = $val;
 	    }
-	    if ( $_ =~ /^tag:(\w+?)=['"]?((\\033\[[0-9m;]+?){1,2})["']?$/ ) {
-		$self->{tag}->{$1} = $2;
+	    if ( $_ =~ /^tag:(\w+?)=['"]?((\\033|.{1}).+?\[[0-9;m]+)["']?$/ ) {
+		my $tag_label = $1;
+		my $colour = $2;
+		$colour =~ s/['"]//g;
+		$self->{tag}->{$tag_label} = $colour;
 	    }
 	}
 	close( FILE );
@@ -400,7 +403,7 @@ sub replace_tags {
 	$$string =~ s/^(.+)\$([A-Z])/$self->tag($2,$1)/e;
 	# comment:
 	$$string =~ s/(;;.+)$/$self->comment_tag($1)/e;
-	     }
+    }
     return $self;
 }
 
@@ -409,23 +412,27 @@ sub tag {
     my $tag = lc( shift );
     my $text = shift;
     if ( ! exists $self->{tag}->{$tag} ) { return $text . '#'; }
-    return `echo -en "$self->{tag}->{$tag}"` . $text . $self->end_tag;
+#    return `echo -e "$self->{tag}->{$tag}"` . $text . $self->end_tag;
+    return $self->{tag}->{$tag} . $text . $self->end_tag;
 }
 
 sub end_tag {
     my $self = shift;
-    return `echo -en "\033[m"`;
+#    return `echo -e "[m"`;
+    return $self->{tag}->{end};
 }
 
 sub date_tag {
     my $self = shift;
-    return `echo -en "$self->{tag}->{date}"` . ">> " . shift() . $self->end_tag;
+#    return `echo -e "$self->{tag}->{date}"` . ">> " . shift() . $self->end_tag;
+    return $self->{tag}->{date} . '>> ' . shift() . $self->end_tag;
 }
 
 sub comment_tag {
     my $self = shift;
 #    return `echo -en "\033[33m"` . shift . $self->end_tag;
-    return `echo -en "$self->{tag}->{comment}"` . shift() . $self->end_tag;
+#    return `echo -e "$self->{tag}->{comment}"` . shift() . $self->end_tag;
+    return $self->{tag}->{comment} . shift() . $self->end_tag;
 }
 
 
