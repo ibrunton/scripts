@@ -11,12 +11,12 @@ tag:comment='\033[33m'
 tag:date='\033[1;34m'
 
 # custom tags (can be any single letter)
-tag:t='\033[32m'
-tag:h='\033[43m\033[30m'
-tag:d='\033[41m\033[30m'
-tag:c='\033[36m'
-tag:o='\033[1;35m'
-tag:x='\033[1;35m'
+tag:t='\033[38;5;32m'
+tag:h='\033[43;5;30m'
+tag:d='\033[41;5;30m'
+tag:c='\033[38;5;36m'
+tag:o='\033[1;38;5;35m'
+tag:x='\033[1;38;5;35m'
 
 # automatically round to nearest 5 minutes:
 auto_round=0

@@ -278,6 +278,9 @@ sub get_date {
     $self->{month} = substr( $self->{date}, 5, 2 );
     $self->{day} = substr( $self->{date}, 8, 2 );
 
+    $self->{dir_path} = $self->{log_dir} . join( '/', $self->{year},
+						 $self->{month} );
+
     my $months = [ 'January', 'February', 'March', 'April', 'May', 'June',
 		   'July', 'August', 'September', 'October', 'November', 'December' ];
     my $weekdays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday',

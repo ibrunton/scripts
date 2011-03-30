@@ -11,7 +11,7 @@ my $log = Log->new();
 
 my $input = join( ' ', @ARGV );
 
-$log->getopts( 'efhjst', \$input ); #&getopts( 'fhjst', \%{$log->{opt}} ); #$log->process_options;
+$log->getopts( 'defhjst', \$input ); #&getopts( 'fhjst', \%{$log->{opt}} ); #$log->process_options;
 
 if ( $log->opt( 'h' ) ) { pod2usage( -exitstatus => 0, -verbose => 2 ); }
 
@@ -30,7 +30,14 @@ if ( ! -e $file_path && ! $log->opt( 'f' ) ) {
     exit( 0 );
 }
 
-if ( $log->opt( 'f' ) ) { print $file_path; exit 0; }
+if ( $log->opt( 'f' ) ) {
+    if ( $log->opt( 'd' ) ) {
+	print $log->{dir_path};
+	exit 0;
+    } else {
+	print $file_path; exit 0;
+    }
+}
 
 open( FILE, $file_path ) or die( "Can't open file $file_path: $!" );
 while ( my $file_line = <FILE> ) {
