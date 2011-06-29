@@ -129,7 +129,7 @@ values may be passed) and parses its values into a hash structure.
 
 sub parse_rc {
     my $self = shift;
-    $self->{rc_file} = shift // $ENV{'HOME'} . '/.logrc';
+    $self->{rc_file} = shift // $ENV{'XDG_CONFIG_HOME'} . '/logrc';
     if ( -s $self->{rc_file} ) {
 	open( FILE, $self->{rc_file} ) || die();
 	while ( <FILE> ) {
