@@ -59,7 +59,7 @@ if ( $log->opt( 'c' ) ) {
 }
 
 # expand snippets...
-$output =~ s/:(\w+)/&expand($1,$log)/egi;
+$output =~ s/(?<!\w):(\w+)/&expand($1,$log)/egi;
 
 # text replacement...
 if ( $output =~ m| -s([/#]).+?\1.*?\1| ) {
