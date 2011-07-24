@@ -37,6 +37,11 @@ if ( ! -e $log->log_dir . $log->year . '/' . $log->month ) {
 my $output = '';
 my $comment = '';
 
+if ( $input eq '-') {
+    $input = <STDIN>;
+    chomp( $input );
+}
+
 # split input on -c or comment_char...
 $input =~ s/(?<=\W)-c(\s)/ $log->comment_char.$1/eo;
 
