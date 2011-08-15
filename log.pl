@@ -87,6 +87,9 @@ if ( $output =~ m| -s([/#]).+?\1.*?\1| ) {
 # add time...
 if ( $log->opt( 'n' ) ) {
     $output .= ' to ' . $log->time;
+	if ($output && $comment) {
+	  $output .= ' ';
+	}
 }
 if ( $log->opt( 'i' ) ) {
     $output = "\t" . $output;
