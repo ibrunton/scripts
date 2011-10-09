@@ -248,7 +248,7 @@ sub get_date {
 	    elsif ( $self->{date} =~ m|^(\d{2})$| ) { # DD provided, use current year and month
 		$self->{date} = substr( $key, 0, 8 ) .= $1;
 	    }
-	    else { $self->error( 'Incorrently formatted date: ' . $self->{date} ); }
+	    else { $self->error( 'Incorrectly formatted date: ' . $self->{date} ); }
 	}
 	else { $self->{date} = $key; }
     }
@@ -414,7 +414,7 @@ sub tag {
     my $self = shift;
     my $tag = lc( shift );
     my $text = shift;
-    if ( ! exists $self->{tag}->{$tag} ) { return $text . '#'; }
+    if ( ! exists $self->{tag}->{$tag} ) { return $text; }
 #    return `echo -e "$self->{tag}->{$tag}"` . $text . $self->end_tag;
     return $self->{tag}->{$tag} . $text . $self->end_tag;
 }

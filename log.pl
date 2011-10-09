@@ -6,7 +6,7 @@ use Text::Wrap;
 
 use Log;
 
-my $VERSION = '2.0.1';
+my $VERSION = '2.0.2';
 
 if ( ! $ARGV[0] ) { pod2usage( -exitval => 1, -verbose => 1 ); }
 
@@ -60,6 +60,7 @@ if ( $log->opt( 'c' ) ) {
 
 # expand snippets...
 $output =~ s/(?<!\w):(\w+)/&expand($1,$log)/egi;
+#$output =~ s/([\d\/\.]*) *:(\w+)/&expand($2,$1,$log)/egi;
 
 # text replacement...
 if ( $output =~ m| -s([/#]).+?\1.*?\1| ) {
@@ -171,13 +172,18 @@ sub expand {
 
     my $snippet_file = $logref->snippet_dir . $snippet;
     if ( -e $snippet_file ) {
-	open( SNIPPET, "<$snippet_file" ) || die( "Cannot open file $snippet_file: $!\n" );
-	my @file_contents = <SNIPPET>;
-	close( SNIPPET );
-	my $str = join( "", @file_contents );
-	$str =~ s/\n$//so; # chop \n off the end
-	return $str;
+		open( SNIPPET, "<$snippet_file" ) || die( "Cannot open file $snippet_file: $!\n" );
+		my @file_contents = <SNIPPET>;
+		close( SNIPPET );
+		my $str = join( "", @file_contents );
+		$str =~ s/\n$//so; # chop \n off the end
 
+		my $ic = $logref->indent_char;
+		if ($str =~ s/#BR#/\n$ic/g) {
+			$logref->set_opt('w');
+		}
+
+		return $str;
     }
     else { return $snippet; }
 }
@@ -190,7 +196,7 @@ log - command-line log/journal processing
 
 =head1 VERSION
 
-2.0
+2.0.2
 
 =head1 SYNOPSIS
 
