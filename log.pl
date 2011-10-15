@@ -140,7 +140,7 @@ if ( $log->opt( 'j' ) ) {
 }
 elsif ( $log->opt( 't' ) && $log->is_new ) {
     system( "log -cw ". $log->date . " TRAINING FILE CREATED " . '-' x 40 );
-    print FILE "training\n\n";
+    #print FILE "training\n\n";
 }
 
 print FILE $output . $comment . $log->end_of_line or die( "didn't print: $!" );
