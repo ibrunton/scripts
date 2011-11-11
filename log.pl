@@ -60,7 +60,6 @@ if ( $log->opt( 'c' ) ) {
 
 # expand snippets...
 $output =~ s/(?<!\w):(\w+)/&expand($1,$log)/egi;
-#$output =~ s/([\d\/\.]*) *:(\w+)/&expand($2,$1,$log)/egi;
 
 # text replacement...
 if ( $output =~ m| -s([/#]).+?\1.*?\1| ) {
@@ -135,11 +134,11 @@ if ( $log->is_new ) { print FILE $log->date_string, "\n\n"; }
 
 my $date = $log->date;
 if ( $log->opt( 'j' ) ) {
-    if ( $log->is_new ) { system( "log -cw " . $log->date . " JOURNAL FILE CREATED " . '-' x 41 ); }
+    if ( $log->is_new ) { system( "log -cw " . $log->date . " JOURNAL file created " . '-' x 41 ); }
     print FILE $log->comment_char . "\t" . $log->time . "\t" . '-' x 53 . "\n";
 }
 elsif ( $log->opt( 't' ) && $log->is_new ) {
-    system( "log -cw ". $log->date . " TRAINING FILE CREATED " . '-' x 40 );
+    system( "log -cw ". $log->date . " TRAINING file created " . '-' x 40 );
     #print FILE "training\n\n";
 }
 
