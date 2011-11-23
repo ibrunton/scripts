@@ -6,7 +6,7 @@ use Text::Wrap;
 
 use Log;
 
-my $VERSION = '2.0.2';
+my $VERSION = '2.1';
 
 if ( ! $ARGV[0] ) { pod2usage( -exitval => 1, -verbose => 1 ); }
 
@@ -16,7 +16,7 @@ $log->parse_rc;
 
 my $input = join( ' ', @ARGV );
 
-$log->getopts( 'acehijnqRrstTw', \$input );
+$log->getopts( 'abcehijnqRrstTw', \$input );
 
 if ( $log->opt( 'h' ) ) { pod2usage( -exitstatus => 0, -verbose => 2 ); }
 
@@ -59,7 +59,9 @@ if ( $log->opt( 'c' ) ) {
 }
 
 # expand snippets...
-$output =~ s/(?<!\w):(\w+)/&expand($1,$log)/egi;
+while ($output =~ m/(?<!\w):(\w+)/) {
+	$output =~ s/(?<!\w):(\w+)/&expand($1,$log)/egi;
+}
 
 # text replacement...
 if ( $output =~ m| -s([/#]).+?\1.*?\1| ) {
