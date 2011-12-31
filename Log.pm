@@ -248,7 +248,7 @@ sub get_date {
 	    elsif ( $self->{date} =~ m|^(\d{2})$| ) { # DD provided, use current year and month
 		$self->{date} = substr( $key, 0, 8 ) .= $1;
 	    }
-	    else { $self->error( 'Incorrectly formatted date: ' . $self->{date} ); }
+	    #else { $self->error( 'Incorrectly formatted date: ' . $self->{date} ); }
 	}
 	else { $self->{date} = $key; }
     }
@@ -406,6 +406,8 @@ sub replace_tags {
 	$$string =~ s/^(.+)\$([A-Z])/$self->tag($2,$1)/e;
 	# comment:
 	$$string =~ s/(;;.+)$/$self->comment_tag($1)/e;
+	# tags:
+	$$string =~ s/^(\+.+)$/$self->comment_tag($1)/e;
     }
     return $self;
 }
