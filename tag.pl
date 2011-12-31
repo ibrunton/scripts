@@ -8,7 +8,7 @@ use Modern::Perl;
 use Pod::Usage;
 use Log;
 
-my $VERSION = '0.1';
+my $VERSION = '1.0';
 
 #if (! $ARGV[0]) { pod2usage (-exitval => 1, -verbose => 1); }
 
