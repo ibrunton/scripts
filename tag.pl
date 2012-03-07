@@ -8,7 +8,7 @@ use Modern::Perl;
 use Pod::Usage;
 use Log;
 
-my $VERSION = '1.0';
+my $VERSION = '1.0.1';
 
 #if (! $ARGV[0]) { pod2usage (-exitval => 1, -verbose => 1); }
 
@@ -29,7 +29,7 @@ if ($input) {
 
 	my @newtags = split (/ /, lc ($input));
 	foreach (@newtags) {
-		$_ = '+' . $_;
+		$_ = '#' . $_;
 	}
 
 	if (-e $tag_file) {
@@ -40,7 +40,7 @@ if ($input) {
 		my $used_tags;
 		foreach (@tags) {
 			$_ =~ s/\n//;
-			next if ($_ !~ m/^\+\w+$/);
+			next if ($_ !~ m/^\#\w+$/);
 			$used_tags->{$_} = 1;
 		}
 
@@ -74,7 +74,7 @@ if ($input) {
 	my @lines = <LOGFILE>;
 	close (LOGFILE);
 
-	if ($lines[2] =~ m/^(\+\w+ ?){1,}$/) {
+	if ($lines[2] =~ m/^(\#\w+ ?){1,}$/) {
 		$lines[2] =~ s/\n//;
 		$lines[2] .= ' ' . join (' ', @newtags) . "\n";
 	} else {
@@ -99,7 +99,7 @@ if ($input) {
 		print $lines[0];
 	}
 		
-	if ($lines[2] =~ m/^(\+\w+ ?){1,}$/) {
+	if ($lines[2] =~ m/^(\#\w+ ?){1,}$/) {
 			print $lines[2];
 	} else {
 		say "No tags"
