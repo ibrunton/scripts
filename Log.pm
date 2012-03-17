@@ -407,7 +407,7 @@ sub replace_tags {
 	# comment:
 	$$string =~ s/(;;.+)$/$self->comment_tag($1)/e;
 	# tags:
-	$$string =~ s/^(\+.+)$/$self->comment_tag($1)/e;
+	$$string =~ s/^(\#.+)$/$self->comment_tag($1)/e;
     }
     return $self;
 }
