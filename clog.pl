@@ -11,15 +11,11 @@ my $log = Log->new();
 
 my $input = join( ' ', @ARGV );
 
-$log->getopts( 'defhjst', \$input ); #&getopts( 'fhjst', \%{$log->{opt}} ); #$log->process_options;
+$log->parse_rc;
+
+$log->getopts( 'defhs', \$input );
 
 if ( $log->opt( 'h' ) ) { pod2usage( -exitstatus => 0, -verbose => 2 ); }
-
-#print $input, "\n";
-
-# uncomment these lines of you want to use them:
-$log->parse_rc;
-#$log->parse_state;
 
 $log->parse_datetime( \$input ); # pass by reference so method can modify $input
 
@@ -62,7 +58,7 @@ clog - command-line log/journal printing
 
  clog [OPTIONS] [YYYY/MM/DD] [diff]
  clog 10/03
- clog -j 06 n1
+ clog -J 06 n1
 
 =head1 DESCRIPTION
 
@@ -87,17 +83,9 @@ not exist.
 
 Prints this documentation.
 
-=item B<-j>
-
-Points clog to the journal file rather than the main log file.
-
 =item B<-s>
 
 I don't know what this was meant to do yet.
-
-=item B<-t>
-
-Points clog to the training file rather than the main log file.
 
 =back
 

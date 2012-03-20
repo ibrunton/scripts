@@ -7,8 +7,8 @@ use Log;
 my $input = join( ' ', @ARGV );
 
 my $log = Log->new;
-$log->getopts( 'ajt', \$input );
 $log->parse_rc;
+$log->getopts( 'a', \$input );
 
 my $action = $log->{editor} // $ENV{EDITOR} // '/usr/bin/env vim';
 my $alternate = $log->{alternate_editor} // 'emacsclient';
