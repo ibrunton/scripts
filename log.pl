@@ -192,7 +192,7 @@ log - command-line log/journal processing
 
 =head1 VERSION
 
-2.0.2
+2.2.1
 
 =head1 SYNOPSIS
 
