@@ -40,7 +40,7 @@ if ($input) {
 		my $used_tags;
 		foreach (@tags) {
 			$_ =~ s/\n//;
-			next if ($_ !~ m/^\#\w+$/);
+			next if ($_ !~ m/^\#[\w-]+$/);
 			$used_tags->{$_} = 1;
 		}
 
