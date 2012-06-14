@@ -98,6 +98,10 @@ unless ( $log->opt( 't' ) ) {
     $output = $log->time . ":\t" . $output;
 }
 
+if ($log->opt('b')) {
+	$output = "\n";
+}
+
 # wrap...
 unless ( $log->opt( 'w' ) ) {
     unless ( $log->opt('c') ) {
@@ -294,6 +298,10 @@ No regular expressions are evaluated.
 =item B<-a>
 
 Cancels the automatic appendage of a newline to the input passed.
+
+=item B<-b>
+
+Inserts a blank line.
 
 =item B<-c>
 

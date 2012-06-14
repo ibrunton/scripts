@@ -426,22 +426,20 @@ sub unset_opt {
 }
 
 # various methods to return object properties:
-sub log_dir { my $self = shift; return $self->{log_dir}; }
-sub snippet_dir { my $self = shift; return $self->{snippet_dir}; }
-sub state_file { my $self = shift; return $self->{state_file}; }
+sub log_dir		{ my $self = shift; return $self->{log_dir}; }
+sub snippet_dir	{ my $self = shift; return $self->{snippet_dir}; }
+sub state_file	{ my $self = shift; return $self->{state_file}; }
 sub comment_char { my $self = shift; return $self->{comment_char}; }
-sub end_of_line { my $self = shift; return $self->{end_of_line}; }
-sub line_length { my $self = shift; return $self->{line_length}; }
-sub training_extension { my $self = shift; return $self->{training_extension}; }
-sub journal_extension { my $self = shift; return $self->{journal_extension}; }
-sub date { my $self = shift; return $self->{date}; }
-sub date_string { my $self = shift; return $self->{date_string}; }
-sub year { my $self = shift; return $self->{year}; }
-sub month { my $self = shift; return $self->{month}; }
-sub time { my $self = shift; return $self->{time}; }
-sub has_time { my $self = shift; return $self->{has_time}; }
-sub file_path { my $self = shift; return $self->{file_path}; }
-sub is_new { my $self = shift; return $self->{is_new}; }
+sub end_of_line	{ my $self = shift; return $self->{end_of_line}; }
+sub line_length	{ my $self = shift; return $self->{line_length}; }
+sub date		{ my $self = shift; return $self->{date}; }
+sub date_string	{ my $self = shift; return $self->{date_string}; }
+sub year		{ my $self = shift; return $self->{year}; }
+sub month		{ my $self = shift; return $self->{month}; }
+sub time		{ my $self = shift; return $self->{time}; }
+sub has_time	{ my $self = shift; return $self->{has_time}; }
+sub file_path	{ my $self = shift; return $self->{file_path}; }
+sub is_new		{ my $self = shift; return $self->{is_new}; }
 
 sub indent_char {
     my $self = shift;
