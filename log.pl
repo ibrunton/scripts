@@ -6,7 +6,7 @@ use Text::Wrap;
 
 use Log;
 
-my $VERSION = '2.2.2';
+my $VERSION = '2.2.3';
 
 if ( ! $ARGV[0] ) { pod2usage( -exitval => 1, -verbose => 1 ); }
 
@@ -98,10 +98,6 @@ unless ( $log->opt( 't' ) ) {
     $output = $log->time . ":\t" . $output;
 }
 
-if ($log->opt('b')) {
-	$output = "\n";
-}
-
 # wrap...
 unless ( $log->opt( 'w' ) ) {
     unless ( $log->opt('c') ) {
@@ -130,6 +126,11 @@ unless ( $log->opt( 'w' ) ) {
     $comment = wrap( "", $log->comment_char . "\t", $comment );
 }
 
+# prepend blank line:
+if ($log->opt('b')) {
+	$output = "\n" . $output;
+}
+
 my $file = $log->file_path;
 open( FILE, ">>$file" ) or die( "Can't open file " . $file . ": $!" );
 
@@ -139,7 +140,7 @@ my $date = $log->date;
 
 if ($log->{extension} ne '') {
 	if ($log->is_new) {
-		system ("log -cw " . $log ->date . " " . uc ($log->{extension}) . " file created");
+		system ("log -cw " . $log->date . " " . uc ($log->{extension}) . " file created");
 	}
 }
 
@@ -301,7 +302,8 @@ Cancels the automatic appendage of a newline to the input passed.
 
 =item B<-b>
 
-Inserts a blank line.
+Inserts a blank line.  If further input is passed, it is processed
+normally and inserted after the blank line.
 
 =item B<-c>
 
