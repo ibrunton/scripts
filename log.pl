@@ -6,7 +6,7 @@ use Text::Wrap;
 
 use Log;
 
-my $VERSION = '2.2.1';
+my $VERSION = '2.2.2';
 
 if ( ! $ARGV[0] ) { pod2usage( -exitval => 1, -verbose => 1 ); }
 
