@@ -139,7 +139,7 @@ values may be passed) and parses its values into a hash structure.
 
 sub parse_rc {
 	my $self = shift;
-	$self->{rc_file} = shift // $ENV{'XDG_CONFIG_HOME'} . '/logrc2';
+	$self->{rc_file} = shift // $ENV{'XDG_CONFIG_HOME'} . '/logrc';
 	if ( -s $self->{rc_file}) {
 		my $keyfile = Glib::KeyFile->new;
 		$keyfile->load_from_file ($self->{rc_file}, 'keep-comments');
