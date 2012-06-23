@@ -6,7 +6,7 @@ use Text::Wrap;
 
 use Log;
 
-my $VERSION = '2.2.3';
+my $VERSION = '2.2.4';
 
 if ( ! $ARGV[0] ) { pod2usage( -exitval => 1, -verbose => 1 ); }
 
@@ -126,15 +126,26 @@ unless ( $log->opt( 'w' ) ) {
     $comment = wrap( "", $log->comment_char . "\t", $comment );
 }
 
-# prepend blank line:
-if ($log->opt('b')) {
-	$output = "\n" . $output;
-}
-
 my $file = $log->file_path;
 open( FILE, ">>$file" ) or die( "Can't open file " . $file . ": $!" );
 
-if ( $log->is_new ) { print FILE $log->date_string, "\n\n"; }
+if ( $log->is_new ) {
+	print FILE $log->date_string, "\n\n";
+	$log->unset_opt ('b');
+}
+
+# prepend blank line:
+# (kind of cludgy)
+if ($log->opt('b')) {
+	if ($input eq '') { # if no other input, just insert a single blank line
+		$log->{end_of_line} = '';
+		$log->set_opt ('t');
+		$output = "\n";
+	}
+	else { # blank line plus additional input
+		$output = "\n" . $output;
+	}
+}
 
 my $date = $log->date;
 
