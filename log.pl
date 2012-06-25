@@ -57,7 +57,7 @@ if ( $log->opt( 'c' ) ) {
 
 # expand snippets...
 while ($output =~ m/(?<!\w):(\w+)/) {
-	$output =~ s/(?<!\w):(\w+)/&expand($1,$log)/egi;
+    $output =~ s/(?<!\w):(\w+)/&expand($1,$log)/egi;
 }
 
 # text replacement...
@@ -65,13 +65,13 @@ if ( $output =~ m| -s([/#]).+?\1.*?\1| ) {
     print ">>Replacing...\n";
     my @seds;
     my $match;
-
+    
     while ( $output =~ s| -s([/#])(.+?\1.*?\1)|| ) {
 	$match = $1 . $2;
 	push( @seds, $match );
 	$output =~ s/$match//g;
     }
-
+    
     my ( $r1, $r2 );
     foreach my $sed ( @seds ) {
 	if ( $sed =~ m|^([/#])(.+?)\1(.*?)\1$| ) {
@@ -86,9 +86,9 @@ if ( $output =~ m| -s([/#]).+?\1.*?\1| ) {
 # add time...
 if ( $log->opt( 'n' ) ) {
     $output .= ' to ' . $log->time;
-	if ($output && $comment) {
-	  $output .= ' ';
-	}
+    if ($output && $comment) {
+	$output .= ' ';
+    }
 }
 if ( $log->opt( 'i' ) ) {
     $output = "\t" . $output;
@@ -103,7 +103,7 @@ unless ( $log->opt( 'w' ) ) {
     unless ( $log->opt('c') ) {
 	$output = wrap( "", $log->indent_char, $output );
     }
-
+    
     # make sure that if a comment begins partway through a line and wraps,
     # it will wrap at the right place:
     if ( length( $output ) > 1 && $comment ) {
@@ -122,7 +122,7 @@ unless ( $log->opt( 'w' ) ) {
 	    }
 	}
     }
-
+    
     $comment = wrap( "", $log->comment_char . "\t", $comment );
 }
 
@@ -130,29 +130,29 @@ my $file = $log->file_path;
 open( FILE, ">>$file" ) or die( "Can't open file " . $file . ": $!" );
 
 if ( $log->is_new ) {
-	print FILE $log->date_string, "\n\n";
-	$log->unset_opt ('b');
+    print FILE $log->date_string, "\n\n";
+    $log->unset_opt ('b');
 }
 
 # prepend blank line:
 # (kind of cludgy)
 if ($log->opt('b')) {
-	if ($input eq '') { # if no other input, just insert a single blank line
-		$log->{end_of_line} = '';
-		$log->set_opt ('t');
-		$output = "\n";
-	}
-	else { # blank line plus additional input
-		$output = "\n" . $output;
-	}
+    if ($input eq '') { # if no other input, just insert a single blank line
+	$log->{end_of_line} = '';
+	$log->set_opt ('t');
+	$output = "\n";
+    }
+    else { # blank line plus additional input
+	$output = "\n" . $output;
+    }
 }
 
 my $date = $log->date;
 
 if ($log->{extension} ne '') {
-	if ($log->is_new) {
-		system ("log -cw " . $log->date . " " . uc ($log->{extension}) . " file created");
-	}
+    if ($log->is_new) {
+	system ("log -cw " . $log->date . " " . uc ($log->{extension}) . " file created");
+    }
 }
 
 print FILE $output . $comment . $log->end_of_line or die( "didn't print: $!" );
@@ -181,21 +181,21 @@ exit( 0 );
 sub expand {
     my $snippet = shift;
     my $logref = shift;
-
+    
     my $snippet_file = $logref->snippet_dir . $snippet;
     if ( -e $snippet_file ) {
-		open( SNIPPET, "<$snippet_file" ) || die( "Cannot open file $snippet_file: $!\n" );
-		my @file_contents = <SNIPPET>;
-		close( SNIPPET );
-		my $str = join( "", @file_contents );
-		$str =~ s/\n$//so; # chop \n off the end
-
-		my $ic = $logref->indent_char;
-		if ($str =~ s/#BR#/\n$ic/g) {
-			$logref->set_opt('w');
-		}
-
-		return $str;
+	open( SNIPPET, "<$snippet_file" ) || die( "Cannot open file $snippet_file: $!\n" );
+	my @file_contents = <SNIPPET>;
+	close( SNIPPET );
+	my $str = join( "", @file_contents );
+	$str =~ s/\n$//so; # chop \n off the end
+	
+	my $ic = $logref->indent_char;
+	if ($str =~ s/#BR#/\n$ic/g) {
+	    $logref->set_opt('w');
+	}
+	
+	return $str;
     }
     else { return $snippet; }
 }

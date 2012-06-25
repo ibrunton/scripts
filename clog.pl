@@ -15,7 +15,9 @@ $log->parse_rc;
 
 $log->getopts( 'defhs', \$input );
 
-if ( $log->opt( 'h' ) ) { pod2usage( -exitstatus => 0, -verbose => 2 ); }
+if ( $log->opt( 'h' ) ) {
+    pod2usage( -exitstatus => 0, -verbose => 2 );
+}
 
 $log->parse_datetime( \$input ); # pass by reference so method can modify $input
 

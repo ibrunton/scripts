@@ -22,21 +22,21 @@ Constructor. Requires no arguments.
 =cut
 
 sub new {
-	my $class = shift;
-	my $self = {};
-	bless( $self, "Log" );
-	$self->_init();
-	return $self;
+    my $class = shift;
+    my $self = {};
+    bless( $self, "Log" );
+    $self->_init();
+    return $self;
 }
 
 sub _init {
-	my $self = shift;
+    my $self = shift;
 	
-	# set default options (all of these can be set in .logrc):
-	$self->{log_dir} = $ENV{HOME} . '/docs/log/';
-	$self->{snippet_dir} = $ENV{HOME} . '/docs/log/.snippets/';
-	$self->{state_file} = $self->{log_dir} . '.state';
-	$self->{auto_round} = 0;
+    # set default options (all of these can be set in .logrc):
+    $self->{log_dir} = $ENV{HOME} . '/docs/log/';
+    $self->{snippet_dir} = $ENV{HOME} . '/docs/log/.snippets/';
+    $self->{state_file} = $self->{log_dir} . '.state';
+    $self->{auto_round} = 0;
     $self->{auto_echo} = 0;
     $self->{comment_char} = ';;';
     $self->{end_of_line} = "\n";
@@ -67,29 +67,31 @@ sub getopts {
     my $string = shift;
     my $tags;
 	
-	#    print "Log.pm: \$\$string = '$$string'\n";
-    if ( $$string !~ /^-/ ) { # no options passed
-		return $self;
+    #    print "Log.pm: \$\$string = '$$string'\n";
+    if ( $$string !~ /^-/ ) {	# no options passed
+	return $self;
     }
-	#    elsif ( $$string =~ /^(-[$allowed]+\s?)(?!-)/o ) {
+    #    elsif ( $$string =~ /^(-[$allowed]+\s?)(?!-)/o ) {
     elsif ( $$string =~ /^((-[a-zA-Z]+ ?)+)(?!-)/ ) {
-	    $tags = $1;
-	    $$string =~ s/$tags//;
-    }
-    else {
-		$self->set_opt( 'h' );
-		return $self;
+	$tags = $1;
+	$$string =~ s/$tags//;
+    } else {
+	$self->set_opt( 'h' );
+	return $self;
     }
 
-	$allowed .= join ('', keys %{$self->{extensions}});
+    $allowed .= join ('', keys %{$self->{extensions}});
 
     $tags =~ s/[^a-zA-Z]//g;
     # print "Log.pm: \$tags = $tags\n";
     my $t;
     for ( my $i = 0; $i < length( $tags ); $i++ ) {
-		$t = substr( $tags, $i, 1 );
-		if ( $t =~ /[$allowed]/ ) { $self->set_opt( $t ); }
-		else { $self->error( "Unknown command-line option `$t'." ); }
+	$t = substr( $tags, $i, 1 );
+	if ( $t =~ /[$allowed]/ ) {
+	    $self->set_opt( $t );
+	} else {
+	    $self->error( "Unknown command-line option `$t'." );
+	}
     }
     $self->process_options;
     return $self;
@@ -98,29 +100,35 @@ sub getopts {
 sub process_options {
     my $self = shift;
 	
-    if ( $self->opt( 'a' ) ) { $self->{end_of_line} = ''; }
-    if ( $self->opt( 'c' ) ) {
-		$self->set_opt( 't' );
-		$self->indent_char( $self->{comment_char} . $self->{indent_char} ) ;
+    if ( $self->opt( 'a' ) ) {
+	$self->{end_of_line} = '';
     }
-    if ( $self->opt( 'i' ) ) { $self->set_opt( 't' ); }
-    if ( $self->opt( 'n' ) ) { $self->set_opt( 't' ); }
+    if ( $self->opt( 'c' ) ) {
+	$self->set_opt( 't' );
+	$self->indent_char( $self->{comment_char} . $self->{indent_char} ) ;
+    }
+    if ( $self->opt( 'i' ) ) {
+	$self->set_opt( 't' );
+    }
+    if ( $self->opt( 'n' ) ) {
+	$self->set_opt( 't' );
+    }
     # if ( $self->opt( 'R' ) ) { $self->unset_opt( 'r' ); }
     # if ( $self->opt( 'r' ) ) { $self->unset_opt( 'R' ); }
 
-	foreach (keys %{$self->{extensions}}) {
-		if ($self->opt ($_)) {
-			$self->{extension} = '.' . $self->{extensions}->{$_};
-		}
+    foreach (keys %{$self->{extensions}}) {
+	if ($self->opt ($_)) {
+	    $self->{extension} = '.' . $self->{extensions}->{$_};
 	}
+    }
 	
-	# This is an ad hoc hack to make .journal files behave in a specific way.
-	# It would be preferable to be able to write this as a hook in the config file
+    # This is an ad hoc hack to make .journal files behave in a specific way.
+    # It would be preferable to be able to write this as a hook in the config file
     if ( $self->opt( 'J' ) ) {
-		$self->{end_of_line} = "\n\n";
-		$self->{indent_char} = '';
-		$self->set_opt( 't' );
-		$self->set_opt( 'r' );
+	$self->{end_of_line} = "\n\n";
+	$self->{indent_char} = '';
+	$self->set_opt( 't' );
+	$self->set_opt( 'r' );
     }
     
     # if ( $self->opt( 'j' ) && $self->opt( 't' ) ) {
@@ -138,74 +146,74 @@ values may be passed) and parses its values into a hash structure.
 =cut
 
 sub parse_rc {
-	my $self = shift;
-	$self->{rc_file} = shift // $ENV{'XDG_CONFIG_HOME'} . '/logrc';
-	if ( -s $self->{rc_file}) {
-		my $keyfile = Glib::KeyFile->new;
-		$keyfile->load_from_file ($self->{rc_file}, 'keep-comments');
+    my $self = shift;
+    $self->{rc_file} = shift // $ENV{'XDG_CONFIG_HOME'} . '/logrc';
+    if ( -s $self->{rc_file}) {
+	my $keyfile = Glib::KeyFile->new;
+	$keyfile->load_from_file ($self->{rc_file}, 'keep-comments');
 
-		if ($keyfile->has_group ('log')) {
-			if ($keyfile->has_key ('log', 'log_dir')) {
-				$self->{log_dir} = $keyfile->get_string ('log', 'log_dir');
-				$self->{log_dir} =~ s/\$HOME/$ENV{'HOME'}/;
-			}
+	if ($keyfile->has_group ('log')) {
+	    if ($keyfile->has_key ('log', 'log_dir')) {
+		$self->{log_dir} = $keyfile->get_string ('log', 'log_dir');
+		$self->{log_dir} =~ s/\$HOME/$ENV{'HOME'}/;
+	    }
 
-			if ($keyfile->has_key ('log', 'snippet_dir')) {
-				$self->{snippet_dir} = $keyfile->get_string ('log', 'snippet_dir');
-				$self->{snippet_dir} =~ s/\$HOME/$ENV{'HOME'}/;
-			}
+	    if ($keyfile->has_key ('log', 'snippet_dir')) {
+		$self->{snippet_dir} = $keyfile->get_string ('log', 'snippet_dir');
+		$self->{snippet_dir} =~ s/\$HOME/$ENV{'HOME'}/;
+	    }
 
-			if ($keyfile->has_key ('log', 'editor')) {
-				$self->{editor} = $keyfile->get_string ('log', 'editor');
-			}
+	    if ($keyfile->has_key ('log', 'editor')) {
+		$self->{editor} = $keyfile->get_string ('log', 'editor');
+	    }
 
-			if ($keyfile->has_key ('log', 'alternate_editor')) {
-				$self->{alternate_editor} = $keyfile->get_string ('log', 'alternate_editor');
-			}
+	    if ($keyfile->has_key ('log', 'alternate_editor')) {
+		$self->{alternate_editor} = $keyfile->get_string ('log', 'alternate_editor');
+	    }
 
-			if ($keyfile->has_key ('log', 'line_length')) {
-				$self->{line_length} = $keyfile->get_integer ('log', 'line_length');
-			}
+	    if ($keyfile->has_key ('log', 'line_length')) {
+		$self->{line_length} = $keyfile->get_integer ('log', 'line_length');
+	    }
 
-			if ($keyfile->has_key ('log', 'auto_round')) {
-				$self->{auto_round} = $keyfile->get_integer ('log', 'auto_round');
-			}
+	    if ($keyfile->has_key ('log', 'auto_round')) {
+		$self->{auto_round} = $keyfile->get_integer ('log', 'auto_round');
+	    }
 
-			if ($keyfile->has_key ('log', 'auto_echo')) {
-				$self->{auto_echo} = $keyfile->get_integer ('log', 'auto_echo');
-			}
+	    if ($keyfile->has_key ('log', 'auto_echo')) {
+		$self->{auto_echo} = $keyfile->get_integer ('log', 'auto_echo');
+	    }
 
-			if ($keyfile->has_key ('log', 'comment_char')) {
-				$self->{comment_char} = $keyfile->get_string ('log', 'comment_char');
-			}
+	    if ($keyfile->has_key ('log', 'comment_char')) {
+		$self->{comment_char} = $keyfile->get_string ('log', 'comment_char');
+	    }
 
-			if ($keyfile->has_key ('log', 'end_of_line')) {
-				$self->{end_of_line} = $keyfile->get_string ('log', 'end_of_line');
-			}
+	    if ($keyfile->has_key ('log', 'end_of_line')) {
+		$self->{end_of_line} = $keyfile->get_string ('log', 'end_of_line');
+	    }
 
-			if ($keyfile->has_key ('log', 'indent_char')) {
-				$self->{indent_char} = $keyfile->get_string ('log', 'indent_char');
-			}
-		}
-
-		if ($keyfile->has_group ('tags')) {
-			my @ttags = $keyfile->get_keys ('tags');
-
-			foreach (@ttags) {
-				$self->{tag}->{$_} = $keyfile->get_string ('tags', $_);
-			}
-		}
-
-		if ($keyfile->has_group ('extensions')) {
-			my @textensions = $keyfile->get_keys ('extensions');
-
-			foreach (@textensions) {
-				$self->{extensions}->{$_} = $keyfile->get_string ('extensions', $_);
-			}
-		}
+	    if ($keyfile->has_key ('log', 'indent_char')) {
+		$self->{indent_char} = $keyfile->get_string ('log', 'indent_char');
+	    }
 	}
 
-	return $self;
+	if ($keyfile->has_group ('tags')) {
+	    my @ttags = $keyfile->get_keys ('tags');
+
+	    foreach (@ttags) {
+		$self->{tag}->{$_} = $keyfile->get_string ('tags', $_);
+	    }
+	}
+
+	if ($keyfile->has_group ('extensions')) {
+	    my @textensions = $keyfile->get_keys ('extensions');
+
+	    foreach (@textensions) {
+		$self->{extensions}->{$_} = $keyfile->get_string ('extensions', $_);
+	    }
+	}
+    }
+
+    return $self;
 }
 
 =head2 parse_state [FILE]
@@ -219,11 +227,11 @@ sub parse_state {
     my $self = shift;
     $self->{state_file} // $self->{log_dir} . '.state';
     if ( -s $self->{state_file} ) {
-		open( FILE, $self->{state_file} ) || die();
-		while ( <FILE> ) {
-			push( @{$self->{state}}, $_ );
-		}
-		close( FILE );
+	open( FILE, $self->{state_file} ) || die();
+	while ( <FILE> ) {
+	    push( @{$self->{state}}, $_ );
+	}
+	close( FILE );
     }
     return $self;
 }
@@ -243,37 +251,36 @@ sub parse_datetime {
     my $self = shift;
     my $string = shift;
 	
-	#    print "Log.pm->parse_datetime: $$string\n";
+    #    print "Log.pm->parse_datetime: $$string\n";
 	
     # date:
     if ( $$string =~ m|^((\d{4}/)?(\d{2}/)?\d{2})\b|o ) {
-		$self->{date} = $1;
-		$$string =~ s/$1 *//o;
-		$self->{has_date} = 1;
+	$self->{date} = $1;
+	$$string =~ s/$1 *//o;
+	$self->{has_date} = 1;
     }
     # date differential:
     if ( $$string =~ m|\b(n\d+?)\b| ) {
-		$self->{date_diff} = $1;
-		$$string =~ s/$1 *//o;
-		$self->{date_diff} =~ s/\D//g;
-		$self->{has_diff} = 1;
+	$self->{date_diff} = $1;
+	$$string =~ s/$1 *//o;
+	$self->{date_diff} =~ s/\D//g;
+	$self->{has_diff} = 1;
     }
     # time:
     if ( $$string =~ s/^(\[?\d{4}[~?]?):? */$1:\t/o ) {
-		$self->{time} = $1;
-		$self->{has_time} = 1;
-		$self->set_opt( 't' );
-		#	print "Log.pm->parse_datetime: has time\n";
-    }
-    elsif ( $$string =~ s/^(\w{1,6}:) +/$1\t/o ) {
+	$self->{time} = $1;
+	$self->{has_time} = 1;
+	$self->set_opt( 't' );
+	#	print "Log.pm->parse_datetime: has time\n";
+    } elsif ( $$string =~ s/^(\w{1,6}:) +/$1\t/o ) {
     	$self->set_opt( 't' );
     }
 	
-	#    print "Log.pm->parse_datetime: date=" . $self->{date},"\n";
-	#    $self->{input} = $$string;
-	#    print ">>Log.pm->parse_datetime: " . $self->{date} . "\n";
+    #    print "Log.pm->parse_datetime: date=" . $self->{date},"\n";
+    #    $self->{input} = $$string;
+    #    print ">>Log.pm->parse_datetime: " . $self->{date} . "\n";
     $self->get_date;
-	#    print ">>Log.pm->parse_datetime: " . $self->{date} . "\n";
+    #    print ">>Log.pm->parse_datetime: " . $self->{date} . "\n";
     $self->set_time;
 	
     return $self;
@@ -289,63 +296,64 @@ sub get_date {
     my $self = shift;
 	
     my $key = join( '/', &IDB::year( (localtime(time))[5] ),
-					&IDB::double_digit( (localtime(time))[4] + 1 ),
-					&IDB::double_digit( (localtime(time))[3] ) );
+		    &IDB::double_digit( (localtime(time))[4] + 1 ),
+		    &IDB::double_digit( (localtime(time))[3] ) );
 	
     if ( $self->{has_date} ) {
-		if ( $self->{date} ne $key ) {
-			if ( $self->{date} =~ m|^(\d{2}/\d{2})$| ) { # MM/DD provided, use current year
-				$self->{date} = substr( $key, 0, 5 ) .= $1;
-			}
-			elsif ( $self->{date} =~ m|^(\d{2})$| ) { # DD provided, use current year and month
-				$self->{date} = substr( $key, 0, 8 ) .= $1;
-			}
-			#else { $self->error( 'Incorrectly formatted date: ' . $self->{date} ); }
-		}
-		else { $self->{date} = $key; }
-    }
-    else {
-		$self->{date} = $key;
+	if ( $self->{date} ne $key ) {
+	    if ( $self->{date} =~ m|^(\d{2}/\d{2})$| ) { # MM/DD provided, use current year
+		$self->{date} = substr( $key, 0, 5 ) .= $1;
+	    } elsif ( $self->{date} =~ m|^(\d{2})$| ) { # DD provided, use current year and month
+		$self->{date} = substr( $key, 0, 8 ) .= $1;
+	    }
+	    #else { $self->error( 'Incorrectly formatted date: ' . $self->{date} ); }
+	} else {
+	    $self->{date} = $key;
+	}
+    } else {
+	$self->{date} = $key;
     }
 	
     if ( $self->{has_diff} ) {
-		my @newdate = Add_Delta_Days( split( /\//, $self->{date} ), 0 - $self->{date_diff} );
-		$newdate[2] = &IDB::double_digit( $newdate[2] );
-		$newdate[1] = &IDB::double_digit( $newdate[1] );
-		$newdate[0] = &IDB::double_digit( $newdate[0] );;
+	my @newdate = Add_Delta_Days( split( /\//, $self->{date} ), 0 - $self->{date_diff} );
+	$newdate[2] = &IDB::double_digit( $newdate[2] );
+	$newdate[1] = &IDB::double_digit( $newdate[1] );
+	$newdate[0] = &IDB::double_digit( $newdate[0] );;
 		
-		$self->{date} = join( '/', @newdate );
+	$self->{date} = join( '/', @newdate );
     }
 	
     # set file_paths:
     $self->{file_path} = $self->{log_dir} . $self->{date};
     $self->{base_path} = $self->{log_dir} . $self->{date};
 
-	if ($self->{extension} ne '') {
-		$self->{file_path} .= $self->{extension};
-	}	
+    if ($self->{extension} ne '') {
+	$self->{file_path} .= $self->{extension};
+    }	
 
     # if ( $self->opt( 't' ) ) { $self->{file_path} .= $self->{training_extension}; }
     # elsif ( $self->opt( 'j' ) ) { $self->{file_path} .= $self->{journal_extension}; }
 	
-    if ( ! -e $self->{file_path} ) { $self->{is_new} = 1; }
+    if ( ! -e $self->{file_path} ) {
+	$self->{is_new} = 1;
+    }
 	
     $self->{year} = substr( $self->{date}, 0, 4 );
     $self->{month} = substr( $self->{date}, 5, 2 );
     $self->{day} = substr( $self->{date}, 8, 2 );
 	
     $self->{dir_path} = $self->{log_dir} . join( '/', $self->{year},
-												 $self->{month} );
+						 $self->{month} );
 	
     my $months = [ 'January', 'February', 'March', 'April', 'May', 'June',
-				   'July', 'August', 'September', 'October', 'November', 'December' ];
+		   'July', 'August', 'September', 'October', 'November', 'December' ];
     my $weekdays = [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday',
-					 'Friday', 'Saturday' ];
+		     'Friday', 'Saturday' ];
     my $weekday = (localtime(timelocal_nocheck(0, 0, 0, $self->{day},
-											   $self->{month} - 1, $self->{year})))[6];
+					       $self->{month} - 1, $self->{year})))[6];
 	
     $self->{date_string} = $weekdays->[$weekday] . ', ' . $self->{day} . ' '
-	  . $months->[$self->{month} - 1] . ', ' . $self->{year};
+      . $months->[$self->{month} - 1] . ', ' . $self->{year};
 	
     return $self;
 }
@@ -360,21 +368,31 @@ According to set options, sets the time for the current entry.
 sub set_time {
     my $self = shift;
 	
-    if ( $self->{has_time} && ! $self->opt( 'n' ) ) { return $self; } # so as not to overwrite
+    if ( $self->{has_time} && ! $self->opt( 'n' ) ) {
+	return $self;
+    }				# so as not to overwrite
 	
     my $hour = (localtime)[2];
     my $min = (localtime)[1];
 	
     if ( $self->opt('r') ) {
-		if ( $min % 5 == 1 ) { $min -= 1; }
-		if ( $min % 5 == 2 ) { $min -= 2; }
-		if ( $min % 5 == 3 ) { $min += 2; }
-		if ( $min % 5 == 4 ) { $min += 1; }
+	if ( $min % 5 == 1 ) {
+	    $min -= 1;
+	}
+	if ( $min % 5 == 2 ) {
+	    $min -= 2;
+	}
+	if ( $min % 5 == 3 ) {
+	    $min += 2;
+	}
+	if ( $min % 5 == 4 ) {
+	    $min += 1;
+	}
 		
-		if ( $min == 60 ) {
-			$min = 0;
-			$hour++;
-		}
+	if ( $min == 60 ) {
+	    $min = 0;
+	    $hour++;
+	}
     }
 	
     # $hour = &IDB::double_digit( $hour );
@@ -383,7 +401,7 @@ sub set_time {
     $self->{time} = &IDB::double_digit( $hour ) . &IDB::double_digit( $min );
 	
     $self->{has_time} = 1;
-	#    print "Log.pm->set_time: $hour, $min, " . $self->{time} . "\n";
+    #    print "Log.pm->set_time: $hour, $min, " . $self->{time} . "\n";
 	
     return $self;
 }
@@ -427,7 +445,7 @@ sub unset_opt {
 
 # various methods to return object properties:
 sub log_dir		{ my $self = shift; return $self->{log_dir}; }
-sub snippet_dir	{ my $self = shift; return $self->{snippet_dir}; }
+sub snippet_dir { my $self = shift; return $self->{snippet_dir}; }
 sub state_file	{ my $self = shift; return $self->{state_file}; }
 sub comment_char { my $self = shift; return $self->{comment_char}; }
 sub end_of_line	{ my $self = shift; return $self->{end_of_line}; }
@@ -443,8 +461,11 @@ sub is_new		{ my $self = shift; return $self->{is_new}; }
 
 sub indent_char {
     my $self = shift;
-    if ( @_ ) { $self->{indent_char} = shift; return $self; }
-    else { return $self->{indent_char}; }
+    if ( @_ ) {
+	$self->{indent_char} = shift; return $self;
+    } else {
+	return $self->{indent_char};
+    }
 }
 
 sub replace_tags {
@@ -452,16 +473,16 @@ sub replace_tags {
     my $string = shift;
 	
     unless ( $self->{tags_off} ) {
-		# date:
-		$$string =~ s/^((\w+), \d{2} (\w+), \d{4})$/$self->date_tag($1)/egi;
-		# inline tag:
-		$$string =~ s/\$([a-z]){1}(.+?)\$(?=\W)/$self->tag($1,$2)/eg;
-		# tag from start of line:
-		$$string =~ s/^(.+)\$([A-Z])/$self->tag($2,$1)/e;
-		# comment:
-		$$string =~ s/(;;.+)$/$self->comment_tag($1)/e;
-		# tags:
-		$$string =~ s/^(\#.+)$/$self->comment_tag($1)/e;
+	# date:
+	$$string =~ s/^((\w+), \d{2} (\w+), \d{4})$/$self->date_tag($1)/egi;
+	# inline tag:
+	$$string =~ s/\$([a-z]){1}(.+?)\$(?=\W)/$self->tag($1,$2)/eg;
+	# tag from start of line:
+	$$string =~ s/^(.+)\$([A-Z])/$self->tag($2,$1)/e;
+	# comment:
+	$$string =~ s/(;;.+)$/$self->comment_tag($1)/e;
+	# tags:
+	$$string =~ s/^(\#.+)$/$self->comment_tag($1)/e;
     }
     return $self;
 }
@@ -470,27 +491,29 @@ sub tag {
     my $self = shift;
     my $tag = lc( shift );
     my $text = shift;
-    if ( ! exists $self->{tag}->{$tag} ) { return $text; }
-	#    return `echo -e "$self->{tag}->{$tag}"` . $text . $self->end_tag;
+    if ( ! exists $self->{tag}->{$tag} ) {
+	return $text;
+    }
+    #    return `echo -e "$self->{tag}->{$tag}"` . $text . $self->end_tag;
     return $self->{tag}->{$tag} . $text . $self->end_tag;
 }
 
 sub end_tag {
     my $self = shift;
-	#    return `echo -e "[m"`;
+    #    return `echo -e "[m"`;
     return $self->{tag}->{end};
 }
 
 sub date_tag {
     my $self = shift;
-	#    return `echo -e "$self->{tag}->{date}"` . ">> " . shift() . $self->end_tag;
+    #    return `echo -e "$self->{tag}->{date}"` . ">> " . shift() . $self->end_tag;
     return $self->{tag}->{date} . '>> ' . shift() . $self->end_tag;
 }
 
 sub comment_tag {
     my $self = shift;
-	#    return `echo -en "\033[33m"` . shift . $self->end_tag;
-	#    return `echo -e "$self->{tag}->{comment}"` . shift() . $self->end_tag;
+    #    return `echo -en "\033[33m"` . shift . $self->end_tag;
+    #    return `echo -e "$self->{tag}->{comment}"` . shift() . $self->end_tag;
     return $self->{tag}->{comment} . shift() . $self->end_tag;
 }
 
