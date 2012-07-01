@@ -6,7 +6,7 @@
 # usage: COURSE=x1/5613 compile_tex.sh
 # usage: COURSE=thesis/ch1 PAPER=draft1.tex compile_tex.sh
 
-src_dir=$HOME/Dropbox/docs/school/"$COURSE"
+src_dir=$HOME/Dropbox/docs/school/"${COURSE:-thesis}"
 paper_body=${PAPER:-paper.tex}
 
 cat $src_dir/_header.tex $src_dir/$PAPER $src_dir/_footer.tex > ./paper.tex

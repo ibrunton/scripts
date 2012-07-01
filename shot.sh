@@ -28,7 +28,7 @@ ss_url=`dropbox puburl $screenshot`
 th_url=`dropbox puburl $thumbnail`
 forum_post=$HOME/docs/drafts/arch_screenshot_`date +'%Y-%m-%d'`
 
-sed 's/#SCREENSHOT#/'$ss_url'/g' <$HOME/templates/forum_screenshot >$forum_post
-sed 's/#THUMBNAIL#/'$th_url'/g' -i $forum_post
+sed 's|#SCREENSHOT#|'$ss_url'|g' <$HOME/templates/forum_screenshot >$forum_post
+sed 's|#THUMBNAIL#|'$th_url'|g' -i $forum_post
 
 $EDITOR $forum_post
