@@ -5,12 +5,14 @@
 
 # usage: COURSE=x1/5613 compile_tex.sh
 # usage: COURSE=thesis/ch1 PAPER=draft1.tex compile_tex.sh
+# usage: BIBDIR=
 
 src_dir=$HOME/Dropbox/docs/school/"${COURSE:-thesis}"
-paper_body=${PAPER:-paper.tex}
+PAPER=${PAPER:-paper.tex}
+BIBDIR=${BIBDIR:-sources}
 
 cat $src_dir/_header.tex $src_dir/$PAPER $src_dir/_footer.tex > ./paper.tex
-rsync $src_dir/sources/*.bib ./sources/
+cat $src_dir/$BIBDIR/*.bib > ./sources.bib
 
 latex paper.tex
 bibtex paper
