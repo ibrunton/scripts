@@ -7,9 +7,10 @@ twmnd &
 
 nitrogen --restore &
 
-conky -c $HOME/.config/conky_dwm | while read -r; do xsetroot -name "$REPLY"; done &
+#conky -c $HOME/.config/conky_dwm | while read -r; do xsetroot -name "$REPLY"; done &
 
-$HOME/bin/trayer.sh &
+#$HOME/bin/trayer.sh &
+$HOME/bin/loops.sh &
 
 while true; do
 	dwm || exit
