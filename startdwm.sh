@@ -11,6 +11,7 @@ nitrogen --restore &
 
 #$HOME/bin/trayer.sh &
 $HOME/bin/loops.sh &
+$HOME/bin/dwmstatus &
 
 while true; do
 	dwm || exit

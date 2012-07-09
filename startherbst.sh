@@ -8,5 +8,6 @@ nitrogen --restore &
 
 #conky -c $HOME/.config/conky_herbstluftwm &
 #$HOME/.config/herbstluftwm/dzen2.sh &
+$HOME/bin/loops.sh
 
 exec herbstluftwm
