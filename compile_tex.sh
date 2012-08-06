@@ -8,13 +8,14 @@
 # usage: BIBDIR=
 
 src_dir=$HOME/Dropbox/docs/school/"${COURSE:-thesis}"
-PAPER=${PAPER:-paper.tex}
+SRC_DOC=${PAPER:-paper.tex}
 BIBDIR=${BIBDIR:-sources}
+OUTPUT=${OUTPUT:-paper} # no extension
 
-cat $src_dir/_header.tex $src_dir/$PAPER $src_dir/_footer.tex > ./paper.tex
-cat $src_dir/$BIBDIR/*.bib > ./sources.bib
+cat $src_dir/_header.tex $src_dir/$PAPER $src_dir/_footer.tex > ./${OUTPUT}.tex
+#cat $src_dir/$BIBDIR/*.bib > ./sources.bib
 
-latex paper.tex
-bibtex paper
-latex paper.tex
-dvipdf paper.dvi
+latex ${OUTPUT}.tex
+bibtex ${OUTPUT}
+latex ${OUTPUT}.tex
+dvipdf ${OUTPUT}.dvi
