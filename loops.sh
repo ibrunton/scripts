@@ -11,8 +11,9 @@ PACMAN_INTERVAL=600
 MAIL_INTERVAL=300
 
 while true ; do
-	pacman -Qu | wc -l > $PACMAN_FILE
-	yaourt -Qua | wc -l > $AUR_FILE
+	pacman=$(pacman -Qu | wc -l)
+	echo $pacman > $PACMAN_FILE
+	echo $(( $(yaourt -Qua | wc -l) - $pacman)) > $AUR_FILE
 	sleep $PACMAN_INTERVAL
 done &
 
