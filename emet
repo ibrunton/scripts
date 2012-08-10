@@ -1,3 +1,3 @@
 #!/bin/sh
 
-urxvt -name EMACS -e emacsclient -nw -e "(transbg)"
+exec urxvt -name EMACS -e emacsclient -nw -e "(transbg)"
