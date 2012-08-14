@@ -10,7 +10,7 @@ use XML::Simple;
 my $home = $ENV{'HOME'};
 #my $url = "http://www.chabad.org/tools/rss/zmanim.xml?c=206";
 my $docurl = "http://www.chabad.org/library/article_cdo/aid/134527/jewish/About-Zmanim.htm";
-my $file = "$home/.local/share/halakhic_times";
+my $file = "$home/.local/share/zmanim";
 
 my $xml = new XML::Simple;
 my $times = $xml->XMLin ($file);

@@ -1,3 +1,7 @@
 #!/bin/sh
 
-exec urxvt -name EMACS -e emacsclient -nw -e "(transbg)"
+if [ -z $1 ] ; then
+	exec urxvt -name EMACS -e emacsclient -nw -e "(transbg)"
+else
+	exec urxvt -name EMACS -e emacsclient -nw -e "(transbg)" "(find-file \"$@\")"
+fi
