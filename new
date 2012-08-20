@@ -32,6 +32,7 @@ then
 	s/#FILENAME#/'"$FILENAME"'/g
 	s/#UC_FILENAME#/'"$UC_FILENAME"'/g
 	s/#DATE#/'"$DATE"'/g' <$HOME/templates/$FILETYPE >$FILENAME
+	echo $FILENAME
 else
     echo 'No template for type `'$type"'"
     exit 1
