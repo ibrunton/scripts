@@ -25,17 +25,18 @@ _PWD=`pwd`
 PROJECT=`basename $_PWD`
 DATE=`date +"%Y-%m-%d %H:%M"`
 UC_FILENAME=`echo $FILENAME | tr [a-z.] [A-Z_]`
+TEMPLATE_DIR=$HOME/Dropbox/templates
 
-if [ -e $HOME/templates/$type ]
+if [ -e $TEMPLATE_DIR/$type ]
 then
 	sed 's/#PROJECT#/'"$PROJECT"'/g
 	s/#FILENAME#/'"$FILENAME"'/g
 	s/#UC_FILENAME#/'"$UC_FILENAME"'/g
-	s/#DATE#/'"$DATE"'/g' <$HOME/templates/$FILETYPE >$FILENAME
+	s/#DATE#/'"$DATE"'/g' <$TEMPLATE_DIR/$FILETYPE >$FILENAME
 	echo $FILENAME
 else
-    echo 'No template for type `'$type"'"
-    exit 1
+	echo 'No template for type `'$type"'"
+	exit 1
 fi
 
 exit 0
