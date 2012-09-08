@@ -3,6 +3,7 @@ log_dir=$HOME/Dropbox/docs/log/
 snippet_dir=$HOME/Dropbox/docs/log/snippets/
 editor=vim -c 'set tw=75'
 alternate_editor=emacsclient -t
+prediction_marker=[
 line_length=75
 #tags_off=true
 

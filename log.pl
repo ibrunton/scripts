@@ -16,7 +16,7 @@ $log->parse_rc;
 
 my $input = join( ' ', @ARGV );
 
-$log->getopts( 'abcehijnqrstw', \$input );
+$log->getopts( 'abcehijnpqrstw', \$input );
 
 if ( $log->opt( 'h' ) ) { pod2usage( -exitstatus => 0, -verbose => 2 ); }
 
@@ -96,6 +96,10 @@ if ( $log->opt( 'i' ) ) {
 
 unless ( $log->opt( 't' ) ) {
     $output = $log->time . ":\t" . $output;
+}
+
+if ($log->opt ('p')) {
+    $output = $log->predictor_char . $output;
 }
 
 # wrap...
@@ -338,6 +342,11 @@ Indents the line with a tab character.
 
 Appends the current time to the end of the input line, rather than
 placing it at the beginning.
+
+=item B<-p>
+
+Prepends predictor_char to the time, to indicate that this time value
+is anticipated in the future.
 
 =item B<-q>
 

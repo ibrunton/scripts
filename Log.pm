@@ -38,7 +38,10 @@ sub _init {
     $self->{state_file} = $self->{log_dir} . '.state';
     $self->{auto_round} = 0;
     $self->{auto_echo} = 0;
+    $self->{mark_rounded} = 0;
+    $self->{rounded_time_char} = '~';
     $self->{comment_char} = ';;';
+    $self->{predictor_char} = '[';
     $self->{end_of_line} = "\n";
     $self->{extension} = '';
     $self->{indent_char} = "\t";
@@ -155,12 +158,12 @@ sub parse_rc {
 	if ($keyfile->has_group ('log')) {
 	    if ($keyfile->has_key ('log', 'log_dir')) {
 		$self->{log_dir} = $keyfile->get_string ('log', 'log_dir');
-		$self->{log_dir} =~ s/\$HOME/$ENV{'HOME'}/;
+		$self->{log_dir} =~ s/(\$HOME|\~)/$ENV{'HOME'}/;
 	    }
 
 	    if ($keyfile->has_key ('log', 'snippet_dir')) {
 		$self->{snippet_dir} = $keyfile->get_string ('log', 'snippet_dir');
-		$self->{snippet_dir} =~ s/\$HOME/$ENV{'HOME'}/;
+		$self->{snippet_dir} =~ s/(\$HOME|\~)/$ENV{'HOME'}/;
 	    }
 
 	    if ($keyfile->has_key ('log', 'editor')) {
@@ -176,15 +179,27 @@ sub parse_rc {
 	    }
 
 	    if ($keyfile->has_key ('log', 'auto_round')) {
-		$self->{auto_round} = $keyfile->get_integer ('log', 'auto_round');
+		$self->{auto_round} = $keyfile->get_boolean ('log', 'auto_round');
+	    }
+
+	    if ($keyfile->has_key ('log', 'mark_rounded')) {
+		$self->{mark_rounded} = $keyfile->get_boolean ('log', 'mark_rounded');
+	    }
+
+	    if ($keyfile->has_key ('log', 'rounded_time_char')) {
+		$self->{rounded_time_char} = $keyfile->get_string ('log', 'rounded_time_char');
 	    }
 
 	    if ($keyfile->has_key ('log', 'auto_echo')) {
-		$self->{auto_echo} = $keyfile->get_integer ('log', 'auto_echo');
+		$self->{auto_echo} = $keyfile->get_boolean ('log', 'auto_echo');
 	    }
 
 	    if ($keyfile->has_key ('log', 'comment_char')) {
 		$self->{comment_char} = $keyfile->get_string ('log', 'comment_char');
+	    }
+
+	    if ($keyfile->has_key ('log', 'predictor_char')) {
+		$self->{predictor_char} = $keyfile->get_string ('log', 'predictor_char');
 	    }
 
 	    if ($keyfile->has_key ('log', 'end_of_line')) {
@@ -271,7 +286,6 @@ sub parse_datetime {
 	$self->{time} = $1;
 	$self->{has_time} = 1;
 	$self->set_opt( 't' );
-	#	print "Log.pm->parse_datetime: has time\n";
     } elsif ( $$string =~ s/^(\w{1,6}:) +/$1\t/o ) {
     	$self->set_opt( 't' );
     }
@@ -375,7 +389,7 @@ sub set_time {
     my $hour = (localtime)[2];
     my $min = (localtime)[1];
 	
-    if ( $self->opt('r') ) {
+    if ( $self->opt('r') || $self->{auto_round} ) {
 	if ( $min % 5 == 1 ) {
 	    $min -= 1;
 	}
@@ -403,6 +417,10 @@ sub set_time {
     $self->{has_time} = 1;
     #    print "Log.pm->set_time: $hour, $min, " . $self->{time} . "\n";
 	
+    if (($self->opt ('r') || $self->{auto_round}) && $self->{mark_rounded}) {
+	$self->{time} .= $self->{rounded_time_char};
+    }
+
     return $self;
 }
 
@@ -448,6 +466,7 @@ sub log_dir		{ my $self = shift; return $self->{log_dir}; }
 sub snippet_dir { my $self = shift; return $self->{snippet_dir}; }
 sub state_file	{ my $self = shift; return $self->{state_file}; }
 sub comment_char { my $self = shift; return $self->{comment_char}; }
+sub predictor_char { my $self = shift; return $self->{predictor_char}; }
 sub end_of_line	{ my $self = shift; return $self->{end_of_line}; }
 sub line_length	{ my $self = shift; return $self->{line_length}; }
 sub date		{ my $self = shift; return $self->{date}; }
@@ -517,6 +536,27 @@ sub comment_tag {
     return $self->{tag}->{comment} . shift() . $self->end_tag;
 }
 
+sub expand_snippets {
+    my $self = shift;
+    my $snippet = shift;
+    
+    my $snippet_file = $self->snippet_dir . $snippet;
+    if ( -e $snippet_file ) {
+	open( SNIPPET, "<$snippet_file" ) || die( "Cannot open file $snippet_file: $!\n" );
+	my @file_contents = <SNIPPET>;
+	close( SNIPPET );
+	my $str = join( "", @file_contents );
+	$str =~ s/\n$//so; # chop \n off the end
+	
+	my $ic = $self->indent_char;
+	if ($str =~ s/#BR#/\n$ic/g) {
+	    $self->set_opt('w');
+	}
+	
+	return $str;
+    }
+    else { return $snippet; }
+}
 
 sub AUTOLOAD {
     my $self = shift;
