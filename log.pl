@@ -6,7 +6,7 @@ use Text::Wrap;
 
 use Log;
 
-my $VERSION = '2.2.4';
+my $VERSION = '2.2.5';
 
 if ( ! $ARGV[0] ) { pod2usage( -exitval => 1, -verbose => 1 ); }
 
@@ -107,6 +107,10 @@ unless ( $log->opt( 'w' ) ) {
     unless ( $log->opt('c') ) {
 	$output = wrap( "", $log->indent_char, $output );
     }
+
+    my $ic = $log->indent_char;
+    # prevent orphaned single characters at end of entry:
+    $output =~ s/\n$ic([^\s\n])$/ $1/;
     
     # make sure that if a comment begins partway through a line and wraps,
     # it will wrap at the right place:
@@ -128,6 +132,9 @@ unless ( $log->opt( 'w' ) ) {
     }
     
     $comment = wrap( "", $log->comment_char . "\t", $comment );
+
+    # prevent orphaned single characters at end of comment:
+    $comment =~ s/\n$cc\t([^\s\n])$/ $1/;
 }
 
 my $file = $log->file_path;
