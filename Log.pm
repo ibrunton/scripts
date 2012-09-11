@@ -402,6 +402,9 @@ sub set_time {
 	if ( $min % 5 == 4 ) {
 	    $min += 1;
 	}
+	if ($min % 5 == 0) {
+	    $self->unset_opt ('r');
+	}
 		
 	if ( $min == 60 ) {
 	    $min = 0;
