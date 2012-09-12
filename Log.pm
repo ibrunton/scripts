@@ -390,22 +390,19 @@ sub set_time {
     my $min = (localtime)[1];
 	
     if ( $self->opt('r') || $self->{auto_round} ) {
-	if ( $min % 5 == 1 ) {
+	my $mod = $min % 5;
+	if ($mod == 1) {
 	    $min -= 1;
-	}
-	if ( $min % 5 == 2 ) {
+	} elsif ($mod == 2) {
 	    $min -= 2;
-	}
-	if ( $min % 5 == 3 ) {
+	} elsif ($mod == 3) {
 	    $min += 2;
-	}
-	if ( $min % 5 == 4 ) {
+	} elsif ($mod == 4) {
 	    $min += 1;
-	}
-	if ($min % 5 == 0) {
+	} else {
 	    $self->unset_opt ('r');
 	}
-		
+
 	if ( $min == 60 ) {
 	    $min = 0;
 	    $hour++;
