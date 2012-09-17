@@ -526,7 +526,7 @@ sub end_tag {
 sub date_tag {
     my $self = shift;
     #    return `echo -e "$self->{tag}->{date}"` . ">> " . shift() . $self->end_tag;
-    return $self->{tag}->{date} . '>> ' . shift() . $self->end_tag;
+    return $self->{tag}->{date} . shift() . $self->end_tag;
 }
 
 sub comment_tag {
