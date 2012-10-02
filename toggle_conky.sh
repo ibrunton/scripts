@@ -8,7 +8,7 @@ if [ -e $LONGNAME"on" ]; then
 	herbstclient pad 0 0 0 0
 else
 	mv $LONGNAME"off" $LONGNAME"on"
-	herbstclient pad 0 10 0 0
+	herbstclient pad 0 12 0 0
 fi
 
 exit

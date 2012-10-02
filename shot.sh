@@ -21,8 +21,7 @@ DELAY=5 # seconds
 scrot -c -d $DELAY -q 100 $screenshot
 
 # create thumbnail:
-cp $screenshot $thumbnail
-mogrify -resize 200x200 $thumbnail
+convert -resize 200x200 $screenshot $thumbnail
 
 ss_url=`dropbox puburl $screenshot`
 th_url=`dropbox puburl $thumbnail`
