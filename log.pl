@@ -56,8 +56,8 @@ if ( $log->opt( 'c' ) ) {
 }
 
 # expand snippets...
-while ($output =~ m/(?<!\w):(\w+)/) {
-    $output =~ s/(?<!\w):(\w+)/&expand($1,$log)/egi;
+while ($output =~ m/(?<!\w):([\/\w]+)/) {
+    $output =~ s/(?<!\w):([\/\w]+)/&expand($1,$log)/egi;
 }
 
 # text replacement...
