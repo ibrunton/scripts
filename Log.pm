@@ -75,7 +75,7 @@ sub getopts {
 	return $self;
     }
     #    elsif ( $$string =~ /^(-[$allowed]+\s?)(?!-)/o ) {
-    elsif ( $$string =~ /^((-[a-zA-Z]+ ?)+)(?!-)/ ) {
+    elsif ( $$string =~ /^((-[a-zA-Z0-9]+ ?)+)(?!-)/ ) {
 	$tags = $1;
 	$$string =~ s/$tags//;
     } else {
@@ -84,6 +84,12 @@ sub getopts {
     }
 
     $allowed .= join ('', keys %{$self->{extensions}});
+
+    # date differential:
+    if ($tags =~ /-(\d+)/) {
+	$self->{date_diff} = $1;
+	$self->{has_diff} = 1;
+    }
 
     $tags =~ s/[^a-zA-Z]//g;
     # print "Log.pm: \$tags = $tags\n";
@@ -274,7 +280,7 @@ sub parse_datetime {
 	$$string =~ s/$1 *//o;
 	$self->{has_date} = 1;
     }
-    # date differential:
+    # date differential:	### DEPRECATED 2012-10-25 ###
     if ( $$string =~ m|\b(n\d+?)\b| ) {
 	$self->{date_diff} = $1;
 	$$string =~ s/$1 *//o;

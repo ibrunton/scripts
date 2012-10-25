@@ -6,7 +6,7 @@ use Text::Wrap;
 
 use Log;
 
-my $VERSION = '2.2.5';
+my $VERSION = '2.2.6';
 
 if ( ! $ARGV[0] ) { pod2usage( -exitval => 1, -verbose => 1 ); }
 
@@ -219,7 +219,7 @@ log - command-line log/journal processing
 
 =head1 VERSION
 
-2.2.1
+2.2.6
 
 =head1 SYNOPSIS
 
@@ -241,8 +241,8 @@ only DD and the current year and month will be used.
 
 You may also specify a date differential, which will be I<subtracted>
 from the current date (or the date specified in the above format).
-This takes the format B<n>I<N>, where N is any integer (and n is a
-literal n).
+This takes the format B<->I<N>, where N is any integer.  It can be
+specified anywhere with other -flag style options.
 
 The date and date differential, if specified, must be the first
 arguments passed after input flags.
@@ -274,7 +274,8 @@ script will replace B<:snippet_name> with the contents of the file
 with that name.
 
 Snippets are recursive as of version 2.2.  Currently no checking is done
-to prevent infinite recursion.
+to prevent infinite recursion.  As of version 2.6, snippet files can be
+organised into subdirectories and called on the command line as :dir/file .
 
 =head2 TAGS
 
@@ -330,7 +331,8 @@ normally and inserted after the blank line.
 =item B<-c>
 
 Treats the whole line (or anything after B<-c>, which may occur at any
-point in a line) as a comment.  B<-c> will be replaced with B<;;>.
+point in a line) as a comment.  B<-c> will be replaced with the
+string specified for denoting comments (default is B<;;>).
 
 =item B<-e>
 
@@ -363,10 +365,6 @@ Suppresses automatic echoing of the current input line.
 
 Rounds the time to the nearest 5 minutes.
 
-=item B<-s>
-
-Does something to do with state.
-
 =item B<-t>
 
 The current time will not be added to this line.
@@ -391,10 +389,6 @@ This section is required.
 
 =over 8
 
-=item B<auto_round>
-
-Automatically round time values to nearest 5 minutes.  Default: 0 (false).
-
 =item B<log_dir>
 
 The base directory in which log files will be written.  Default: F<~/docs/log>.
@@ -402,6 +396,50 @@ The base directory in which log files will be written.  Default: F<~/docs/log>.
 =item B<log_snippet_dir>
 
 The directory in which snippet files are kept.  Default: F<log_dir/.snippets>.
+
+=item B<editor>
+
+The executable to use to edit log files using the I<editlog.pl> script.
+
+=item B<alternate_editor>
+
+Alternate editor, used when passing the -a option to the I<editlog.pl> script.
+
+=item B<auto_round>
+
+Automatically round time values to nearest 5 minutes.  Default: false.
+
+=item B<auto_echo>
+
+Automatically output the result of the log command to the console as well
+as to the log file.  Default: true.
+
+=item B<mark_rounded>
+
+Append an indicator to time values when they are rounded.  If the -r option is
+passed or auto_round is set and log is called when rounding would not change
+the time value (i.e., the current time ends in 0 or 5), no indicator is
+appended.  Default: false.
+
+=item B<rounded_time_char>
+
+The character appended to time values if mark_rounded is set to true.
+Default: ~
+
+=item B<comment_char>
+
+The string used to mark comments.  Can be a single character or more.
+Default: ;;
+
+=item B<predictor_char>
+
+The single character prepended to time values when the -p option is passed.
+Default: [
+
+=item B<line_length>
+
+The number of characters per line, after which lines will be wrapped.
+Default: 70
 
 =back
 
@@ -427,11 +465,11 @@ Written by Ian D. Brunton
 
 =head1 REPORTING BUGS
 
-Report Log bugs to wolfshift@gmail.com
+Report Log bugs to iandbrunton at gmail.com
 
 =head1 COPYRIGHT
 
-Copyright 2011 Ian Brunton.
+Copyright 2011-2012 Ian Brunton.
 
 This file is part of Log.
 
