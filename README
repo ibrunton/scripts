@@ -55,6 +55,11 @@ DESCRIPTION
     organised into subdirectories and called on the command line as
     :dir/file .
 
+    As of v. 2.2.7, snippets may contain system calls. Text between
+    `backticks` will be interpreted as a command to be passed to the system;
+    its output will be captured and inserted into log's output. NB: NO
+    FILTERING OR CHECKING IS CURRENTLY PERFORMED ON SUCH SYSTEM COMMANDS.
+
   TAGS
     Tags are single-character labels defined in the configuration file in
     order to allow the user (1) to mark content for easy finding with a

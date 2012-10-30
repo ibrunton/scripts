@@ -6,7 +6,7 @@ use Text::Wrap;
 
 use Log;
 
-my $VERSION = '2.2.6';
+my $VERSION = '2.2.7';
 
 if ( ! $ARGV[0] ) { pod2usage( -exitval => 1, -verbose => 1 ); }
 
@@ -284,6 +284,11 @@ with that name.
 Snippets are recursive as of version 2.2.  Currently no checking is done
 to prevent infinite recursion.  As of version 2.6, snippet files can be
 organised into subdirectories and called on the command line as :dir/file .
+
+As of v. 2.2.7, snippets may contain system calls.  Text between `backticks`
+will be interpreted as a command to be passed to the system; its output will
+be captured and inserted into log's output.  NB: NO FILTERING OR CHECKING
+IS CURRENTLY PERFORMED ON SUCH SYSTEM COMMANDS.
 
 =head2 TAGS
 
