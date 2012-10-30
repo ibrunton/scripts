@@ -60,6 +60,14 @@ while ($output =~ m/(?<!\w):([\/\w]+)/) {
     $output =~ s/(?<!\w):([\/\w]+)/&expand($1,$log)/egi;
 }
 
+# execute shell commands from within snippets:
+if ($output =~ m/`(.+?)`/) {
+    my $cmd = $1;
+    my $cmdinput = `$cmd`;
+    $cmdinput =~ s/\n$//;
+    $output =~ s/`$cmd`/$cmdinput/;
+}
+
 # text replacement...
 if ( $output =~ m| -s([/#]).+?\1.*?\1| ) {
     print ">>Replacing...\n";
