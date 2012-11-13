@@ -215,6 +215,14 @@ sub parse_rc {
 	    if ($keyfile->has_key ('log', 'indent_char')) {
 		$self->{indent_char} = $keyfile->get_string ('log', 'indent_char');
 	    }
+
+	    if ($keyfile->has_key ('log', 'underline_start')) {
+		$self->{underline_start} = $keyfile->get_string ('log', 'underline_start');
+	    }
+
+	    if ($keyfile->has_key ('log', 'underline_end')) {
+		$self->{underline_end} = $keyfile->get_string ('log', 'underline_end');
+	    }
 	}
 
 	if ($keyfile->has_group ('tags')) {
@@ -508,6 +516,8 @@ sub replace_tags {
 	$$string =~ s/(;;.+)$/$self->comment_tag($1)/e;
 	# tags:
 	$$string =~ s/^(\#.+)$/$self->comment_tag($1)/e;
+	# underline:
+	$$string =~ s|/(.+)/|$self->underline($1)|eg;
     }
     return $self;
 }
@@ -540,6 +550,11 @@ sub comment_tag {
     #    return `echo -en "\033[33m"` . shift . $self->end_tag;
     #    return `echo -e "$self->{tag}->{comment}"` . shift() . $self->end_tag;
     return $self->{tag}->{comment} . shift() . $self->end_tag;
+}
+
+sub underline {
+    my $self = shift;
+    return $self->{underline_start} . shift () . $self->{underline_end};
 }
 
 sub expand_snippets {

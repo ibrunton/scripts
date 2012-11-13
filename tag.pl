@@ -23,6 +23,12 @@ if ($log->opt ('h')) {
     pod2usage (-exitstatus => 0, -verbose => 2);
 }
 
+# because I often miss the - when intending -l
+if ($input =~ /(\bl\b)/) {
+    $input =~ s/$1//;
+    $log->set_opt ('l');
+}
+
 $log->parse_datetime (\$input);
 my $tag_file = $log->log_dir . 'tags';
 
