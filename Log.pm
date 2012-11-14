@@ -517,7 +517,7 @@ sub replace_tags {
 	# tags:
 	$$string =~ s/^(\#.+)$/$self->comment_tag($1)/e;
 	# underline:
-	$$string =~ s|/(.+)/|$self->underline($1)|eg;
+	$$string =~ s|/([^;]+)/|$self->underline($1)|eg;
     }
     return $self;
 }
