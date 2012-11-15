@@ -16,7 +16,7 @@ $log->parse_rc;
 
 my $input = join( ' ', @ARGV );
 
-$log->getopts( 'abcehijnpqrstw', \$input );
+$log->getopts( 'abchijnpqrstw', \$input );
 
 if ( $log->opt( 'h' ) ) { pod2usage( -exitstatus => 0, -verbose => 2 ); }
 
@@ -174,18 +174,18 @@ if ($log->{extension} ne '') {
     }
 }
 
-print FILE $output . $comment . $log->end_of_line or die( "didn't print: $!" );
+my $output_line = $output . $comment . $log->end_of_line;
+print FILE $output_line or die ("didn't print: $!");
 
 close( FILE );
 
 # parse tags with colour codes and print to terminal:
 unless ( $log->opt( 'q' ) ) {
-    $log->replace_tags( \$output );
-    $log->replace_tags( \$comment );
-    print $output, $comment, $log->end_of_line;
+    $log->replace_tags (\$output_line);
+    print $output_line;
 }
 
-if ( $log->opt( 'e' ) || $log->is_new ) {
+if ($log->is_new) {
     open( FILE, "<$file" ) or die( "Can't open file $file: $!" );
     while ( my $file_line = <FILE> ) {
 	$log->replace_tags( \$file_line );
