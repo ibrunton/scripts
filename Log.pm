@@ -505,7 +505,7 @@ sub replace_tags {
     my $self = shift;
     my $string = shift;
 	
-    unless ( $self->{tags_off} ) {
+    unless ( $self->{tags_off}) {
 	# date:
 	$$string =~ s/^((\w+), \d{2} (\w+), \d{4})$/$self->date_tag($1)/egi;
 	# inline tag:
@@ -517,7 +517,7 @@ sub replace_tags {
 	# tags:
 	$$string =~ s/^(\#.+)$/$self->comment_tag($1)/e;
 	# underline:
-	$$string =~ s|/([^;]+)/|$self->underline($1)|eg;
+	$$string =~ s|/([^,;]+)/|$self->underline($1)|eg;
     }
     return $self;
 }
@@ -526,16 +526,14 @@ sub tag {
     my $self = shift;
     my $tag = lc( shift );
     my $text = shift;
-    if ( ! exists $self->{tag}->{$tag} ) {
+    if ( ! exists $self->{tag}->{$tag} || $self->opt ('m') ) {
 	return $text;
     }
-    #    return `echo -e "$self->{tag}->{$tag}"` . $text . $self->end_tag;
     return $self->{tag}->{$tag} . $text . $self->end_tag;
 }
 
 sub end_tag {
     my $self = shift;
-    #    return `echo -e "[m"`;
     return $self->{tag}->{end};
 }
 
@@ -547,7 +545,6 @@ sub date_tag {
 
 sub comment_tag {
     my $self = shift;
-    #    return `echo -en "\033[33m"` . shift . $self->end_tag;
     #    return `echo -e "$self->{tag}->{comment}"` . shift() . $self->end_tag;
     return $self->{tag}->{comment} . shift() . $self->end_tag;
 }

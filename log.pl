@@ -16,7 +16,7 @@ $log->parse_rc;
 
 my $input = join( ' ', @ARGV );
 
-$log->getopts( 'abchijnpqrstw', \$input );
+$log->getopts( 'abchijmnpqrstw', \$input );
 
 if ( $log->opt( 'h' ) ) { pod2usage( -exitstatus => 0, -verbose => 2 ); }
 
@@ -359,6 +359,10 @@ Prints this help message.
 =item B<-i>
 
 Indents the line with a tab character.
+
+=item B<-m>
+
+Suppresses coloured output of tags (except for comments).
 
 =item B<-n>
 

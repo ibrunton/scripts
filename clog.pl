@@ -13,7 +13,7 @@ my $input = join( ' ', @ARGV );
 
 $log->parse_rc;
 
-$log->getopts( 'defhs', \$input );
+$log->getopts( 'defhms', \$input );
 
 if ( $log->opt( 'h' ) ) {
     pod2usage( -exitstatus => 0, -verbose => 2 );
