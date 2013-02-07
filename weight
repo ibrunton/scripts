@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# <2011-03-30 Wed> by Ian Brunton
+
+weightfile=$(clog -fd)/weight
+
+#if [ -z "$1" ]
+#then
+    #cat $weightfile
+#else
+    #date=$(date +"%Y-%m-%d")
+    #logfile=$(clog -f)
+    #echo -e $date"\t"$@ >> $weightfile
+    #echo -e "Weight:\t"$@ >> $logfile
+#fi
+#exit 0
+
+# 2013-01-27 Sun
+if [ -z "$1" ]
+then
+	cd $(clog -df)
+	grep "Weight:" * | sort | sed 's/Weight://g'
+else
+	$HOME/bin/logalias.pl -t Weight: -- "$@"
+fi
+exit 0

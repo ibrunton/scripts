@@ -12,7 +12,7 @@ SRC_DOC=${PAPER:-paper.tex}
 BIBDIR=${BIBDIR:-sources}
 OUTPUT=${OUTPUT:-paper} # no extension
 
-cat $src_dir/_header.tex $src_dir/$PAPER $src_dir/_footer.tex > ./${OUTPUT}.tex
+cat $src_dir/_header.tex $src_dir/$SRC_DOC $src_dir/_footer.tex > ./${OUTPUT}.tex
 #cat $src_dir/$BIBDIR/*.bib > ./sources.bib
 
 latex ${OUTPUT}.tex

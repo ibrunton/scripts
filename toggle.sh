@@ -2,7 +2,8 @@
 
 # toggles window title
 
-LONGNAME=$HOME/.local/share/hcwin-
+FILENAME=$1
+LONGNAME=$HOME/.local/share/${FILENAME}-
 if [ -e $LONGNAME"on" ]; then
 	mv $LONGNAME"on" $LONGNAME"off"
 else

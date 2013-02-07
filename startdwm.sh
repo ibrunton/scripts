@@ -1,8 +1,7 @@
 #!/bin/sh
 
-#xfce4-power-manager &
-
 # various services needed only for DWM
+
 twmnd &
 
 nitrogen --restore &

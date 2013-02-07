@@ -5,3 +5,4 @@
 # if it has one.
 
 emacsclient -e "(recentf-save-list)"
+cp -f $HOME/.config/recentf $HOME/.config/recentf.bak

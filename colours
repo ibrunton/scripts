@@ -1,7 +1,7 @@
 #!/bin/bash
 # source: Meyithi, https://bbs.archlinux.org/viewtopic.php?pid=1010829#p1010829
 
-xdef="$HOME/.Xdefaults"
+xdef="$HOME/Dropbox/config/dots/colours.muted"
 
 colors=( $( sed -re '/^!/d; /^$/d; /^#/d; s/(\*color)([0-9]):/\10\2:/g;' $xdef | grep 'color[01][0-9]:' | sort | sed  's/^.*: *//g' ) )
 
