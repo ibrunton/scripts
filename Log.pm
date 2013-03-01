@@ -156,7 +156,8 @@ values may be passed) and parses its values into a hash structure.
 
 sub parse_rc {
     my $self = shift;
-    $self->{rc_file} = shift // $ENV{'XDG_CONFIG_HOME'} . '/logrc';
+    my $configdir = $ENV{'XDG_CONFIG_HOME'} // $ENV{'HOME'} . '/.config';
+    $self->{rc_file} = shift // $configdir . '/logrc';
     if ( -s $self->{rc_file}) {
 	my $keyfile = Glib::KeyFile->new;
 	$keyfile->load_from_file ($self->{rc_file}, 'keep-comments');
@@ -300,7 +301,7 @@ sub parse_datetime {
 	$self->{time} = $1;
 	$self->{has_time} = 1;
 	$self->set_opt( 't' );
-    } elsif ( $$string =~ s/^(\w{1,6}:) +/$1\t/o ) {
+    } elsif ( $$string =~ s/^(\w{1,6}:)\s+/$1\t/o ) {
     	$self->set_opt( 't' );
     }
 	
