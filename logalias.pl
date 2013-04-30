@@ -12,6 +12,8 @@ my $input = join (' ', @ARGV);
 my $prefix = '';
 my $opts = '';
 
+$input =~ s/(["'])/\\$1/g;
+
 if ($input =~ m/(.+)--/) {
     $prefix = $1;
     $input =~ s/$prefix//;
