@@ -1,1 +1,68 @@
-/home/ian/docs/programming/perl/new/new.pl
+#!/usr/bin/env perl
+
+# new
+# 2013-04-15 15:04
+# by Ian D Brunton <iandbrunton at gmail dawt com>
+
+use Cwd;
+use Modern::Perl;
+
+my $filesdir = $ENV{HOME} . "/Dropbox/templates/";
+
+my $filetype = $ARGV[0] or die ("usage: new TYPE [FILENAME] [-- arguments]");
+my $filename = $ARGV[1] // "";
+my $arg = "";
+if ($filename eq "--") {
+    $arg = join (" ", splice (@ARGV, 2));
+    $filename = "";
+}
+
+open (FILE, "<", $filesdir . $filetype) or die ("No template for type `$filetype'.");
+my @lines = <FILE>;
+close (FILE);
+
+my $i;
+my $flag = 0;
+
+for ($i = 0; $i < $#lines; $i++) {
+    if ($lines[$i] =~ /^# --$/) {
+	$flag = 1;
+	last;
+    }
+    if ($lines[$i] =~ /^# default file name: (.+)$/i && !$filename) {
+	$filename = $1;
+    }
+}
+
+if (length ($filename) < 1) { $filename = $filetype }
+
+if (-e $filename) {
+    print "File `$filename' already exists.  Overwrite? y/n: ";
+    my $r = <STDIN>;
+    chomp ($r);
+    if ($r !~ /^y$/i) { exit (1) }
+}
+
+my $ucfilename = uc ($filename);
+my $project = cwd();
+$project =~ s|.*?/([^/]+?)$|$1|;
+my @t = localtime (time);
+my $date = $t[5] + 1900 .'-'. $t[4] .'-'. $t[3] .' '. sprintf ("%02d", $t[2]) .':'. sprintf ("%02d", $t[1]);
+
+if ($flag == 1) { splice (@lines, 0, ++$i) }
+
+foreach (@lines) {
+    $_ =~ s/#PROJECT#/$project/g;
+    $_ =~ s/#FILENAME#/$filename/g;
+    $_ =~ s/#UC_FILENAME#/$ucfilename/g;
+    $_ =~ s/#DATE#/$date/g;
+    if ($arg) { $_ =~ s/#ARG#/$arg/g }
+}
+
+open (FILE, ">", $filename) or die ("Cannot open file `$filename': $!");
+foreach (@lines) {
+    print FILE $_;
+}
+close (FILE);
+
+exit (0);
