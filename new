@@ -9,6 +9,15 @@ use Modern::Perl;
 
 my $filesdir = $ENV{HOME} . "/Dropbox/templates/";
 
+my $edit = 0;
+
+for (my $n = 0; $n < $#ARGV; $n++) {
+    if ($ARGV[$n] eq "-e") {
+	splice (@ARGV, $n, 1);
+	$edit = 1;
+    }
+}
+
 my $filetype = $ARGV[0] or die ("usage: new TYPE [FILENAME] [-- arguments]");
 my $filename = $ARGV[1] // "";
 my $arg = "";
@@ -64,5 +73,10 @@ foreach (@lines) {
     print FILE $_;
 }
 close (FILE);
+
+if ($edit == 1) {
+    my $action = $ENV{EDITOR} // "vim";
+    exec ("$action $filename");
+}
 
 exit (0);
