@@ -80,7 +80,7 @@ if ($input) {
     	}
     	close (TAGFILE);
        
-    	if ($lines[2] =~ m/^(\#\w+ ?){1,}$/) {
+    	if ($lines[2] =~ m/^(\#[-a-z]+ ?){1,}$/) {
 	    $lines[2] =~ s/\n//;
 	    $lines[2] .= ' ' . join (' ', @newtags) . "\n";
     	} else {
@@ -96,7 +96,7 @@ if ($input) {
 } elsif ($log->opt ('l')) {	# list all used tags, from most to least often used
     my $tag; my $count;
     format STDOUT = 
-@<<<<<<<<<<<<<<< @>>>>
+@<<<<<<<<<<<<<<<<<<<< @>>>>
 $tag,            $count
 .
     foreach (sort {$used_tags->{$b} <=> $used_tags->{$a}} keys %{$used_tags}) { 
@@ -114,7 +114,7 @@ $tag,            $count
 	print $log->date_tag ($lines[0]);
     }
 		
-    if ($lines[2] =~ m/^(\#\w+ ?){1,}$/) {
+    if ($lines[2] =~ m/^(\#[-a-z]+ ?){1,}$/) {
 	print $log->comment_tag ($lines[2]);
     } else {
 	say "No tags"

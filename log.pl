@@ -179,20 +179,20 @@ print FILE $output_line or die ("didn't print: $!");
 
 close( FILE );
 
-# parse tags with colour codes and print to terminal:
+# parse markup with colour codes and print to terminal:
 unless ( $log->opt( 'q' ) ) {
-    $log->replace_tags (\$output_line);
+    $log->markup (\$output_line);
     print $output_line;
 }
 
 if ($log->is_new) {
     open( FILE, "<$file" ) or die( "Can't open file $file: $!" );
     while ( my $file_line = <FILE> ) {
-	$log->replace_tags( \$file_line );
+	$log->markup( \$file_line );
 	print $file_line;
     }
     close( FILE );
-    print "\n";
+    print $log->end_markup, "\n";
 }
 
 exit( 0 );
@@ -290,23 +290,21 @@ will be interpreted as a command to be passed to the system; its output will
 be captured and inserted into log's output.  NB: NO FILTERING OR CHECKING
 IS CURRENTLY PERFORMED ON SUCH SYSTEM COMMANDS.
 
-=head2 TAGS
+=head2 MARKUP
 
-Tags are single-character labels defined in the configuration file in
-order to allow the user (1) to mark content for easy finding with a
-utility such as grep, and (2) to enable colour-coded terminal output.
+Markup consists of single-character labels defined in the configuration file in
+order to allow the user (1) to mark content for easy finding with a utility
+such as grep, and (2) to enable colour-coded terminal output.
 
-Tags are marked by the '$' character, so when entering them from the
+Markup is identified by the '$' character, so when entering them from the
 command line, this character must be escaped.
 
-Tags can be upper case or lower case.  All text between a lower-case
+Markup tags can be upper case or lower case.  All text between a lower-case
 tag (e.g., '$a') and a '$' not followed by a letter will be colour-coded.
 An upper-case tag has no matching end-tag, and colour-codes everything
 preceeding it on the line.  After an upper-case tag or the closing '$'
 of a lower-case tag, the program sends an escape sequence to the terminal
 to return to normal text.
-
-Tags cannot span line breaks.
 
 =head2 COMMENTS
 

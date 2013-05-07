@@ -46,7 +46,7 @@ sub _init {
     $self->{extension} = '';
     $self->{indent_char} = "\t";
     $self->{line_length} = 70;
-    $self->{tag}->{end} = '[m'; # don't change this unless you know what you're doing
+    $self->{markup}->{end} = '[m'; # don't change this unless you know what you're doing
     # $self->{tag}->{comment} = '\033[32m';
     # $self->{tag}->{t} = '\033[32m';
     # $self->{tag}->{h} = '\033[43m\033[30m';
@@ -118,6 +118,9 @@ sub process_options {
     }
     if ( $self->opt( 'i' ) ) {
 	$self->set_opt( 't' );
+    }
+    if ($self->opt ('m')) {
+	$self->{show_markup} = 0;
     }
     if ( $self->opt( 'n' ) ) {
 	$self->set_opt( 't' );
@@ -224,13 +227,17 @@ sub parse_rc {
 	    if ($keyfile->has_key ('log', 'underline_end')) {
 		$self->{underline_end} = $keyfile->get_string ('log', 'underline_end');
 	    }
+
+	    if ($keyfile->has_key ('log', 'show_markup')) {
+		$self->{show_markup} = $keyfile->get_boolean ('log', 'show_markup');
+	    }
 	}
 
-	if ($keyfile->has_group ('tags')) {
-	    my @ttags = $keyfile->get_keys ('tags');
+	if ($keyfile->has_group ('markup')) {
+	    my @ttags = $keyfile->get_keys ('markup');
 
 	    foreach (@ttags) {
-		$self->{tag}->{$_} = $keyfile->get_string ('tags', $_);
+		$self->{markup}->{$_} = $keyfile->get_string ('markup', $_);
 	    }
 	}
 
@@ -502,52 +509,67 @@ sub indent_char {
     }
 }
 
-sub replace_tags {
+sub markup {
     my $self = shift;
     my $string = shift;
 	
-    unless ( $self->{tags_off}) {
+    #if ( $self->{show_markup}) {
 	# date:
-	$$string =~ s/^((\w+), \d{2} (\w+), \d{4})$/$self->date_tag($1)/egi;
+	$$string =~ s/^((\w+), \d{2} (\w+), \d{4})$/$self->date_markup($1)/egi;
+
 	# inline tag:
-	$$string =~ s/\$([a-z]){1}(.+?)\$(?=\W)/$self->tag($1,$2)/eg;
+	#$$string =~ s/\$([a-z]){1}(.+?)\$(?=\W)/$self->markup_tag($1,$2)/eg;
+	$$string =~ s/\$([a-z]){1}/$self->get_markup($1)/eg;
+	$$string =~ s/\$(?![a-zA-Z])/$self->end_markup/eg;
+
 	# tag from start of line:
-	$$string =~ s/^(.+)\$([A-Z])/$self->tag($2,$1)/e;
+	#$$string =~ s/^(.+)\$([A-Z])/$self->markup_tag($2,$1)/e;
+	$$string =~ s/^(.+)\$([A-Z])/$self->get_markup($2).$1.$self->end_markup/e;
+
 	# comment:
-	$$string =~ s/(;;.+)$/$self->comment_tag($1)/e;
-	# tags:
-	$$string =~ s/^(\#.+)$/$self->comment_tag($1)/e;
+	$$string =~ s/(;;.+)$/$self->comment_markup($1)/e;
+
+	# hash-tags:
+	$$string =~ s/^(\#.+)$/$self->comment_markup($1)/e;
+
 	# underline:
 	$$string =~ s|/([^,;]+)/|$self->underline($1)|eg;
-    }
+    	#}
     return $self;
 }
 
-sub tag {
+sub get_markup {
+    my $self = shift;
+    my $tag = lc (shift);
+    if (exists $self->{markup}->{$tag} && $self->{show_markup}) {
+    	return $self->{markup}->{$tag};
+    }
+    return '';
+}
+
+sub markup_tag {    # deprecated 2013-05-07
     my $self = shift;
     my $tag = lc( shift );
     my $text = shift;
-    if ( ! exists $self->{tag}->{$tag} || $self->opt ('m') ) {
+    if ( ! exists $self->{markup}->{$tag} || $self->opt ('m') ) {
 	return $text;
     }
-    return $self->{tag}->{$tag} . $text . $self->end_tag;
+    return $self->{markup}->{$tag} . $text . $self->end_markup;
 }
 
-sub end_tag {
+sub end_markup {
     my $self = shift;
-    return $self->{tag}->{end};
+    return $self->{markup}->{end};
 }
 
-sub date_tag {
+sub date_markup {
     my $self = shift;
-    #    return `echo -e "$self->{tag}->{date}"` . ">> " . shift() . $self->end_tag;
-    return $self->{tag}->{date} . shift() . $self->end_tag;
+    return $self->get_markup ('date') . shift() . $self->end_markup;
 }
 
-sub comment_tag {
+sub comment_markup {
     my $self = shift;
-    #    return `echo -e "$self->{tag}->{comment}"` . shift() . $self->end_tag;
-    return $self->{tag}->{comment} . shift() . $self->end_tag;
+    return $self->get_markup ('comment') . shift() . $self->end_markup;
 }
 
 sub underline {
