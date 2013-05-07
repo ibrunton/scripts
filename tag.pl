@@ -111,11 +111,11 @@ $tag,            $count
     close (FILE);
 
     if ($lines[0] =~ m/^\w+, \d{2} \w+, \d{4}$/) {
-	print $log->date_tag ($lines[0]);
+	print $log->date_markup ($lines[0]);
     }
 		
     if ($lines[2] =~ m/^(\#[-a-z]+ ?){1,}$/) {
-	print $log->comment_tag ($lines[2]);
+	print $log->comment_markup ($lines[2]);
     } else {
 	say "No tags"
     }
