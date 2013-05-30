@@ -34,7 +34,7 @@ my $tag_file = $log->log_dir . 'tags';
 
 my $used_tags;
 if (-e $tag_file) {
-    open (TAGFILE, $tag_file) or die ("Cannot open tag file: $!");
+    open (TAGFILE, "<", $tag_file) or die ("Cannot open tag file: $!");
     my @tags = <TAGFILE>;
     close (TAGFILE);
 
@@ -56,7 +56,7 @@ if ($input) {
     }
 
     my $logfile = $log->file_path;
-    open (LOGFILE, $logfile) or die ("Cannot open log file: $!");
+    open (LOGFILE, "<", $logfile) or die ("Cannot open log file: $!");
     my @lines = <LOGFILE>;
     close (LOGFILE);
 
@@ -74,7 +74,7 @@ if ($input) {
 	    $used_tags->{$_} += 1;
     	}
 
-    	open (TAGFILE, ">$tag_file") or die ("Cannot open tag file: $!");
+    	open (TAGFILE, ">", $tag_file) or die ("Cannot open tag file: $!");
     	foreach (sort keys %{$used_tags}) {
 	    print TAGFILE $_, "\t", $used_tags->{$_}, "\n";
     	}
@@ -87,7 +87,7 @@ if ($input) {
 	    splice (@lines, 2, 0, join (' ', @newtags), "\n\n");
     	}
 
-    	open (LOGFILE, ">$logfile") or die ("Cannot open log file: $!");
+    	open (LOGFILE, ">", $logfile) or die ("Cannot open log file: $!");
     	foreach (@lines) {
 	    print LOGFILE $_;
     	}
@@ -106,7 +106,7 @@ $tag,            $count
     }
 } else {			# just return tags for given date
     my $tags_printed = 0;
-    open (FILE, $log->file_path) or die ("Cannot open log file: $!");
+    open (FILE, "<", $log->file_path) or die ("Cannot open log file: $!");
     my @lines = <FILE>;
     close (FILE);
 

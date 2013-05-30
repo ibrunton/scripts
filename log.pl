@@ -146,7 +146,7 @@ unless ( $log->opt( 'w' ) ) {
 }
 
 my $file = $log->file_path;
-open( FILE, ">>$file" ) or die( "Can't open file " . $file . ": $!" );
+open( FILE, ">>", $file ) or die( "Can't open file " . $file . ": $!" );
 
 if ( $log->is_new ) {
     print FILE $log->date_string, "\n\n";
@@ -186,7 +186,7 @@ unless ( $log->opt( 'q' ) ) {
 }
 
 if ($log->is_new) {
-    open( FILE, "<$file" ) or die( "Can't open file $file: $!" );
+    open( FILE, "<", $file ) or die( "Can't open file $file: $!" );
     while ( my $file_line = <FILE> ) {
 	$log->markup( \$file_line );
 	print $file_line;
@@ -203,7 +203,7 @@ sub expand {
     
     my $snippet_file = $logref->snippet_dir . $snippet;
     if ( -e $snippet_file ) {
-	open( SNIPPET, "<$snippet_file" ) || die( "Cannot open file $snippet_file: $!\n" );
+	open( SNIPPET, "<", $snippet_file ) || die( "Cannot open file $snippet_file: $!\n" );
 	my @file_contents = <SNIPPET>;
 	close( SNIPPET );
 	my $str = join( "", @file_contents );

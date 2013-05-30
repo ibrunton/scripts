@@ -264,7 +264,7 @@ sub parse_state {
     my $self = shift;
     $self->{state_file} // $self->{log_dir} . '.state';
     if ( -s $self->{state_file} ) {
-	open( FILE, $self->{state_file} ) || die();
+	open( FILE, "<", $self->{state_file} ) || die();
 	while ( <FILE> ) {
 	    push( @{$self->{state}}, $_ );
 	}
@@ -583,7 +583,7 @@ sub expand_snippets {
     
     my $snippet_file = $self->snippet_dir . $snippet;
     if ( -e $snippet_file ) {
-	open( SNIPPET, "<$snippet_file" ) || die( "Cannot open file $snippet_file: $!\n" );
+	open( SNIPPET, "<", $snippet_file ) || die( "Cannot open file $snippet_file: $!\n" );
 	my @file_contents = <SNIPPET>;
 	close( SNIPPET );
 	my $str = join( "", @file_contents );

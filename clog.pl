@@ -37,7 +37,7 @@ if ( $log->opt( 'f' ) ) {
     }
 }
 
-open( FILE, $file_path ) or die( "Can't open file $file_path: $!" );
+open( FILE, "<", $file_path ) or die( "Can't open file $file_path: $!" );
 while ( my $file_line = <FILE> ) {
     $log->markup( \$file_line );
     print $file_line;
