@@ -170,7 +170,7 @@ my $date = $log->date;
 
 if ($log->{extension} ne '') {
     if ($log->is_new) {
-	system ("log -cw " . $log->date . " " . uc ($log->{extension}) . " file created");
+	system ("$0 -cw " . $log->date . " " . uc ($log->{extension}) . " file created");
     }
 }
 
