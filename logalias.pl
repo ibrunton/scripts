@@ -29,4 +29,4 @@ my $cmd = "$opts $prefix $input\n";
 $cmd =~ s/^ //;
 print "log $cmd";
 
-exec ($ENV{HOME} . "/bin/log $cmd");
+exec ($ENV{HOME} . "/bin/llg $cmd");

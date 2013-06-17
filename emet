@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export ALTERNATE_EDITOR=""
+
 if [ -z $1 ] ; then
 	exec urxvt -name EMACS -e emacsclient -nw # -e "(transbg)"
 else
