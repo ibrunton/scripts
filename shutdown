@@ -1,0 +1,3 @@
+#!/bin/sh
+
+$HOME/scripts/atexit.sh && sudo /sbin/shutdown "$1" now

@@ -21,6 +21,6 @@ then
 	cd $(clog -df)
 	grep "Weight:" * | sort | sed 's/Weight://g'
 else
-	$HOME/bin/logalias.pl -t Weight: -- "$@"
+	$HOME/scripts/logalias.pl -t Weight: -- "$@"
 fi
 exit 0
