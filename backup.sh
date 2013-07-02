@@ -9,6 +9,10 @@ target_dir=/mnt/sd/sync/$HOSTNAME/
 
 rsync -r --safe-links $source_dir $target_dir >> $logfile
 
+# backup system-wide configs
+source_dir=/etc
+rsync -r --safe-links $source_dir $target_dir >> $logfile
+
 # backup data
 source_dir=/mnt/data/
 target_dir=/mnt/sd/sync/data
