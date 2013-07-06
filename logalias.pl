@@ -14,12 +14,12 @@ my $opts = '';
 
 $input =~ s/(["'])/\\$1/g;
 
-if ($input =~ m/(.+)--/) {
+if ($input =~ m/(.+) --/) {
     $prefix = $1;
     $input =~ s/$prefix//;
 }
 
-if ($input =~ m/--(\s+-([\w\d]+)+)/) {
+if ($input =~ m/ --(\s+-([\w\d]+)+)/) {
     $opts = $1;
     $input =~ s/$opts//;
 }

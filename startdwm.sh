@@ -2,14 +2,12 @@
 
 # various services needed only for DWM
 
-twmnd &
+#twmnd &
 
-nitrogen --restore &
+eval `cat ~/.fehbg` &
 
-#conky -c $HOME/.config/conky_dwm | while read -r; do xsetroot -name "$REPLY"; done &
-
-#$HOME/bin/trayer.sh &
-$HOME/bin/dwmstatus &
+$HOME/scripts/check_mail.sh &
+$HOME/scripts/dwmstatus &
 
 while true; do
 	dwm || exit
