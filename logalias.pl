@@ -23,7 +23,7 @@ if ($input =~ m/ --(\s+-([\w\d]+)+)/) {
     $opts = $1;
     $input =~ s/$opts//;
 }
-$input =~ s/--//;
+$input =~ s/ -- //;
 
 my $cmd = "$opts $prefix $input\n";
 $cmd =~ s/^ //;
