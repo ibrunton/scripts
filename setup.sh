@@ -10,6 +10,9 @@ ln -s /mnt/data/pics $HOME/pics
 echo "done."
 
 # config files
+mkdir -p $HOME/.config
+mkdir -p $HOME/.local/share
+
 echo -n "Linking config files..."
 ln -s $HOME/Dropbox/config/dots/_Xmodmap $HOME/.Xmodmap
 ln -s $HOME/Dropbox/config/dots/_Xresources $HOME/.Xresources
