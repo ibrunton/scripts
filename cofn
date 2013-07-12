@@ -5,8 +5,6 @@ cofnfile=$HOME/Dropbox/docs/cofn
 if [ $(stat -c "%s" $cofnfile) -gt "0" ] ; then
 	llg -n $(cat $cofnfile) :cof
 	echo -n "" > $cofnfile
-	#echo "null catted to cofnfile"
 else
-	date +"%H%M" > $cofnfile
-	#echo "date catted to cofnfile"
+	roundtime > $cofnfile
 fi
