@@ -6,7 +6,7 @@ use Text::Wrap;
 
 use Log;
 
-my $VERSION = '2.2.7';
+my $VERSION = '2.2.8';
 
 if ( ! $ARGV[0] ) { pod2usage( -exitval => 1, -verbose => 1 ); }
 
@@ -17,6 +17,11 @@ $log->parse_rc;
 my $input = join( ' ', @ARGV );
 
 $log->getopts( 'abchijmnpqrstw', \$input );
+
+my $silent;
+if ($log->opt ('s')) {
+    $silent = "-s";
+}
 
 if ( $log->opt( 'h' ) ) { pod2usage( -exitstatus => 0, -verbose => 2 ); }
 
@@ -145,11 +150,8 @@ unless ( $log->opt( 'w' ) ) {
     $comment =~ s/\n$cc\t([^\s\n])$/ $1/;
 }
 
-my $file = $log->file_path;
-open( FILE, ">>", $file ) or die( "Can't open file " . $file . ": $!" );
-
 if ( $log->is_new ) {
-    print FILE $log->date_string, "\n\n";
+    $output = $log->date_string . "\n\n" . $output;
     $log->unset_opt ('b');
 }
 
@@ -170,14 +172,17 @@ my $date = $log->date;
 
 if ($log->{extension} ne '') {
     if ($log->is_new) {
-	system ("$0 -cw " . $log->date . " " . uc ($log->{extension}) . " file created");
+	system (join (" ", $0, "-cw", $silent, $log->date, uc ($log->{extension}), "file created"));
     }
 }
 
+my $file = $log->file_path;
 my $output_line = $output . $comment . $log->end_of_line;
-print FILE $output_line or die ("didn't print: $!");
-
+unless ($silent) {
+    open( FILE, ">>", $file ) or die( "Can't open file " . $file . ": $!" );
+    print FILE $output_line or die ("didn't print: $!");
 close( FILE );
+}
 
 # parse markup with colour codes and print to terminal:
 unless ( $log->opt( 'q' ) ) {
@@ -185,15 +190,15 @@ unless ( $log->opt( 'q' ) ) {
     print $output_line;
 }
 
-if ($log->is_new) {
-    open( FILE, "<", $file ) or die( "Can't open file $file: $!" );
-    while ( my $file_line = <FILE> ) {
-	$log->markup( \$file_line );
-	print $file_line;
-    }
-    close( FILE );
-    print $log->end_markup, "\n";
-}
+#if ($log->is_new) {
+#open( FILE, "<", $file ) or die( "Can't open file $file: $!" );
+    #while ( my $file_line = <FILE> ) {
+	#$log->markup( \$file_line );
+	#print $file_line;
+    	#}
+    	#close( FILE );
+    	#print $log->end_markup, "\n";
+#}
 
 exit( 0 );
 
@@ -227,7 +232,7 @@ log - command-line log/journal processing
 
 =head1 VERSION
 
-2.2.7
+2.2.8
 
 =head1 SYNOPSIS
 
@@ -374,11 +379,17 @@ is anticipated in the future.
 
 =item B<-q>
 
-Suppresses automatic echoing of the current input line.
+Suppresses automatic echoing of the current input line to STDOUT.
 
 =item B<-r>
 
 Rounds the time to the nearest 5 minutes.
+
+=item B<-s>
+
+Silent mode: entry is parsed and echoed to STDOUT but not writen to file.
+Useful for testing the result of commands such as recursive snippets or
+text replacement.
 
 =item B<-t>
 
