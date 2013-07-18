@@ -4,5 +4,5 @@
 
 
 install: Log.pm IDB.pm
-	install -D -m 755 -o root -g root Log.pm $(DESTDIR)/usr/lib/perl5/vendor_perl/
-	install -D -m 755 -o root -g root IDB.pm $(DESTDIR)/usr/lib/perl5/vendor_perl/
+	install -D -m 755 -o root -g root Log.pm $(DESTDIR)/usr/lib64/perl5/vendor_perl/
+	install -D -m 755 -o root -g root IDB.pm $(DESTDIR)/usr/lib64/perl5/vendor_perl/

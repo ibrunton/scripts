@@ -2,7 +2,7 @@ NAME
     log - command-line log/journal processing
 
 VERSION
-    2.2.7
+    2.2.8
 
 SYNOPSIS
      log [OPTIONS] [YYYY/MM/DD] [TIME] [TEXT]
@@ -60,22 +60,21 @@ DESCRIPTION
     its output will be captured and inserted into log's output. NB: NO
     FILTERING OR CHECKING IS CURRENTLY PERFORMED ON SUCH SYSTEM COMMANDS.
 
-  TAGS
-    Tags are single-character labels defined in the configuration file in
-    order to allow the user (1) to mark content for easy finding with a
-    utility such as grep, and (2) to enable colour-coded terminal output.
+  MARKUP
+    Markup consists of single-character labels defined in the configuration
+    file in order to allow the user (1) to mark content for easy finding
+    with a utility such as grep, and (2) to enable colour-coded terminal
+    output.
 
-    Tags are marked by the '$' character, so when entering them from the
-    command line, this character must be escaped.
+    Markup is identified by the '$' character, so when entering them from
+    the command line, this character must be escaped.
 
-    Tags can be upper case or lower case. All text between a lower-case tag
-    (e.g., '$a') and a '$' not followed by a letter will be colour-coded. An
-    upper-case tag has no matching end-tag, and colour-codes everything
-    preceeding it on the line. After an upper-case tag or the closing '$' of
-    a lower-case tag, the program sends an escape sequence to the terminal
-    to return to normal text.
-
-    Tags cannot span line breaks.
+    Markup tags can be upper case or lower case. All text between a
+    lower-case tag (e.g., '$a') and a '$' not followed by a letter will be
+    colour-coded. An upper-case tag has no matching end-tag, and
+    colour-codes everything preceeding it on the line. After an upper-case
+    tag or the closing '$' of a lower-case tag, the program sends an escape
+    sequence to the terminal to return to normal text.
 
   COMMENTS
     Comments may be added to the log file. To do so, either place the -c
@@ -113,6 +112,8 @@ OPTIONS
 
     -i      Indents the line with a tab character.
 
+    -m      Suppresses coloured output of tags (except for comments).
+
     -n      Appends the current time to the end of the input line, rather
             than placing it at the beginning.
 
@@ -122,6 +123,10 @@ OPTIONS
     -q      Suppresses automatic echoing of the current input line.
 
     -r      Rounds the time to the nearest 5 minutes.
+
+    -s      Silent mode: entry is parsed and echoed to STDOUT but not writen
+            to file. Useful for testing the result of commands such as
+            recursive snippets or text replacement.
 
     -t      The current time will not be added to this line.
 

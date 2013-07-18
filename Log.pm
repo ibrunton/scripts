@@ -143,10 +143,10 @@ sub process_options {
 	$self->set_opt( 'r' );
     }
     
-    # if ( $self->opt( 'j' ) && $self->opt( 't' ) ) {
-    # 	$self->error( 'Cannot pass both -j and -t.' );
-    # }
-	
+    if ($self->opt ('q') && $self->opt ('s')) {
+	$self->error ("Cannot pass both -q and -s.");
+    }
+
     return $self;
 }
 
