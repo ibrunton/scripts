@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# screenshot script by Ian Brunton <iandbrunton at gmail dot com>
+# screenshot script by Ian D. Brunton <iandbrunton at gmail dot com>
 # 2011-05-20, 2012-06-23
 #
 # 1. Takes a screenshot after $DELAY
@@ -25,7 +25,7 @@ convert -resize 200x200 $screenshot $thumbnail
 
 ss_url=`dropbox puburl $screenshot`
 th_url=`dropbox puburl $thumbnail`
-forum_post=$HOME/docs/drafts/arch_screenshot_`date +'%Y-%m-%d'`
+forum_post=$HOME/docs/drafts/screenshot_`date +'%Y-%m-%d'`
 
 sed "s,#SCREENSHOT#,$ss_url,g
      s,#THUMBNAIL#,$th_url,g" <$HOME/Dropbox/templates/forum_screenshot >>$forum_post

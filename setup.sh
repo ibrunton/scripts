@@ -7,6 +7,7 @@ echo -n "Linking data locations..."
 ln -s /mnt/data/Dropbox $HOME/Dropbox
 ln -s /mnt/data/docs $HOME/docs
 ln -s /mnt/data/pics $HOME/pics
+ln -s /mnt/data/scripts $HOME/scripts
 echo "done."
 
 # config files
@@ -35,6 +36,7 @@ echo "done."
 # essentials from github
 echo "Cloning essential GIT repos..."
 mkdir -p $GIT_DIR
+mkdir -p $HOME/bin
 cd $GIT_DIR
 
 git clone https://github.com/ibrunton/log.git
