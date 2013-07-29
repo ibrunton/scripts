@@ -8,38 +8,38 @@ use Log;
 
 my $VERSION = '2.2.8';
 
-if ( ! $ARGV[0] ) { pod2usage( -exitval => 1, -verbose => 1 ); }
+if (! $ARGV[0]) { pod2usage (-exitval => 1, -verbose => 1); }
 
 my $log = Log->new();
 
 $log->parse_rc;
 
-my $input = join( ' ', @ARGV );
+my $input = join (' ', @ARGV);
 
-$log->getopts( 'abchijmnpqrstw', \$input );
+$log->getopts ('abchijmnpqrstw', \$input);
 
 my $silent;
 if ($log->opt ('s')) {
     $silent = "-s";
 }
 
-if ( $log->opt( 'h' ) ) { pod2usage( -exitstatus => 0, -verbose => 2 ); }
+if ( $log->opt ('h') ) { pod2usage (-exitstatus => 0, -verbose => 2); }
 
 $Text::Wrap::columns = $log->line_length;
 
 $log->parse_datetime( \$input ); # pass by reference so method can modify $input
 
-if ( ! -e $log->log_dir . $log->year ) {
+if (! -e $log->log_dir . $log->year) {
     mkdir $log->log_dir . $log->year;
 }
-if ( ! -e $log->log_dir . $log->year . '/' . $log->month ) {
+if (! -e $log->log_dir . $log->year . '/' . $log->month) {
     mkdir $log->log_dir . $log->year . '/' . $log->month;
 }
 
 my $output = '';
 my $comment = '';
 
-if ( $input eq '-') {
+if ($input eq '-') {
     $input = <STDIN>;
     chomp( $input );
 }
@@ -48,16 +48,16 @@ if ( $input eq '-') {
 $input =~ s/(?<=\W)-c(\s)/ $log->comment_char.$1/eo;
 
 my $cc = $log->comment_char;
-if ( $input =~ m/$cc/ ) {
-    ( $output, $comment ) = split( /$cc/, $input );
+if ($input =~ m/$cc/) {
+    ($output, $comment) = split (/$cc/, $input);
     $comment = $cc . $comment;
 }
 else { $output = $input; }
 
-if ( $log->opt( 'c' ) ) {
+if ($log->opt ('c')) {
     $comment = $log->indent_char . $input;
     $output = '';
-    $log->set_opt( 't' );
+    $log->set_opt ('t');
 }
 
 # expand snippets...
@@ -74,20 +74,20 @@ if ($output =~ m/`(.+?)`/) {
 }
 
 # text replacement...
-if ( $output =~ m| -s([/#]).+?\1.*?\1| ) {
+if ($output =~ m| -s([/#]).+?\1.*?\1|) {
     print ">>Replacing...\n";
     my @seds;
     my $match;
     
-    while ( $output =~ s| -s([/#])(.+?\1.*?\1)|| ) {
+    while ($output =~ s| -s([/#])(.+?\1.*?\1)||) {
 	$match = $1 . $2;
-	push( @seds, $match );
+	push (@seds, $match);
 	$output =~ s/$match//g;
     }
     
-    my ( $r1, $r2 );
-    foreach my $sed ( @seds ) {
-	if ( $sed =~ m|^([/#])(.+?)\1(.*?)\1$| ) {
+    my ($r1, $r2);
+    foreach my $sed (@seds) {
+	if ($sed =~ m|^([/#])(.+?)\1(.*?)\1$|) {
 	    $r1 = $2;
 	    $r2 = $3;
 	    print ">>\t'$r1' with '$r2'...\n";
@@ -97,17 +97,17 @@ if ( $output =~ m| -s([/#]).+?\1.*?\1| ) {
 }
 
 # add time...
-if ( $log->opt( 'n' ) ) {
+if ($log->opt ('n')) {
     $output .= ' to ' . $log->time;
     if ($output && $comment) {
 	$output .= ' ';
     }
 }
-if ( $log->opt( 'i' ) ) {
+if ($log->opt ('i')) {
     $output = "\t" . $output;
 }
 
-unless ( $log->opt( 't' ) ) {
+unless ($log->opt ('t')) {
     $output = $log->time . ":\t" . $output;
 }
 
@@ -116,9 +116,9 @@ if ($log->opt ('p')) {
 }
 
 # wrap...
-unless ( $log->opt( 'w' ) ) {
-    unless ( $log->opt('c') ) {
-	$output = wrap( "", $log->indent_char, $output );
+unless ($log->opt ('w')) {
+    unless ($log->opt ('c')) {
+	$output = wrap ("", $log->indent_char, $output);
     }
 
     my $ic = $log->indent_char;
@@ -127,30 +127,30 @@ unless ( $log->opt( 'w' ) ) {
     
     # make sure that if a comment begins partway through a line and wraps,
     # it will wrap at the right place:
-    if ( length( $output ) > 1 && $comment ) {
-	my @output_lines = split( /\n/, $output );
-	my $len = $log->line_length - length( $output_lines[$#output_lines] ) - 8;
+    if (length ($output) > 1 && $comment) {
+	my @output_lines = split (/\n/, $output);
+	my $len = $log->line_length - length ($output_lines[$#output_lines]) - 8;
 	my $short = '';
-	if ( $len > 0 && length( $comment ) > $len ) {
-	    if ( $comment =~ /^(;; .{1,$len})(\b | \b)/ ) {
+	if ($len > 0 && length ($comment) > $len) {
+	    if ($comment =~ /^(;; .{1,$len})(\b | \b)/) {
 		$short = $1;
 		$comment =~ s/$short//o;
 		$comment =~ s/^ //o;
 		$output .= $short . "\n";
-		if ( $comment !~ /^$cc\t/ ) {
+		if ($comment !~ /^$cc\t/) {
 		    $comment = $cc . "\t" . $comment;
 		}
 	    }
 	}
     }
     
-    $comment = wrap( "", $log->comment_char . "\t", $comment );
+    $comment = wrap ("", $log->comment_char . "\t", $comment);
 
     # prevent orphaned single characters at end of comment:
     $comment =~ s/\n$cc\t([^\s\n])$/ $1/;
 }
 
-if ( $log->is_new ) {
+if ($log->is_new) {
     $output = $log->date_string . "\n\n" . $output;
     $log->unset_opt ('b');
 }
@@ -179,26 +179,16 @@ if ($log->{extension} ne '') {
 my $file = $log->file_path;
 my $output_line = $output . $comment . $log->end_of_line;
 unless ($silent) {
-    open( FILE, ">>", $file ) or die( "Can't open file " . $file . ": $!" );
+    open (FILE, ">>", $file) or die ("Can't open file " . $file . ": $!");
     print FILE $output_line or die ("didn't print: $!");
-close( FILE );
+close (FILE);
 }
 
 # parse markup with colour codes and print to terminal:
-unless ( $log->opt( 'q' ) ) {
+unless ($log->opt ('q')) {
     $log->markup (\$output_line);
     print $output_line;
 }
-
-#if ($log->is_new) {
-#open( FILE, "<", $file ) or die( "Can't open file $file: $!" );
-    #while ( my $file_line = <FILE> ) {
-	#$log->markup( \$file_line );
-	#print $file_line;
-    	#}
-    	#close( FILE );
-    	#print $log->end_markup, "\n";
-#}
 
 exit( 0 );
 
@@ -207,11 +197,11 @@ sub expand {
     my $logref = shift;
     
     my $snippet_file = $logref->snippet_dir . $snippet;
-    if ( -e $snippet_file ) {
-	open( SNIPPET, "<", $snippet_file ) || die( "Cannot open file $snippet_file: $!\n" );
+    if (-e $snippet_file) {
+	open (SNIPPET, "<", $snippet_file) || die ("Cannot open file $snippet_file: $!\n");
 	my @file_contents = <SNIPPET>;
-	close( SNIPPET );
-	my $str = join( "", @file_contents );
+	close (SNIPPET);
+	my $str = join ("", @file_contents);
 	$str =~ s/\n$//so; # chop \n off the end
 	
 	my $ic = $logref->indent_char;
