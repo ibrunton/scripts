@@ -13,7 +13,7 @@ my $input = join (' ', @ARGV);
 
 $log->parse_rc;
 
-$log->getopts ('defhms', \$input);
+$log->getopts ('dfhm', \$input);
 
 if ($log->opt ('h')) {
     pod2usage (-exitstatus => 0, -verbose => 2);
@@ -64,16 +64,20 @@ clog - command-line log/journal printing
 
 =head1 DESCRIPTION
 
-B<This program> facillitates outputs log files as written by the log
-script. See that script's documentation for date formatting. With no
-arguments, clog outputs today's log file, replacing tags with colour
-codes. If the file pointed to (based optionally on -j and -t flags)
-does not exist, and the -f flag has not been set, clog will return an
-error message.
+B<This program> outputs log files as written by the log script.  See that
+script's documentation for date formatting.  With no arguments, clog outputs
+today's log file, replacing tags with colour codes.  If the file pointed to
+does not exist, and the -f flag has not been set, clog will return an error
+message.
 
 =head1 OPTIONS
 
 =over 8
+
+=item B<-d>
+
+If B<-f> is also passed, prints the directory path to log files for
+the current month, or the month specified by the date passed.
 
 =item B<-f>
 
@@ -85,9 +89,9 @@ not exist.
 
 Prints this documentation.
 
-=item B<-s>
+=item B<-m>
 
-I don't know what this was meant to do yet.
+Suppresses coloured markup output.
 
 =back
 
@@ -97,11 +101,11 @@ Written by Ian D. Brunton
 
 =head1 REPORTING BUGS
 
-Report Log bugs to ibrunton@accesswave.ca
+Report Log bugs to iandbrunton at gmail. com.
 
 =head1 COPYRIGHT
 
-Copyright 2011 Ian Brunton.
+Copyright 2011--13 Ian D. Brunton.
 
 This file is part of Log.
 
