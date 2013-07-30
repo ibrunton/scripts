@@ -9,27 +9,27 @@ my $VERSION = '2.0';
 
 my $log = Log->new();
 
-my $input = join( ' ', @ARGV );
+my $input = join (' ', @ARGV);
 
 $log->parse_rc;
 
-$log->getopts( 'defhms', \$input );
+$log->getopts ('defhms', \$input);
 
-if ( $log->opt( 'h' ) ) {
-    pod2usage( -exitstatus => 0, -verbose => 2 );
+if ($log->opt ('h')) {
+    pod2usage (-exitstatus => 0, -verbose => 2);
 }
 
-$log->parse_datetime( \$input ); # pass by reference so method can modify $input
+$log->parse_datetime (\$input); # pass by reference so method can modify $input
 
 my $file_path = $log->file_path;
 
-if ( ! -e $file_path && ! $log->opt( 'f' ) ) {
+if (! -e $file_path && ! $log->opt ('f')) {
     print "File $file_path does not exist.\n\n";
-    exit( 0 );
+    exit (0);
 }
 
-if ( $log->opt( 'f' ) ) {
-    if ( $log->opt( 'd' ) ) {
+if ($log->opt ('f')) {
+    if ($log->opt ('d')) {
 	print $log->{dir_path};
 	exit 0;
     } else {
@@ -37,14 +37,14 @@ if ( $log->opt( 'f' ) ) {
     }
 }
 
-open( FILE, "<", $file_path ) or die( "Can't open file $file_path: $!" );
-while ( my $file_line = <FILE> ) {
-    $log->markup( \$file_line );
+open (FILE, "<", $file_path) or die ("Can't open file $file_path: $!");
+while (my $file_line = <FILE>) {
+    $log->markup (\$file_line);
     print $file_line;
 }
-close( FILE );
+close (FILE);
 print "\n";
-exit( 0 );
+exit (0);
 
 __END__
 
