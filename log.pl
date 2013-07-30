@@ -23,11 +23,11 @@ if ($log->opt ('s')) {
     $silent = "-s";
 }
 
-if ( $log->opt ('h') ) { pod2usage (-exitstatus => 0, -verbose => 2); }
+if ($log->opt ('h')) { pod2usage (-exitstatus => 0, -verbose => 2); }
 
 $Text::Wrap::columns = $log->line_length;
 
-$log->parse_datetime( \$input ); # pass by reference so method can modify $input
+$log->parse_datetime (\$input); # pass by reference so method can modify $input
 
 if (! -e $log->log_dir . $log->year) {
     mkdir $log->log_dir . $log->year;
