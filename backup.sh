@@ -1,6 +1,7 @@
 #!/bin/bash
 
 hostname=$(hostname)
+mkdir -p $HOME/.logs/rsync
 logfile=$HOME/.logs/rsync/$(date +"%Y-%m-%d")
 
 # backup configs
