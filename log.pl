@@ -18,7 +18,7 @@ my $input = join (' ', @ARGV);
 
 $log->getopts ('abchijmnpqrstw', \$input);
 
-my $silent;
+my $silent = '';
 if ($log->opt ('s')) {
     $silent = "-s";
 }
