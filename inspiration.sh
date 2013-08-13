@@ -8,6 +8,16 @@
 #		restores links from file.  If filename is not supplied,
 #		uses most recent available.
 
+# colours
+fg_red="$(tput setaf 1)"
+fg_green="$(tput setaf 2)"
+fg_yellow="$(tput setaf 3)"
+fg_blue="$(tput setaf 4)"
+fg_magenta="$(tput setaf 5)"
+fg_cyan="$(tput setaf 6)"
+fg_white="$(tput setaf 7)"
+reset="$(tput sgr0)"
+
 inspiration_dir=$HOME/pics/xedrbh/inspiration
 file=$HOME/pics/xedrbh/inspiration/.lists
 
@@ -61,18 +71,12 @@ case "$1" in
 			name=$(echo $line | awk '{print $1}')
 			echo -n "Linking $name to $target..."
 			if [ -e $name ] ; then
-				if [ $(readlink $name) != $target ] ; then
-					echo -n "$name already linked to another file.  Overwrite? (y/n)"
-					read answer
-					if [ $answer = "y" ] ; then
-						ln -fs $target $inspiration_dir/$name
-					fi
-				fi
+				echo -e "${fg_red}$name already exists.${reset}"
 			else
 				if [ ! -e $target ] ; then
-					echo "$target does not exist."
+					echo -e "${fg_red}$target does not exist.${reset}"
 				else
-					ln -s $target $inspiration_dir/$name
+					ln -s $target $name
 					echo "done."
 				fi
 			fi
