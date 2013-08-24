@@ -46,6 +46,7 @@ sub _init {
     $self->{extension} = '';
     $self->{indent_char} = "\t";
     $self->{line_length} = 70;
+    $self->{editlog_create_new} = 0;
     $self->{markup}->{end} = '[m'; # don't change this unless you know what you're doing
     # $self->{tag}->{comment} = '\033[32m';
     # $self->{tag}->{t} = '\033[32m';
@@ -226,6 +227,10 @@ sub parse_rc {
 
 	    if ($keyfile->has_key ('log', 'show_markup')) {
 		$self->{show_markup} = $keyfile->get_boolean ('log', 'show_markup');
+	    }
+
+	    if ($keyfile->has_key ('log', 'editlog_create_new')) {
+	    	$self->{editlog_create_new} = $keyfile->get_boolean ('log', 'editlog_create_new');
 	    }
 	}
 
@@ -481,6 +486,7 @@ sub time		{ my $self = shift; return $self->{time}; }
 sub has_time	{ my $self = shift; return $self->{has_time}; }
 sub file_path	{ my $self = shift; return $self->{file_path}; }
 sub is_new		{ my $self = shift; return $self->{is_new}; }
+sub editlog_create_new { my $self = shift; return $self->{editlog_create_new}; }
 
 sub indent_char {
     my $self = shift;

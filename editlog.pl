@@ -30,7 +30,20 @@ if (-e $file) {
     $action .= " $file";
     exec ($action);
 } else {
-    print "File `$file' does not exist.\n";
+    if ($log->editlog_create_new) {
+    	open (FILE, ">>", $file) or die ("Cannot open file `$file': $!");
+    	print FILE $log->date_string, "\n\n";
+    	close (FILE);
+    	if ($log->{extension} ne '') {
+	    system (join (" ", "llg", "-cw", $log->date,
+	    	    uc ($log->{extension}), "file created"));
+    	}
+
+    	$action .= " $file";
+    	exec ($action);
+    } else {
+    	print "File `$file' does not exist.\n";
+    }
 }
 
 __END__
@@ -41,7 +54,7 @@ editlog - command-line log/journal editing
 
 =head1 VERSION
 
-2.0
+2.1
 
 =head1 SYNOPSIS
 

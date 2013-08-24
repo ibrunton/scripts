@@ -120,7 +120,8 @@ OPTIONS
     -p      Prepends predictor_char to the time, to indicate that this time
             value is anticipated in the future.
 
-    -q      Suppresses automatic echoing of the current input line.
+    -q      Suppresses automatic echoing of the current input line to
+            STDOUT.
 
     -r      Rounds the time to the nearest 5 minutes.
 
@@ -144,7 +145,7 @@ CONFIGURATION OPTIONS
             log_dir The base directory in which log files will be written.
                     Default: ~/docs/log.
 
-            log_snippet_dir
+            snippet_dir
                     The directory in which snippet files are kept. Default:
                     log_dir/.snippets.
 
@@ -156,17 +157,18 @@ CONFIGURATION OPTIONS
                     *editlog.pl* script.
 
             auto_round
-                    Automatically round time values to nearest 5 minutes.
-                    Default: false.
+                    (Boolean) Automatically round time values to nearest 5
+                    minutes. Default: false.
 
             auto_echo
-                    Automatically output the result of the log command to
-                    the console as well as to the log file. Default: true.
+                    (Boolean) Automatically output the result of the log
+                    command to the console as well as to the log file.
+                    Default: true.
 
             mark_rounded
-                    Append an indicator to time values when they are
-                    rounded. If the -r option is passed or auto_round is set
-                    and log is called when rounding would not change the
+                    (Boolean) Append an indicator to time values when they
+                    are rounded. If the -r option is passed or auto_round is
+                    set and log is called when rounding would not change the
                     time value (i.e., the current time ends in 0 or 5), no
                     indicator is appended. Default: false.
 
@@ -185,6 +187,22 @@ CONFIGURATION OPTIONS
             line_length
                     The number of characters per line, after which lines
                     will be wrapped. Default: 70
+
+            underline_start
+                    Terminal escape sequence to turn on underline with the _
+                    character.
+
+            underline_end
+                    Terminal escape sequence to turn off underlining.
+
+            show_markup
+                    (Boolean) Equivalent to -m command-line option. Default:
+                    true.
+
+            editlog_create_new
+                    (Boolean) Allows the editlog.pl script to create a
+                    requested file that does not exist, before opening it in
+                    the editor. Default: false.
 
     [tags] section
             Here the user may define single-character tags to be used (1) to

@@ -409,7 +409,7 @@ This section is required.
 
 The base directory in which log files will be written.  Default: F<~/docs/log>.
 
-=item B<log_snippet_dir>
+=item B<snippet_dir>
 
 The directory in which snippet files are kept.  Default: F<log_dir/.snippets>.
 
@@ -423,18 +423,19 @@ Alternate editor, used when passing the -a option to the I<editlog.pl> script.
 
 =item B<auto_round>
 
-Automatically round time values to nearest 5 minutes.  Default: false.
+(Boolean) Automatically round time values to nearest 5 minutes.  Default:
+false.
 
 =item B<auto_echo>
 
-Automatically output the result of the log command to the console as well
-as to the log file.  Default: true.
+(Boolean) Automatically output the result of the log command to the console as
+well as to the log file.  Default: true.
 
 =item B<mark_rounded>
 
-Append an indicator to time values when they are rounded.  If the -r option is
-passed or auto_round is set and log is called when rounding would not change
-the time value (i.e., the current time ends in 0 or 5), no indicator is
+(Boolean) Append an indicator to time values when they are rounded.  If the -r
+option is passed or auto_round is set and log is called when rounding would not
+change the time value (i.e., the current time ends in 0 or 5), no indicator is
 appended.  Default: false.
 
 =item B<rounded_time_char>
@@ -456,6 +457,23 @@ Default: [
 
 The number of characters per line, after which lines will be wrapped.
 Default: 70
+
+=item B<underline_start>
+
+Terminal escape sequence to turn on underline with the _ character.
+
+=item B<underline_end>
+
+Terminal escape sequence to turn off underlining.
+
+=item B<show_markup>
+
+(Boolean) Equivalent to B<-m> command-line option.  Default: true.
+
+=item B<editlog_create_new>
+
+(Boolean) Allows the editlog.pl script to create a requested file that does not exist,
+before opening it in the editor.  Default: false.
 
 =back
 
