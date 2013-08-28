@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# db
+# library.pl
 # 2013-7-22 15:02
 # by Ian D Brunton <iandbrunton at gmail dawt com>
 
