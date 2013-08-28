@@ -30,6 +30,7 @@ ln -s $HOME/Dropbox/.userdata/netrc_iandbrunton $HOME/.config/netrc_iandbrunton
 ln -s $HOME/Dropbox/.userdata/netrc_wolfshift $HOME/.config/netrc_wolfshift
 ln -s $HOME/Dropbox/.userdata/netrc $HOME/.netrc
 ln -s /mnt/data/config/openbox $HOME/.config/openbox
+ln -s /mnt/data/config/ncmpcpp $HOME/.ncmpcpp
 ln -s $HOME/Dropbox/config/zsh $HOME/.config/zsh
 echo "done."
 
@@ -39,7 +40,7 @@ mkdir -p $GIT_DIR
 mkdir -p $HOME/bin
 cd $GIT_DIR
 
-git clone https://github.com/ibrunton/log.git
+git clone git@github.com:ibrunton/log.git
 ln -s $GIT_DIR/log/log.pl $HOME/bin/llg
 ln -s $GIT_DIR/log/clog.pl $HOME/bin/clog
 ln -s $GIT_DIR/log/editlog.pl $HOME/bin/editlog

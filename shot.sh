@@ -18,7 +18,7 @@ thumbnail=$basefilename-thumb.png
 DELAY=5 # seconds
 
 # take full-sized screen shot:
-scrot -c -d $DELAY -q 100 $screenshot
+scrot -c -d $DELAY -q 100 -e 'mv $f $screenshot'
 
 # create thumbnail:
 convert -resize 200x200 $screenshot $thumbnail
