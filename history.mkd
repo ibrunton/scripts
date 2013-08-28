@@ -1,0 +1,4 @@
+* 2.1
+
+Enabled recursive snippets: a snippet can include other snippets, which will be
+expanded until there are no more :snippets.
