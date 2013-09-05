@@ -56,7 +56,7 @@ my $ucfilename = uc ($filename);
 my $project = cwd();
 $project =~ s|.*?/([^/]+?)$|$1|;
 my @t = localtime (time);
-my $date = $t[5] + 1900 .'-'. $t[4] + 1 .'-'. $t[3] .' '. sprintf ("%02d", $t[2]) .':'. sprintf ("%02d", $t[1]);
+my $date = $t[5] + 1900 .'-'. zeropad ($t[4] + 1) .'-'. zeropad ($t[3]) .' '. sprintf ("%02d", $t[2]) .':'. sprintf ("%02d", $t[1]);
 
 if ($flag == 1) { splice (@lines, 0, ++$i) }
 
@@ -80,3 +80,9 @@ if ($edit == 1) {
 }
 
 exit (0);
+
+sub zeropad {
+    my $n = shift;
+    if ($n < 10) { return '0' . $n; }
+    else { return $n; }
+}
