@@ -27,7 +27,7 @@ case "$1" in
 			mkdir -p $file
 		fi
 
-		file=$file/$(date +"%y-%m-%d")
+		file=$file/$(date +"%Y-%m-%d")
 		if [ -e $file ] ; then
 			echo -n "File $file already exists.  Overwrite? (y/n)"
 			read answer
