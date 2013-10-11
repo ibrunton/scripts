@@ -1,3 +1,3 @@
 #!/bin/sh
 
-exec urxvt -name RANGER -e ranger
+exec urxvtc -name RANGER -e ranger
