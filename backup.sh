@@ -6,7 +6,7 @@ logfile=$HOME/.logs/rsync/$(date +"%Y-%m-%d")
 
 # backup configs
 source_dir=$HOME
-target_dir=/mnt/sdc/sync/$HOSTNAME/
+target_dir=/media/VERBATIM/sync/$HOSTNAME/
 
 rsync -r --safe-links $source_dir $target_dir >> $logfile
 
@@ -16,7 +16,7 @@ rsync -r --safe-links $source_dir $target_dir >> $logfile
 
 # backup data
 source_dir=/mnt/data/
-target_dir=/mnt/sdc/sync/data
+target_dir=/media/VERBATIM/sync/data
 
 y=$(date +"%Y")
 m=$(date +"%m")
