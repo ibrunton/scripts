@@ -6,9 +6,9 @@ logfile=$HOME/.logs/rsync/$(date +"%Y-%m-%d")
 
 # backup configs
 source_dir=$HOME
-target_dir=/media/VERBATIM/sync/$HOSTNAME/
+target_dir=/media/VERBATIM/sync/$hostname/
 
-rsync -r --safe-links $source_dir $target_dir >> $logfile
+rsync -r --safe-links --exclude=/build/kernel $source_dir $target_dir >> $logfile
 
 # backup system-wide configs
 source_dir=/etc
@@ -52,7 +52,7 @@ mv $HOME/pics/pics $HOME/pics/saved/$y/$m/$d
 mkdir -p $HOME/pics/xedrbh/saved/$y/$m
 mv $HOME/pics/xedrbh/xedrbh $HOME/pics/xedrbh/saved/$y/$m/$d
 
-rsync -r $source_dir $target_dir >> $logfile
+rsync -r --exclude=/docs/virtualbox $source_dir $target_dir >> $logfile
 
 mkdir -p $HOME/pics/xedrbh/xedrbh/x
 mkdir -p $HOME/pics/pics/wp

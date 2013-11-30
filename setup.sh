@@ -30,6 +30,9 @@ ln -s $HOME/Dropbox/.userdata/netrc_iandbrunton $HOME/.config/netrc_iandbrunton
 ln -s $HOME/Dropbox/.userdata/netrc_wolfshift $HOME/.config/netrc_wolfshift
 ln -s $HOME/Dropbox/.userdata/netrc $HOME/.netrc
 ln -s /mnt/data/config/openbox $HOME/.config/openbox
+ln -s /mnt/data/config/herbstluftwm $HOME/.config/herbstluftwm
+ln -s /mnt/data/Dropbox/config/luakit $HOME/.config/luakit
+ln -s /mnt/data/Dropbox/docs/luakit $HOME/.local/share/luakit
 ln -s /mnt/data/config/ncmpcpp $HOME/.ncmpcpp
 ln -s $HOME/Dropbox/config/zsh $HOME/.config/zsh
 echo "done."
@@ -40,18 +43,33 @@ mkdir -p $GIT_DIR
 mkdir -p $HOME/bin
 cd $GIT_DIR
 
-git clone git@github.com:ibrunton/log.git
-ln -s $GIT_DIR/log/log.pl $HOME/bin/llg
-ln -s $GIT_DIR/log/clog.pl $HOME/bin/clog
-ln -s $GIT_DIR/log/editlog.pl $HOME/bin/editlog
-ln -s $GIT_DIR/log/tag.pl $HOME/bin/log-tag
+if [ -x /mnt/data/docs/programming/perl/log/log.pl ] ; then
+	ln -s /mnt/data/docs/programming/perl/log/log.pl $HOME/bin/llg
+	ln -s /mnt/data/docs/programming/perl/log/clog.pl $HOME/bin/clog
+	ln -s /mnt/data/docs/programming/perl/log/editlog.pl $HOME/bin/editlog
+	ln -s /mnt/data/docs/programming/perl/log/tag $HOME/bin/log-tag
+	ln -s /mnt/data/docs/programming/perl/log/switch_last_2_lines.pl $HOME/bin/switchlog
+elif
+	git clone git@github.com:ibrunton/log.git
+	ln -s $GIT_DIR/log/log.pl $HOME/bin/llg
+	ln -s $GIT_DIR/log/clog.pl $HOME/bin/clog
+	ln -s $GIT_DIR/log/editlog.pl $HOME/bin/editlog
+	ln -s $GIT_DIR/log/tag.pl $HOME/bin/log-tag
+fi
 
 git clone https://github.com/muennich/urxvt-perls.git
 
 git clone https://github.com/KittyKatt/screenFetch.git
 ln -s $GIT_DIR/screenFetch/screenfetch-dev $HOME/bin/screenfetch
 
+git clone https://github.com/graysky2/modprobed_db.git
+
+git clone https://github.com/capitaomorte/yasnippet.git
+
+git clone https://github.com/kohler/gifsicle.git
+
 echo "done."
 
 echo "Don't forget to install log system libs!"
 echo "Don't forget to install urxvt perls in system directory!"
+echo "Don't forget to install modprobe_db!"
