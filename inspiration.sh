@@ -33,6 +33,8 @@ case "$1" in
 			read answer
 			if [ $answer = "n" ] ; then
 				exit 0
+			else
+				echo -n "" > $file
 			fi
 		fi
 

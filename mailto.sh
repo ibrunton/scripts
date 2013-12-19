@@ -1,3 +1,3 @@
 #!/bin/sh
 
-exec urxvtc -name MAIL -e mutt -F ~/Dropbox/mutt/iandbrunton/muttrc $@
+exec urxvt -name MAIL -e mutt -F ~/Dropbox/mutt/iandbrunton/muttrc $@

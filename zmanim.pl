@@ -43,7 +43,7 @@ foreach my $t (@{$times->{channel}->{item}}) {
 	$time_min = $3;
 	$apm = $4;
 
-	if ($apm eq 'PM') { $time_hour += 12; }
+	if ($apm eq 'PM' && $time_hour != 12) { $time_hour += 12; }
 	$time = "$time_hour:$time_min";
 
 	write;

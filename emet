@@ -3,7 +3,7 @@
 export ALTERNATE_EDITOR=""
 
 if [ -z $1 ] ; then
-	exec urxvtc -name EMACS -e emacsclient -nw # -e "(transbg)"
+	exec urxvt -name EMACS -e emacsclient -nw # -e "(transbg)"
 else
-	exec urxvtc -name EMACS -e emacsclient -nw "$@" #-e "(transbg)" "(find-file \"$@\")"
+	exec urxvt -name EMACS -e emacsclient -nw "$@" #-e "(transbg)" "(find-file \"$@\")"
 fi

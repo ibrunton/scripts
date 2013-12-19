@@ -2,7 +2,7 @@
 
 # <2011-03-30 Wed> by Ian Brunton
 
-weightfile=$(clog -fd)/weight
+#weightfile=$(clog -fd)/weight
 
 #if [ -z "$1" ]
 #then
