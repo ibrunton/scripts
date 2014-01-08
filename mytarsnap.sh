@@ -5,8 +5,8 @@ if [ -z $1 ] ; then
 	exit 1
 fi
 
-$ARCHIVE_NAME=$1
+ARCHIVE_NAME=$1
 shift
-$DATE=`date "+%Y-%m-%d"`
+DATE=`date "+%Y-%m-%d"`
 
 sudo tarsnap cf $ARCHIVE_NAME-$DATE $@

@@ -69,7 +69,7 @@ case "$1" in
 
 		while read line
 		do
-			target=$(echo $line | awk '{print $2}')
+			target=$(echo $line | awk -F"\t" '{print $2}')
 			name=$(echo $line | awk '{print $1}')
 			echo -n "Linking $name to $target..."
 			if [ -e $name ] ; then
@@ -78,7 +78,7 @@ case "$1" in
 				if [ ! -e $target ] ; then
 					echo -e "${fg_red}$target does not exist.${reset}"
 				else
-					ln -s $target $name
+					ln -s "$target" "$name"
 					echo "done."
 				fi
 			fi
