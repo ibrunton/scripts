@@ -41,7 +41,7 @@ case "$1" in
 		for f in $inspiration_dir/*.*; do
 			if [ -L $f ] ; then
 				echo -n $f >> $file
-				echo -en "\t" >> $file
+				echo -en "\|" >> $file
 				readlink $f >> $file
 			else
 				echo "Skipping regular file $f."
@@ -69,8 +69,8 @@ case "$1" in
 
 		while read line
 		do
-			target=$(echo $line | awk -F"\t" '{print $2}')
-			name=$(echo $line | awk '{print $1}')
+			target=$(echo $line | awk -F"|" '{print $2}')
+			name=$(echo $line | awk -F"|" '{print $1}')
 			echo -n "Linking $name to $target..."
 			if [ -e $name ] ; then
 				echo -e "${fg_red}$name already exists.${reset}"
