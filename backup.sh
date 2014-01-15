@@ -8,6 +8,12 @@ logfile=$HOME/.logs/rsync/$(date +"%Y-%m-%d")
 source_dir=$HOME
 target_dir=/media/VERBATIM/sync/$hostname/
 
+if [ ! -d $target_dir ]
+then
+	echo "Target dir $target_dir does not exist!"
+	exit 1
+fi
+
 rsync -r --safe-links --exclude=/build/kernel $source_dir $target_dir >> $logfile
 
 # backup system-wide configs
