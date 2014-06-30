@@ -1,14 +1,7 @@
 #!/bin/sh
 
-# various services needed only for DWM
-
-#twmnd &
-
-eval `cat ~/.fehbg` &
-
-$HOME/scripts/check_mail.sh &
-$HOME/scripts/dwmstatus &
+dwmstatus &
 
 while true; do
-	dwm || exit
+	dwm 2> ~/.logs/dwm || exit
 done
