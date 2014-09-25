@@ -6,11 +6,17 @@ logfile=$HOME/.logs/rsync/$(date +"%Y-%m-%d")
 
 # backup configs
 source_dir=$HOME
-target_dir=/media/VERBATIM/sync/$hostname/
+target_dir=/media/VERBATIM-HD/sync/$hostname/
 
 if [ ! -d $target_dir ]
 then
 	echo "Target dir $target_dir does not exist!"
+	mkdir -p $target_dir
+fi
+
+if [ ! -w $target_dir ]
+then
+	echo "Target dir $target_dir is not writeable!"
 	exit 1
 fi
 
@@ -22,7 +28,7 @@ rsync -r --safe-links $source_dir $target_dir >> $logfile
 
 # backup data
 source_dir=/mnt/data/
-target_dir=/media/VERBATIM/sync/data
+target_dir=/media/VERBATIM-HD/sync/data
 
 y=$(date +"%Y")
 m=$(date +"%m")
@@ -58,7 +64,7 @@ mv $HOME/pics/pics $HOME/pics/saved/$y/$m/$d
 mkdir -p $HOME/pics/xedrbh/saved/$y/$m
 mv $HOME/pics/xedrbh/xedrbh $HOME/pics/xedrbh/saved/$y/$m/$d
 
-rsync -r --exclude=/docs/virtualbox $source_dir $target_dir >> $logfile
+rsync -r --exclude=virtualbox $source_dir $target_dir >> $logfile
 
 mkdir -p $HOME/pics/xedrbh/xedrbh/x
 mkdir -p $HOME/pics/pics/wp

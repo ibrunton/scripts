@@ -1,0 +1,211 @@
+#!/usr/bin/env perl
+
+# scripts
+# 2014-09-09 15:44
+# by Ian D Brunton <iandbrunton at gmail dawt com>
+
+use Modern::Perl;
+
+my $editor = $ENV{EDITOR} // '/usr/bin/vim';
+
+if (@ARGV) {
+    my $client;
+    for (my $i = 0; $i <= $#ARGV; ++$i) {
+	if ($ARGV[$i] =~ m/^-h$/) {
+	    print "USAGE: $0 CLIENT_KEY [-n] [-p INT] [-a [DATE]] [-s [DATE]]\n";
+	    exit(0);
+	}
+	if ($ARGV[$i] =~ m/\w+-\w+/) { # client-name key, required
+	    print "Initialising client $ARGV[$i].\n";
+	    $client = Client->new($ARGV[$i]);
+	}
+	elsif ($ARGV[$i] eq '-a' || $ARGV[$i] eq '--assessment') {
+	    if ($i != $#ARGV && $ARGV[$i + 1] =~ m|^((\d{4}-)?([01][0-9]-)?[0123][0-9])$|) {
+		$client->date($ARGV[++$i]);
+	    }
+	    else {
+		$client->date();
+	    }
+	    $client->assessment();
+	    # open file for editing
+	    system($editor . ' ' . $client->{assessment_file});
+	}
+	elsif ($ARGV[$i] eq '-n' || $ARGV[$i] eq '--new') {
+	    system($editor . ' ' . $client->{contact_file});
+	}
+	elsif ($ARGV[$i] eq '-p' || $ARGV[$i] eq '--purchase') {
+	    my $n = 0;
+	    if ($i != $#ARGV && $ARGV[$i + 1] =~ m/^\d+$/) {
+		$n = $ARGV[++$i];
+	    }
+	    else { # prompt for number of sessions purchased
+		print "Enter number of sessions purchased: ";
+		$n = <STDIN>;
+		$n =~ s/\n//g;
+	    }
+	    $client->purchase($n);
+	}
+	elsif ($ARGV[$i] eq '-s' || $ARGV[$i] eq '--session') {
+	    if ($i != $#ARGV && $ARGV[$i + 1] =~ m|^((\d{4}-)?([01][0-9]-)?[0123][0-9])$|) {
+		$client->date($ARGV[++$i]);
+	    }
+	    else {
+		$client->date();
+	    }
+	    $client->session();
+	}
+	elsif ($ARGV[$i] eq '-q' || $ARGV[$i] eq '--query') {
+	    print 'Sessions used: ' . $client->{sessions} . "\n";
+	    print 'Sessions purchased: ' . $client->{purchase} . "\n";
+	    print 'Total sessions to date: ' . $client->{total} . "\n";
+	}
+    }
+    $client->write_file();
+}
+else {}
+
+
+package Client;
+use IDB;
+use Time::Local 'timelocal_nocheck';
+
+sub new {
+    my $class = shift;
+    my $self = {};
+    bless($self, "Client");
+    if (@_) { $self->{key} = shift; }
+    $self->_init();
+    return $self;
+}
+
+sub _init {
+    my $self = shift;
+    my $CLIENT_DIR = $ENV{HOME} . '/Dropbox/docs/training/clients/';
+    my $dir = '';
+
+    if ($self->{key}) {
+	$self->{dir} = $CLIENT_DIR . $self->{key} . '/';
+	my $client_file = $self->{dir} . $self->{key};
+
+	if (-e $self->{dir}) {
+	    if (-e $client_file) { # read in data from client files
+	    	$self->{is_new_client} = 0;
+
+	    	open(FILE, "<", $client_file) or die("Cannot open file $client_file: $!");
+	    	my @flines = <FILE>;
+	    	close(FILE);
+
+	    	foreach (@flines) {
+		    my ($k,$v) = split('=', $_);
+		    $v =~ s/\n//g;
+		    $self->{$k} = $v;
+	    	}
+	    }
+	}
+	else {
+	    $self->{is_new_client} = 1;
+	    mkdir $self->{dir};
+	    $self->{sessions} = 0;
+	    $self->{purchase} = 0;
+	    $self->{total} = 0;
+	}
+
+	$self->{sessions_file} = $self->{dir} . 'sessions';
+	$self->{contact_file} = $self->{dir} . 'contact';
+    }
+    else { # fail
+    }
+
+    return $self;
+}
+
+sub is_new {
+    my $self = shift;
+    return $self->{is_new_client};
+}
+
+sub date {
+    my $self = shift;
+    if ($@) {
+	$self->{date} = shift;
+    }
+    else {
+    	my $key = join('-', &IDB::year((localtime(time))[5]),
+		    	&IDB::double_digit((localtime(time))[4] + 1),
+		    	&IDB::double_digit((localtime(time))[3]));
+	    
+    	if ($self->{date}) {
+	    if ($self->{date} ne $key) {
+	    	if ($self->{date} =~ m|^(\d{2}-\d{2})$|) { # MM/DD provided, use current year
+		    $self->{date} = substr($key, 0, 5) .= $1;
+	    	} elsif ($self->{date} =~ m|^(\d{2})$|) { # DD provided, use current year and month
+		    $self->{date} = substr($key, 0, 8) .= $1;
+	    	}
+	    } else {
+	    	$self->{date} = $key;
+	    }
+    	} else {
+	    $self->{date} = $key;
+    	}
+    }
+    my $year = substr($self->{date}, 0, 4);
+    my $month = substr($self->{date}, 5, 2);
+    my $day = substr($self->{date}, 8, 2);
+    my $wkday = (localtime(timelocal_nocheck(0, 0, 0, $day,
+		$month - 1, $year)))[6];
+    my @wdays = ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
+    $self->{weekday} = $wdays[$wkday];
+    return $self;
+}
+
+sub session {
+    my $self = shift;
+    ++$self->{sessions};
+    ++$self->{total};
+    open(FILE, ">>", $self->{sessions_file}) or die("Cannot open sessions file: $!");
+    print FILE $self->{date}, ' ', $self->{weekday}, "\t", $self->{sessions}, '/', $self->{purchase}, "\tsession\n";
+    close(FILE);
+    print 'Session ' . $self->{sessions} . ' of ' . $self->{purchase} . ".\n";
+    if ($self->{sessions} >= $self->{purchase}) {
+	print "WARNING: Client has no remaining paid sessions.\n";
+    }
+    return $self;
+}
+
+sub assessment {
+    my $self = shift;
+    $self->{assessment_file} = $self->{dir} . $self->{date} . '-assessment';
+    ++$self->{sessions};
+    ++$self->{total};
+    open(FILE, ">>", $self->{sessions_file}) or die("Cannot open sessions file: $!");
+    print FILE $self->{date}, ' ', $self->{weekday}, "\t", $self->{sessions}, '/', $self->{purchase}, "\tassessment\n";
+    close(FILE);
+    print 'Session ' . $self->{sessions} . ' of ' . $self->{purchase} . ".\n";
+    if ($self->{sessions} >= $self->{purchase}) {
+	print "WARNING: Client has no remaining paid sessions.\n";
+    }
+    return $self;
+}
+
+sub purchase {
+    my $self = shift;
+    my $sessions = shift;
+    $self->{purchase} = $sessions;
+    $self->{sessions} = 0;
+    return $self;
+}
+
+sub write_file {
+    my $self = shift;
+    my $client_file = $self->{dir} . $self->{key};
+
+    open(FILE, ">", $client_file) or die("Cannot open file $client_file: $!");
+    print FILE 'sessions=' . $self->{sessions} . "\n";
+    print FILE 'purchase=' . $self->{purchase} . "\n";
+    print FILE 'total=' . $self->{total} . "\n";
+    close(FILE);
+
+    return $self;
+}
+
+1;
