@@ -169,6 +169,9 @@ sub session {
     if ($self->{sessions} >= $self->{purchase}) {
 	print "WARNING: Client has no remaining paid sessions.\n";
     }
+    if ($self->{session_hook}) {
+	system($self->{session_hook});
+    }
     return $self;
 }
 
