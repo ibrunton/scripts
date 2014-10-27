@@ -10,14 +10,18 @@ my $editor = $ENV{EDITOR} // '/usr/bin/vim';
 
 if (@ARGV) {
     my $client;
+    if ($ARGV[0] =~ m/\w+-\w+/) { # client-name key, required
+	print "Initialising client $ARGV[0].\n";
+	$client = Client->new($ARGV[0]);
+	shift(@ARGV);
+    }
+    else {
+	die("First argument must be client key.\n");
+    }
     for (my $i = 0; $i <= $#ARGV; ++$i) {
 	if ($ARGV[$i] =~ m/^-h$/) {
 	    print "USAGE: $0 CLIENT_KEY [-n] [-p INT] [-a [DATE]] [-s [DATE]]\n";
 	    exit(0);
-	}
-	if ($ARGV[$i] =~ m/\w+-\w+/) { # client-name key, required
-	    print "Initialising client $ARGV[$i].\n";
-	    $client = Client->new($ARGV[$i]);
 	}
 	elsif ($ARGV[$i] eq '-a' || $ARGV[$i] eq '--assessment') {
 	    if ($i != $#ARGV && $ARGV[$i + 1] =~ m|^((\d{4}-)?([01][0-9]-)?[0123][0-9])$|) {
@@ -206,6 +210,9 @@ sub write_file {
     print FILE 'sessions=' . $self->{sessions} . "\n";
     print FILE 'purchase=' . $self->{purchase} . "\n";
     print FILE 'total=' . $self->{total} . "\n";
+    if ($self->{session_hook}) {
+	print FILE 'session_hook=' . $self->{session_hook} . "\n";
+    }
     close(FILE);
 
     return $self;
