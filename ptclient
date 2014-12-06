@@ -58,10 +58,22 @@ if (@ARGV) {
 	    }
 	    $client->session();
 	}
+	elsif ($ARGV[$i] eq '-f' || $ARGV[$i] eq '--freebie') {
+	    if ($i != $#ARGV && $ARGV[$i + 1] =~ m|^((\d{4}-)?([01][0-9]-)?[0123][0-9])$|) {
+		$client->date($ARGV[++$i]);
+	    }
+	    else {
+		$client->date();
+	    }
+	    $client->freebie();
+	}
 	elsif ($ARGV[$i] eq '-q' || $ARGV[$i] eq '--query') {
 	    print 'Sessions used: ' . $client->{sessions} . "\n";
 	    print 'Sessions purchased: ' . $client->{purchase} . "\n";
-	    print 'Total sessions to date: ' . $client->{total} . "\n";
+	    print 'Total paid sessions to date: ' . $client->{total} . "\n";
+	    if ($client->{freebies}) {
+		print 'Free sessions awarded: ' . $client->{freebies} . "\n";
+	    }
 	}
     }
     $client->write_file();
@@ -130,7 +142,7 @@ sub is_new {
 
 sub date {
     my $self = shift;
-    if ($@) {
+    if (@_) {
 	$self->{date} = shift;
     }
     else {
@@ -176,6 +188,18 @@ sub session {
     if ($self->{session_hook}) {
 	system($self->{session_hook});
     }
+    return $self;
+}
+
+sub freebie {
+    my $self = shift;
+    open (FILE, ">>", $self->{sessions_file}) or die ("Cannot open sessions file: $!");
+    print FILE $self->{date}, ' ', $self->{weekday}, "\tfree\tsession\n";
+    close (FILE);
+    if ($self->{session_hook}) {
+	system($self->{session_hook});
+    }
+    ++$self->{freebies};
     return $self;
 }
 
