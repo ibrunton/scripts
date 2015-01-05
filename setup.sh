@@ -5,6 +5,7 @@ GIT_DIR=$HOME/build/git
 # directory locations
 echo -n "Linking data locations..."
 ln -s /mnt/data/Dropbox $HOME/Dropbox
+ln -s /mnt/data/build $HOME/build
 ln -s /mnt/data/docs $HOME/docs
 ln -s /mnt/data/pics $HOME/pics
 ln -s /mnt/data/scripts $HOME/scripts
@@ -21,9 +22,11 @@ ln -s $HOME/Dropbox/config/dots/_Xmodmap $HOME/.Xmodmap
 ln -s $HOME/Dropbox/config/dots/_Xresources $HOME/.Xresources
 ln -s $HOME/Dropbox/config/emacs $HOME/.emacs.d
 ln -s $HOME/Dropbox/config/dots/_pentadactylrc $HOME/.pentadactylrc
+ln -s $HOME/Dropbox/config/dots/_vimperatorrc $HOME/.vimperatorrc
 ln -s $HOME/Dropbox/config/dots/_tmux.conf $HOME/.tmux.conf
 ln -s $HOME/Dropbox/config/dots/_vimrc $HOME/.vimrc
 ln -s $HOME/Dropbox/config/vim $HOME/.vim
+ln -s $HOME/Dropbox/config/dwb $HOME/.config/dwb
 ln -s $HOME/Dropbox/config/zsh/_zshenv $HOME/.zshenv
 ln -s /mnt/data/themes $HOME/.themes
 ln -s $HOME/Dropbox/config/bash $HOME/.config/bash

@@ -233,6 +233,9 @@ sub write_file {
     open(FILE, ">", $client_file) or die("Cannot open file $client_file: $!");
     print FILE 'sessions=' . $self->{sessions} . "\n";
     print FILE 'purchase=' . $self->{purchase} . "\n";
+    if ($self->{freebies}) {
+	print FILE 'freebies=' . $self->{freebies} . "\n";
+    }
     print FILE 'total=' . $self->{total} . "\n";
     if ($self->{session_hook}) {
 	print FILE 'session_hook=' . $self->{session_hook} . "\n";
@@ -243,3 +246,4 @@ sub write_file {
 }
 
 1;
+

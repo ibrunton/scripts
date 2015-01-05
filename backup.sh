@@ -20,11 +20,11 @@ then
 	exit 1
 fi
 
-rsync -r --safe-links --exclude=/build/kernel $source_dir $target_dir >> $logfile
+rsync -r --safe-links --exclude=/build/kernel $source_dir $target_dir 2>> $logfile
 
 # backup system-wide configs
 source_dir=/etc
-rsync -r --safe-links $source_dir $target_dir >> $logfile
+rsync -r --safe-links $source_dir $target_dir 2>> $logfile
 
 # backup data
 source_dir=/mnt/data/
@@ -64,7 +64,7 @@ mv $HOME/pics/pics $HOME/pics/saved/$y/$m/$d
 mkdir -p $HOME/pics/xedrbh/saved/$y/$m
 mv $HOME/pics/xedrbh/xedrbh $HOME/pics/xedrbh/saved/$y/$m/$d
 
-rsync -r --exclude=virtualbox $source_dir $target_dir >> $logfile
+rsync -r --exclude=virtualbox $source_dir $target_dir 2>> $logfile
 
 mkdir -p $HOME/pics/xedrbh/xedrbh/x
 mkdir -p $HOME/pics/pics/wp
