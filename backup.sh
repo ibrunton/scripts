@@ -43,6 +43,15 @@ do
 	fi
 done
 
+for f in $HOME/pics/xedrbh/xedrbh/x/* ;
+do
+	newf1=$(echo "$f" | tr ' :' '_-' | tr A-Z a-z | sed 's/jpe$/jpg/')
+	if [[ ! -e $newf1 ]]
+	then
+		mv "$f" $newf1
+	fi
+done
+
 for f in $HOME/pics/pics/* ;
 do
 	newf1=$(echo "$f" | tr ' :' '_-' | tr A-Z a-z | sed 's/jpe$/jpg/')
