@@ -11,7 +11,7 @@ my $editor = $ENV{EDITOR} // '/usr/bin/vim';
 if (@ARGV) {
     my $client;
     if ($ARGV[0] =~ m/\w+-\w+/) { # client-name key, required
-	print "Initialising client $ARGV[0].\n";
+	##print "Initialising client $ARGV[0].\n";
 	$client = Client->new($ARGV[0]);
 	shift(@ARGV);
     }
@@ -67,7 +67,14 @@ if (@ARGV) {
 	    }
 	    $client->freebie();
 	}
+	elsif ($ARGV[$i] eq '--set-active') {
+	    $client->set_active();
+	}
+	elsif ($ARGV[$i] eq '--set-inactive') {
+	    $client->set_inactive();
+	}
 	elsif ($ARGV[$i] eq '-q' || $ARGV[$i] eq '--query') {
+	    print 'Status: ' . $client->{status} . "\n";
 	    print 'Sessions used: ' . $client->{sessions} . "\n";
 	    print 'Sessions purchased: ' . $client->{purchase} . "\n";
 	    print 'Total paid sessions to date: ' . $client->{total} . "\n";
@@ -121,6 +128,7 @@ sub _init {
 	else {
 	    $self->{is_new_client} = 1;
 	    mkdir $self->{dir};
+	    $self->{status} = 'Active';
 	    $self->{sessions} = 0;
 	    $self->{purchase} = 0;
 	    $self->{total} = 0;
@@ -226,6 +234,18 @@ sub purchase {
     return $self;
 }
 
+sub set_active {
+    my $self = shift;
+    $self->{status} = 'Active';
+    return $self;
+}
+
+sub set_inactive {
+    my $self = shift;
+    $self->{status} = 'Inactive';
+    return $self;
+}
+
 sub write_file {
     my $self = shift;
     my $client_file = $self->{dir} . $self->{key};
@@ -233,6 +253,7 @@ sub write_file {
     open(FILE, ">", $client_file) or die("Cannot open file $client_file: $!");
     print FILE 'sessions=' . $self->{sessions} . "\n";
     print FILE 'purchase=' . $self->{purchase} . "\n";
+    print FILE 'status=' . $self->{status} . "\n";
     if ($self->{freebies}) {
 	print FILE 'freebies=' . $self->{freebies} . "\n";
     }
