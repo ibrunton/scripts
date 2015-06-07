@@ -133,6 +133,8 @@ sub _init {
 	    $self->{purchase} = 0;
 	    $self->{total} = 0;
 	}
+	
+	if (!$self->{status}) { $self->{status} = 'Active'; }
 
 	$self->{sessions_file} = $self->{dir} . 'sessions';
 	$self->{contact_file} = $self->{dir} . 'contact';

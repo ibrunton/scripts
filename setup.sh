@@ -22,11 +22,11 @@ ln -s $HOME/Dropbox/config/dots/_Xmodmap $HOME/.Xmodmap
 ln -s $HOME/Dropbox/config/dots/_Xresources $HOME/.Xresources
 ln -s $HOME/Dropbox/config/emacs $HOME/.emacs.d
 ln -s $HOME/Dropbox/config/dots/_pentadactylrc $HOME/.pentadactylrc
-ln -s $HOME/Dropbox/config/dots/_vimperatorrc $HOME/.vimperatorrc
+#ln -s $HOME/Dropbox/config/dots/_vimperatorrc $HOME/.vimperatorrc
 ln -s $HOME/Dropbox/config/dots/_tmux.conf $HOME/.tmux.conf
 ln -s $HOME/Dropbox/config/dots/_vimrc $HOME/.vimrc
 ln -s $HOME/Dropbox/config/vim $HOME/.vim
-ln -s $HOME/Dropbox/config/dwb $HOME/.config/dwb
+#ln -s $HOME/Dropbox/config/dwb $HOME/.config/dwb
 ln -s $HOME/Dropbox/config/zsh/_zshenv $HOME/.zshenv
 ln -s /mnt/data/themes $HOME/.themes
 ln -s $HOME/Dropbox/config/bash $HOME/.config/bash
@@ -35,19 +35,19 @@ ln -s $HOME/Dropbox/.userdata/netrc_iandbrunton $HOME/.config/netrc_iandbrunton
 ln -s $HOME/Dropbox/.userdata/netrc_wolfshift $HOME/.config/netrc_wolfshift
 ln -s $HOME/Dropbox/.userdata/netrc $HOME/.netrc
 ln -s /mnt/data/config/openbox $HOME/.config/openbox
-ln -s /mnt/data/config/herbstluftwm $HOME/.config/herbstluftwm
-ln -s /mnt/data/Dropbox/config/luakit $HOME/.config/luakit
-ln -s /mnt/data/Dropbox/share/luakit $HOME/.local/share/luakit
-ln -s /mnt/data/config/ncmpcpp $HOME/.ncmpcpp
+#ln -s /mnt/data/config/herbstluftwm $HOME/.config/herbstluftwm
+#ln -s /mnt/data/Dropbox/config/luakit $HOME/.config/luakit
+#ln -s /mnt/data/Dropbox/share/luakit $HOME/.local/share/luakit
+#ln -s /mnt/data/config/ncmpcpp $HOME/.ncmpcpp
 ln -s $HOME/Dropbox/config/zsh $HOME/.config/zsh
 ln -s $HOME/Dropboxconfig/conky $HOME/.config/conky
 echo "done."
 
 # essentials from github
-echo "Cloning essential GIT repos..."
-mkdir -p $GIT_DIR
-mkdir -p $HOME/bin
-cd $GIT_DIR
+#echo "Cloning essential GIT repos..."
+#mkdir -p $GIT_DIR
+#mkdir -p $HOME/bin
+#cd $GIT_DIR
 
 if [ -x /mnt/data/docs/programming/perl/log/log.pl ] ; then
 	ln -s /mnt/data/docs/programming/perl/log/log.pl $HOME/bin/llg
@@ -63,16 +63,16 @@ elif
 	ln -s $GIT_DIR/log/tag.pl $HOME/bin/log-tag
 fi
 
-git clone https://github.com/muennich/urxvt-perls.git
+#git clone https://github.com/muennich/urxvt-perls.git
 
-git clone https://github.com/KittyKatt/screenFetch.git
-ln -s $GIT_DIR/screenFetch/screenfetch-dev $HOME/bin/screenfetch
+#git clone https://github.com/KittyKatt/screenFetch.git
+#ln -s $GIT_DIR/screenFetch/screenfetch-dev $HOME/bin/screenfetch
 
-git clone https://github.com/graysky2/modprobed_db.git
+#git clone https://github.com/graysky2/modprobed_db.git
 
-git clone https://github.com/capitaomorte/yasnippet.git
+#git clone https://github.com/capitaomorte/yasnippet.git
 
-git clone https://github.com/kohler/gifsicle.git
+#git clone https://github.com/kohler/gifsicle.git
 
 echo "done."
 
