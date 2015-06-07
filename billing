@@ -1,0 +1,55 @@
+#!/usr/bin/env perl
+
+# scripts
+# 2015-06-01 19:24
+# by Ian D Brunton <iandbrunton at gmail dawt com>
+
+use Modern::Perl;
+
+my $file = $ENV{HOME} . '/Dropbox/docs/training/business/billing';
+
+my $client;
+my $date = &get_date;
+my $type = 'persession';
+my $amount = '45.00';
+my $method = 'cash';
+
+for (my $i = 0; $i < $#ARGV; ++$i) {
+    if ($ARGV[$i] eq '--client' || $ARGV[$i] eq '-c') {
+	$client = $ARGV[++$i];
+    }
+    elsif ($ARGV[$i] eq '--date') {
+	$date = $ARGV[++$i];
+    }
+    elsif ($ARGV[$i] =~ m/\d{4}([\/-])\d{2}\1\d{2}/) {
+	$date = $ARGV[$i];
+    }
+    elsif ($ARGV[$i] eq '--type' || $ARGV[$i] eq '-t') {
+	$type = $ARGV[++$i];
+    }
+    elsif ($ARGV[$i] eq '--method' || $ARGV[$i] eq '-m') {
+	$method = $ARGV[++$i];
+    }
+    else {
+    }
+}
+
+if (!$client) {
+}
+
+open (FILE, ">>", $file) or die ("Cannot open file $file: $!");
+print FILE $date . '|' . $client . '|session|' . $type . '|' . $amount . '|' . $method . "\n";
+close (FILE);
+
+sub get_date {
+    my $y = (localtime(time))[5] + 1900;
+    my $m = &double_digit((localtime(time))[4] + 1);
+    my $d = &double_digit((localtime(time))[3]);
+
+    return $y . '-' . $m . '-' . $d;
+};
+
+sub double_digit {
+    my $n = shift;
+    return $n < 10 ? '0' . $n : $n;
+}
