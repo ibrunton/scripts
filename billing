@@ -30,6 +30,9 @@ for (my $i = 0; $i < $#ARGV; ++$i) {
     elsif ($ARGV[$i] eq '--method' || $ARGV[$i] eq '-m') {
 	$method = $ARGV[++$i];
     }
+    elsif ($ARGV[$i] eq '--amount' || $ARGV[$i] eq '-a') {
+	$amount = $ARGV[++$i];
+    }
     else {
     }
 }
