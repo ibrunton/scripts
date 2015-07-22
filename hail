@@ -1,0 +1,6 @@
+#!/bin/sh
+
+$HOME/bin/log-tag heathenry mjolnir
+notify-send "Hail the Aesir and Vanir!
+Hail the honoured dead!"
+
