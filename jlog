@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [ -z "$1" ] ; then
+	/home/ian/bin/editlog -J
+else
+	/home/ian/bin/llg -Jtfb "$@"
+fi
