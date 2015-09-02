@@ -6,7 +6,7 @@ logfile=$HOME/.logs/rsync/$(date +"%Y-%m-%d")
 
 # backup configs
 source_dir=$HOME
-target_dir=/media/VERBATIM-HD/sync/$hostname/
+target_dir=/run/media/ian/VERBATIM-HD/sync/$hostname/
 
 if [ ! -d $target_dir ]
 then
