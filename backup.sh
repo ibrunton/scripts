@@ -3,10 +3,12 @@
 hostname=$(hostname)
 mkdir -p $HOME/.logs/rsync
 logfile=$HOME/.logs/rsync/$(date +"%Y-%m-%d")
+TARGET_ROOT=/run/media/ian/VERBATIM-HD/sync
+MOVE_PICS={$MOVE_PICS:-YES}
 
 # backup configs
 source_dir=$HOME
-target_dir=/run/media/ian/VERBATIM-HD/sync/$hostname/
+target_dir=$TARGET_ROOT/$hostname/
 
 if [ ! -d $target_dir ]
 then
@@ -28,50 +30,52 @@ rsync -r --safe-links $source_dir $target_dir 2>> $logfile
 
 # backup data
 source_dir=/mnt/data/
-target_dir=/media/VERBATIM-HD/sync/data
+target_dir=$TARGET_ROOT/data
 
-y=$(date +"%Y")
-m=$(date +"%m")
-d=$(date +"%d")
+if [ "${MOVE_PICS}" == "YES" ]; then
+	y=$(date +"%Y")
+	m=$(date +"%m")
+	d=$(date +"%d")
 
-for f in $HOME/pics/xedrbh/xedrbh/* ;
-do
-	newf1=$(echo "$f" | tr ' :' '_-' | tr A-Z a-z | sed 's/jpe$/jpg/')
-	if [[ ! -e $newf1 ]]
-	then
-		mv "$f" $newf1
+	for f in $HOME/pics/xedrbh/xedrbh/* ;
+	do
+		newf1=$(echo "$f" | tr ' :' '_-' | tr A-Z a-z | sed 's/jpe$/jpg/')
+		if [[ ! -e $newf1 ]]
+		then
+			mv "$f" $newf1
+		fi
+	done
+
+	for f in $HOME/pics/xedrbh/xedrbh/x/* ;
+	do
+		newf1=$(echo "$f" | tr ' :' '_-' | tr A-Z a-z | sed 's/jpe$/jpg/')
+		if [[ ! -e $newf1 ]]
+		then
+			mv "$f" $newf1
+		fi
+	done
+
+	for f in $HOME/pics/pics/* ;
+	do
+		newf1=$(echo "$f" | tr ' :' '_-' | tr A-Z a-z | sed 's/jpe$/jpg/')
+		if [[ ! -e $newf1 ]]
+		then
+			mv "$f" $newf1
+		fi
+	done
+
+	if [ "$(ls -A $HOME/pics/pics/wp)" ] ; then
+		mv $HOME/pics/pics/wp/* $HOME/pics/wp/
 	fi
-done
 
-for f in $HOME/pics/xedrbh/xedrbh/x/* ;
-do
-	newf1=$(echo "$f" | tr ' :' '_-' | tr A-Z a-z | sed 's/jpe$/jpg/')
-	if [[ ! -e $newf1 ]]
-	then
-		mv "$f" $newf1
-	fi
-done
+	rmdir $HOME/pics/pics/wp
 
-for f in $HOME/pics/pics/* ;
-do
-	newf1=$(echo "$f" | tr ' :' '_-' | tr A-Z a-z | sed 's/jpe$/jpg/')
-	if [[ ! -e $newf1 ]]
-	then
-		mv "$f" $newf1
-	fi
-done
+	mkdir -p $HOME/pics/saved/$y/$m
+	mv $HOME/pics/pics $HOME/pics/saved/$y/$m/$d
 
-if [ "$(ls -A $HOME/pics/pics/wp)" ] ; then
-	mv $HOME/pics/pics/wp/* $HOME/pics/wp/
+	mkdir -p $HOME/pics/xedrbh/saved/$y/$m
+	mv $HOME/pics/xedrbh/xedrbh $HOME/pics/xedrbh/saved/$y/$m/$d
 fi
-
-rmdir $HOME/pics/pics/wp
-
-mkdir -p $HOME/pics/saved/$y/$m
-mv $HOME/pics/pics $HOME/pics/saved/$y/$m/$d
-
-mkdir -p $HOME/pics/xedrbh/saved/$y/$m
-mv $HOME/pics/xedrbh/xedrbh $HOME/pics/xedrbh/saved/$y/$m/$d
 
 rsync -r --exclude=virtualbox $source_dir $target_dir 2>> $logfile
 
