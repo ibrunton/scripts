@@ -58,6 +58,15 @@ if (@ARGV) {
 	    }
 	    $client->session();
 	}
+	elsif ($ARGV[$i] eq '-l' || $ARGV[$i] eq '--half-session') {
+	    if ($i != $#ARGV && $ARGV[$i + 1] =~ m|^((\d{4}-)?([01][0-9]-)?[0123][0-9])$|) {
+		$client->date($ARGV[++$i]);
+	    }
+	    else {
+		$client->date();
+	    }
+	    $client->half_session();
+	}
 	elsif ($ARGV[$i] eq '-f' || $ARGV[$i] eq '--freebie') {
 	    if ($i != $#ARGV && $ARGV[$i + 1] =~ m|^((\d{4}-)?([01][0-9]-)?[0123][0-9])$|) {
 		$client->date($ARGV[++$i]);
@@ -188,6 +197,23 @@ sub session {
     my $self = shift;
     ++$self->{sessions};
     ++$self->{total};
+    open(FILE, ">>", $self->{sessions_file}) or die("Cannot open sessions file: $!");
+    print FILE $self->{date}, ' ', $self->{weekday}, "\t", $self->{sessions}, '/', $self->{purchase}, "\tsession\n";
+    close(FILE);
+    print 'Session ' . $self->{sessions} . ' of ' . $self->{purchase} . ".\n";
+    if ($self->{sessions} >= $self->{purchase}) {
+	print "WARNING: Client has no remaining paid sessions.\n";
+    }
+    if ($self->{session_hook}) {
+	system($self->{session_hook});
+    }
+    return $self;
+}
+
+sub half_session {
+    my $self = shift;
+    $self->{sessions} += 0.5;
+    $self->{total} += 0.5;
     open(FILE, ">>", $self->{sessions_file}) or die("Cannot open sessions file: $!");
     print FILE $self->{date}, ' ', $self->{weekday}, "\t", $self->{sessions}, '/', $self->{purchase}, "\tsession\n";
     close(FILE);
