@@ -4,7 +4,7 @@ hostname=$(hostname)
 mkdir -p $HOME/.logs/rsync
 logfile=$HOME/.logs/rsync/$(date +"%Y-%m-%d")
 TARGET_ROOT=/run/media/ian/VERBATIM-HD/sync
-MOVE_PICS={$MOVE_PICS:-YES}
+MOVE_PICS=${MOVE_PICS:-YES}
 
 # backup configs
 source_dir=$HOME
@@ -22,17 +22,20 @@ then
 	exit 1
 fi
 
-rsync -r --safe-links --exclude=/build/kernel $source_dir $target_dir 2>> $logfile
+echo "Backing up home directory..."
+rsync -q -r --safe-links --exclude=/build/kernel $source_dir $target_dir 2>> $logfile
 
 # backup system-wide configs
 source_dir=/etc
-rsync -r --safe-links $source_dir $target_dir 2>> $logfile
+echo "Backing up /etc..."
+rsync -q -r --safe-links $source_dir $target_dir 2>> $logfile
 
 # backup data
 source_dir=/mnt/data/
 target_dir=$TARGET_ROOT/data
 
 if [ "${MOVE_PICS}" == "YES" ]; then
+	echo "Moving pics for backup..."
 	y=$(date +"%Y")
 	m=$(date +"%m")
 	d=$(date +"%d")
@@ -77,7 +80,8 @@ if [ "${MOVE_PICS}" == "YES" ]; then
 	mv $HOME/pics/xedrbh/xedrbh $HOME/pics/xedrbh/saved/$y/$m/$d
 fi
 
-rsync -r --exclude=virtualbox $source_dir $target_dir 2>> $logfile
+echo "Backing up data..."
+rsync -q -r --exclude=virtualbox $source_dir $target_dir 2>> $logfile
 
 mkdir -p $HOME/pics/xedrbh/xedrbh/x
 mkdir -p $HOME/pics/pics/wp

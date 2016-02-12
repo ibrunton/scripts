@@ -34,11 +34,11 @@ ln -s $HOME/Dropbox/config/logrc $HOME/.config/logrc
 ln -s $HOME/Dropbox/.userdata/netrc_iandbrunton $HOME/.config/netrc_iandbrunton
 ln -s $HOME/Dropbox/.userdata/netrc_wolfshift $HOME/.config/netrc_wolfshift
 ln -s $HOME/Dropbox/.userdata/netrc $HOME/.netrc
-ln -s /mnt/data/config/openbox $HOME/.config/openbox
-#ln -s /mnt/data/config/herbstluftwm $HOME/.config/herbstluftwm
+#ln -s /mnt/data/config/openbox $HOME/.config/openbox
+ln -s /mnt/data/config/herbstluftwm $HOME/.config/herbstluftwm
 #ln -s /mnt/data/Dropbox/config/luakit $HOME/.config/luakit
 #ln -s /mnt/data/Dropbox/share/luakit $HOME/.local/share/luakit
-#ln -s /mnt/data/config/ncmpcpp $HOME/.ncmpcpp
+ln -s /mnt/data/config/ncmpcpp $HOME/.ncmpcpp
 ln -s $HOME/Dropbox/config/zsh $HOME/.config/zsh
 ln -s $HOME/Dropboxconfig/conky $HOME/.config/conky
 echo "done."
@@ -46,7 +46,7 @@ echo "done."
 # essentials from github
 #echo "Cloning essential GIT repos..."
 #mkdir -p $GIT_DIR
-#mkdir -p $HOME/bin
+mkdir -p $HOME/bin
 #cd $GIT_DIR
 
 if [ -x /mnt/data/docs/programming/perl/log/log.pl ] ; then
