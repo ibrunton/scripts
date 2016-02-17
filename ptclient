@@ -204,6 +204,7 @@ sub session {
     if ($self->{sessions} >= $self->{purchase}) {
 	print "WARNING: Client has no remaining paid sessions.\n";
     }
+    $self->set_active;
     if ($self->{session_hook}) {
 	system($self->{session_hook});
     }
@@ -221,6 +222,7 @@ sub half_session {
     if ($self->{sessions} >= $self->{purchase}) {
 	print "WARNING: Client has no remaining paid sessions.\n";
     }
+    $self->set_active;
     if ($self->{session_hook}) {
 	system($self->{session_hook});
     }
