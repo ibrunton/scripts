@@ -1,0 +1,38 @@
+#!/usr/bin/env perl
+
+# scripts
+# 2016-04-29 18:35
+# by Ian D Brunton <iandbrunton at gmail dawt com>
+
+use Modern::Perl;
+
+my $basedir = $ENV{HOME} . '/Dropbox/docs/training/clients/';
+my $client = $ARGV[0] or die ("No parameters passed.");
+
+my $f = $basedir . $client . '/account';
+my $balance = 0;
+
+if (-e $f) {
+    open (FILE, "<", $f) or die ("Cannot open file `$f': $!");
+    my @lines = <FILE>;
+    close (FILE);
+    if ($lines[0] =~ /(-?\d+(\.\d{0,2})?)/) {
+    	$balance = $1;
+    }
+}
+
+if ($ARGV[1]) {
+    my $new = 0;
+    if ($ARGV[1] =~ /(-?\d+(\.\d{0,2})?)/) {
+	$new = $1;
+    }
+    $balance += $new;
+
+    open (FILE, ">", $f) or die ("Cannot open file `$f': $!");
+    print FILE $balance, "\n";
+    close (FILE);
+}
+
+print 'Balance: $' . $balance . "\n";
+
+exit (0);
