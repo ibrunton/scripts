@@ -6,6 +6,8 @@ off() {
 	xset s off
 	xset s noblank
 	xset -dpms
+
+	$HOME/scripts/toggle.sh noblank
 }
 
 on() {
@@ -14,6 +16,8 @@ on() {
 	xset s on
 	xset s blank
 	xset +dpms
+
+	$HOME/scripts/toggle.sh noblank
 }
 
 "$1"
