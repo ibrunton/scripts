@@ -1,0 +1,10 @@
+#!/bin/sh
+
+ptclient ripley-david -p 1 -s
+ptaccount ripley-david -45
+
+if [ -z $1 ] ; then
+	ptaccount ripley-david 45
+else
+	ptaccount ripley-david $1
+fi
