@@ -13,6 +13,11 @@ ln -s /mnt/data/videos $HOME/videos
 ln -s /mnt/data/music $HOME/music
 echo "done."
 
+echo -n "Creating dirs..."
+mkdir $HOME/bin
+mkdir $HOME/dl
+echo "done."
+
 # config files
 mkdir -p $HOME/.config
 mkdir -p $HOME/.local/share
@@ -45,8 +50,6 @@ echo "done."
 
 # essentials from github
 #echo "Cloning essential GIT repos..."
-#mkdir -p $GIT_DIR
-mkdir -p $HOME/bin
 #cd $GIT_DIR
 
 if [ -x /mnt/data/docs/programming/perl/log/log.pl ] ; then
@@ -55,6 +58,7 @@ if [ -x /mnt/data/docs/programming/perl/log/log.pl ] ; then
 	ln -s /mnt/data/docs/programming/perl/log/editlog.pl $HOME/bin/editlog
 	ln -s /mnt/data/docs/programming/perl/log/tag $HOME/bin/log-tag
 	ln -s /mnt/data/docs/programming/perl/log/switch_last_2_lines.pl $HOME/bin/switchlog
+	ln -s /mnt/data/docs/programming/perl/log/journal.pl $HOME/bin/jlog
 elif
 	git clone git@github.com:ibrunton/log.git
 	ln -s $GIT_DIR/log/log.pl $HOME/bin/llg
@@ -74,7 +78,7 @@ fi
 
 #git clone https://github.com/kohler/gifsicle.git
 
-echo "done."
+#echo "done."
 
 echo "Don't forget to install log system libs!"
 echo "Don't forget to install urxvt perls in system directory!"
