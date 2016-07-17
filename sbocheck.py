@@ -5,7 +5,7 @@ import re
 from os.path import expanduser
 
 def sbocheck(updatesfile):
-    installedfile = "~/Dropbox/docs/slackbuilds-14.1"
+    installedfile = "~/Dropbox/docs/slackbuilds-14.2"
     installedfile = expanduser(installedfile)
 
     installed = {}
