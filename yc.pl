@@ -15,7 +15,8 @@ my %classes = ( 'Mon' => '1200 teaching Yoga Fundamentals \(NN\) to 1245',
 
 my $attendance = $ARGV[0];
 
-my $command = "llg " . $classes{$daynames[$weekday]};
+my $class = $classes{$daynames[$weekday]} || die ("No class defined for today.");
+my $command = "llg " . $class;
 $command =~ s/NN/$attendance/;
 
 exec ($command);
