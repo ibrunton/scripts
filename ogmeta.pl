@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# scripts
+# For simplifying passing metadata to ffmpeg.
 # 2016-10-30 10:42
 # by Ian D Brunton <iandbrunton at gmail dawt com>
 
