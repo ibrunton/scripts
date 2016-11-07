@@ -1,0 +1,5 @@
+#!/bin/sh
+
+DIR=~/Dropbox/docs/drafts
+FILE="$DIR/$1"
+vim $FILE
