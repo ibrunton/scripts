@@ -1,0 +1,33 @@
+#!/usr/bin/env perl
+
+# alt: In the given file, finds two strings separated by a tab, returns the first,
+#      reverses the two, and writes them back to the file.
+# 2016-11-13 10:39
+# by Ian D Brunton <iandbrunton at gmail dawt com>
+
+use Modern::Perl;
+
+my $basedir = $ENV{HOME} . '/Dropbox/docs/';
+my $file = shift (@ARGV) or die ("File required.");
+my $path = $basedir . $file;
+
+open (FILE, "<", $path) or die ("Cannot open file $path: $!");
+my $line = <FILE>;
+close (FILE);
+
+$line =~ s/\n//;
+
+if ($line =~ m/([^\t]+)\t([^\t]+)/) {
+    $a = $1;
+    $b = $2;
+
+    print "$a\n";
+    open (FILE, ">", $path) or die ("Cannot open file $path for writing: $!");
+    print FILE "$b\t$a\n";
+    close (FILE);
+
+    exit (0);
+}
+else {
+    die ("Incorrectly formatted file.");
+}
