@@ -4,14 +4,17 @@ cofnfile=$HOME/Dropbox/docs/cofn
 
 if [ $(stat -c "%s" $cofnfile) -gt "0" ] ; then
 	if [ -z $1 ] ; then
-		llg -n $(cat $cofnfile) :cof
+		#llg -n $(cat $cofnfile) :cof
+		mark -t :rt
 	else
-		llg $(cat $cofnfile) :cof to $1
+		#llg $(cat $cofnfile) :cof to $1
+		mark -t $1
 	fi
 	echo -n "" > $cofnfile
 else
 	if [ -z $1 ] ; then
 		roundtime > $cofnfile
+		llg -r :cof to :mark
 	else
 		llg -n $1 :cof
 	fi
