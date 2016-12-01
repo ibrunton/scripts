@@ -76,6 +76,15 @@ if (@ARGV) {
 	    }
 	    $client->freebie();
 	}
+	elsif ($ARGV[$i] eq '-x' || $ARGV[$i] eq '--no-show') {
+	    if ($i != $#ARGV && $ARGV[$i + 1] =~ m|^((\d{4}-)?([01][0-9]-)?[0123][0-9])$|) {
+		$client->date($ARGV[++$i]);
+	    }
+	    else {
+		$client->date();
+	    }
+	    $client->noshow();
+	}
 	elsif ($ARGV[$i] eq '--set-active') {
 	    $client->set_active();
 	}
@@ -238,6 +247,15 @@ sub freebie {
 	system($self->{session_hook});
     }
     ++$self->{freebies};
+    return $self;
+}
+
+sub noshow {
+    my $self = shift;
+    open (FILE, ">>", $self->{sessions_file}) or die ("Cannot open sessions file: $!");
+    print FILE $self->{date}, ' ', $self->{weekday}, "\t", $self->{sessions}, '/', $self->{purchase}, "\tno-show\n";
+    close (FILE);
+    ++$self->{sessions};
     return $self;
 }
 
