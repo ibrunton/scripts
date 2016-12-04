@@ -1,0 +1,18 @@
+#!/bin/bash
+
+yogafile=$HOME/Dropbox/docs/yoga
+
+if [ $(stat -c "%s" $yogafile) -gt "0" ] ; then
+	if [ -z $1 ] ; then
+		mark -t :rt :mark
+	else
+		mark -t $1 :mark
+	fi
+else
+	if [ -z $1 ] ; then
+		roundtime > $yogafile
+		llg -r :primary to :mark
+	else
+		llg $1 :primary to :mark
+	fi
+fi
