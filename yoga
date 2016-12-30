@@ -4,9 +4,9 @@ yogafile=$HOME/Dropbox/docs/yoga
 
 if [ $(stat -c "%s" $yogafile) -gt "0" ] ; then
 	if [ -z $1 ] ; then
-		llg $(cat $yogafile) :primary to :rt :mark
+		llg $(cat $yogafile) :primary to :rt :marky
 	else
-		llg $(cat $yogafile) :primary to "$1" :mark
+		llg $(cat $yogafile) :primary to "$1" :marky
 	fi
 	echo -n > $yogafile
 else

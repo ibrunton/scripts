@@ -5,16 +5,16 @@ cofnfile=$HOME/Dropbox/docs/cofn
 if [ $(stat -c "%s" $cofnfile) -gt "0" ] ; then
 	if [ -z $1 ] ; then
 		#llg -n $(cat $cofnfile) :cof
-		mark -t :rt
+		mark +C -t :rt
 	else
 		#llg $(cat $cofnfile) :cof to $1
-		mark -t $1
+		mark +C -t $1
 	fi
 	echo -n "" > $cofnfile
 else
 	if [ -z $1 ] ; then
 		roundtime > $cofnfile
-		llg -r :cof to :mark
+		llg -r :cof to :markc
 	else
 		llg -n $1 :cof
 	fi
