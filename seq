@@ -1,0 +1,28 @@
+#!/usr/bin/env perl
+
+# ian
+# 2017-03-03 00:39
+# by Ian D Brunton <iandbrunton at gmail dawt com>
+# This script prints the first line of a file, then moves that line to the end
+# of the file.  Each time the file is accessed, therefore, lines are printed in
+# sequence.
+
+use Modern::Perl;
+
+my $file = $ARGV[0] || die ("No file name provided.");
+
+open (FILE, "<", $file) or die ("Cannot open file `$file': $!");
+my @lines = <FILE>;
+close (FILE);
+
+my $current = shift (@lines);
+print $current, "\n";
+push (@lines, $current);
+
+open (FILE, ">", $file) or die ("Cannot open file `$file': $!");
+foreach (@lines) {
+    print FILE $_;
+}
+close (FILE);
+
+exit (0);
