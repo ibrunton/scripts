@@ -85,6 +85,9 @@ if (@ARGV) {
 	    }
 	    $client->noshow();
 	}
+	elsif ($ARGV[$i] eq '-e' || $ARGV[$i] eq '--edit') {
+	    system($editor . ' ' . $client->{client_file});
+	}
 	elsif ($ARGV[$i] eq '--set-active') {
 	    $client->set_active();
 	}
@@ -126,13 +129,13 @@ sub _init {
 
     if ($self->{key}) {
 	$self->{dir} = $CLIENT_DIR . $self->{key} . '/';
-	my $client_file = $self->{dir} . $self->{key};
+	$self->{client_file} = $self->{dir} . $self->{key};
 
 	if (-e $self->{dir}) {
-	    if (-e $client_file) { # read in data from client files
+	    if (-e $self->client_file) { # read in data from client files
 	    	$self->{is_new_client} = 0;
 
-	    	open(FILE, "<", $client_file) or die("Cannot open file $client_file: $!");
+	    	open(FILE, "<", $self->client_file) or die("Cannot open file $self->client_file: $!");
 	    	my @flines = <FILE>;
 	    	close(FILE);
 
@@ -296,9 +299,8 @@ sub set_inactive {
 
 sub write_file {
     my $self = shift;
-    my $client_file = $self->{dir} . $self->{key};
 
-    open(FILE, ">", $client_file) or die("Cannot open file $client_file: $!");
+    open(FILE, ">", $self->{client_file)} or die("Cannot open file $client->{client_file}: $!");
     print FILE 'sessions=' . $self->{sessions} . "\n";
     print FILE 'purchase=' . $self->{purchase} . "\n";
     print FILE 'status=' . $self->{status} . "\n";
