@@ -132,10 +132,10 @@ sub _init {
 	$self->{client_file} = $self->{dir} . $self->{key};
 
 	if (-e $self->{dir}) {
-	    if (-e $self->client_file) { # read in data from client files
+	    if (-e $self->{client_file}) { # read in data from client files
 	    	$self->{is_new_client} = 0;
 
-	    	open(FILE, "<", $self->client_file) or die("Cannot open file $self->client_file: $!");
+	    	open(FILE, "<", $self->{client_file}) or die("Cannot open file $self->{client_file}: $!");
 	    	my @flines = <FILE>;
 	    	close(FILE);
 
@@ -300,7 +300,7 @@ sub set_inactive {
 sub write_file {
     my $self = shift;
 
-    open(FILE, ">", $self->{client_file)} or die("Cannot open file $client->{client_file}: $!");
+    open(FILE, ">", $self->{client_file}) or die("Cannot open file $self->{client_file}: $!");
     print FILE 'sessions=' . $self->{sessions} . "\n";
     print FILE 'purchase=' . $self->{purchase} . "\n";
     print FILE 'status=' . $self->{status} . "\n";
