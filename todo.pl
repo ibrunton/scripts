@@ -9,9 +9,14 @@ use Modern::Perl;
 my $file = $ENV{HOME} . '/Dropbox/docs/todo';
 
 if ($ARGV[0]) {
+    my $prefix = '* ';
+    if ($ARGV[0] eq '-p') {
+	shift (@ARGV);
+	$prefix = '!* ';
+    }
     my $s = ucfirst (join (' ', @ARGV));
     open (FILE, ">>", $file) or die ("Cannot open file $file: $!");
-    print FILE '* ', $s, "\n";
+    print FILE $prefix, $s, "\n";
     close (FILE);
 }
 else {
