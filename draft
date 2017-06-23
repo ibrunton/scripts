@@ -1,5 +1,6 @@
 #!/bin/sh
 
 DIR=~/Dropbox/docs/drafts
-FILE="$DIR/$1"
+DATE=`date "+%Y-%m-%d"`
+FILE="$DIR/$DATE-$1"
 vim $FILE

@@ -34,6 +34,18 @@ if (@ARGV) {
 	    # open file for editing
 	    system($editor . ' ' . $client->{assessment_file});
 	}
+	elsif ($ARGV[$i] eq '-b' || $ARGV[$i] eq '--bank') {
+	    my $n = 0;
+	    if ($i != $#ARGV && $ARGV[$i + 1] =~ m/^\d+$/) {
+		$n = $ARGV[++$i];
+	    }
+	    else {
+		print "Enter number of minutes banked: ";
+		$n = <STDIN>;
+		$n =~ s/\n//g;
+	    }
+	    $client->bank($n);
+	}
 	elsif ($ARGV[$i] eq '-n' || $ARGV[$i] eq '--new') {
 	    system($editor . ' ' . $client->{contact_file});
 	}
@@ -101,6 +113,9 @@ if (@ARGV) {
 	    print 'Total paid sessions to date: ' . $client->{total} . "\n";
 	    if ($client->{freebies}) {
 		print 'Free sessions awarded: ' . $client->{freebies} . "\n";
+	    }
+	    if ($client->{banked}) {
+		print 'Minutes banked: ' . $client->{banked} . "\n";
 	    }
 	}
     }
@@ -285,6 +300,13 @@ sub purchase {
     return $self;
 }
 
+sub bank {
+    my $self = shift;
+    my $banked = shift;
+    $self->{banked} = $banked;
+    return $self;
+}
+
 sub set_active {
     my $self = shift;
     $self->{status} = 'Active';
@@ -306,6 +328,9 @@ sub write_file {
     print FILE 'status=' . $self->{status} . "\n";
     if ($self->{freebies}) {
 	print FILE 'freebies=' . $self->{freebies} . "\n";
+    }
+    if ($self->{banked}) {
+	print FILE 'banked=' . $self->{banked} . "\n";
     }
     print FILE 'total=' . $self->{total} . "\n";
     if ($self->{session_hook}) {
