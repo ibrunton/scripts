@@ -20,6 +20,21 @@ if ($ARGV[0] =~ /cheque/) {
     # Begin new pay period.  Move current file to archive.
     my $archivefile = $archive . $date;
     move ($file, $archivefile);
+
+    my $total = 0;
+    open (FILE, "<", $archivefile) or die ("Cannot open file `$archivefile': $!");
+    my @lines = <FILE>;
+    close (FILE);
+
+    foreach (@lines) {
+	if ($_ =~ /(\d+(\.\d+))/) {
+	    $total += $1;
+	}
+    }
+
+    open (FILE, ">>", $archivefile) or die ("Cannot open file `$archivefile': $!");
+    print FILE "\nTotal:\t$total\n";
+    close (FILE);
 }
 elsif ($ARGV[0] =~/^\d+(\.\d+)?$/) {
     # Add 1 session at pay rate given in $ARGV[0]
@@ -33,4 +48,5 @@ elsif ($ARGV[0] =~/^\d+(\.\d+)?$/) {
     close (FILE);
 }
 else { # incorrect input: error
+    die ("Invalid input.  Try again.");
 }
