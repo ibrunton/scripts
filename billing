@@ -9,7 +9,7 @@ use Modern::Perl;
 my $client;
 my $date = &get_date;
 my $type = 'persession';
-my $amount = '45.00';
+my $amount = '60.00';
 my $method = 'cash';
 
 my $file = $ENV{HOME} . '/Dropbox/docs/training/business/billing-' . $date->{year};
