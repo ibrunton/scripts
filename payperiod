@@ -1,0 +1,36 @@
+#!/usr/bin/env perl
+
+# scripts
+# 2017-07-14 15:25
+# by Ian D Brunton <iandbrunton at gmail dawt com>
+
+use Modern::Perl;
+use IDB;
+use File::Copy qw(move);
+
+my $file = $ENV{HOME} . '/Dropbox/docs/training/business/payperiod';
+my $archive = $file . '-archive/';
+
+my $date = join ('-', &IDB::year ((localtime(time))[5]),
+		    &IDB::double_digit ((localtime(time))[4]),
+		    &IDB::double_digit ((localtime(time))[3]));
+my $wkday = &IDB::wkday ((localtime)[6]);
+
+if ($ARGV[0] =~ /cheque/) {
+    # Begin new pay period.  Move current file to archive.
+    my $archivefile = $archive . $date;
+    move ($file, $archivefile);
+}
+elsif ($ARGV[0] =~/^\d+(\.\d+)?$/) {
+    # Add 1 session at pay rate given in $ARGV[0]
+    my $rate = shift (@ARGV);
+    my $client = "unknown";
+    if (@ARGV) { $client = join (' ', @ARGV); }
+    open (FILE, ">>", $file) or die ("Cannot open file `$file': $!");
+    print FILE $date, ' ', $wkday, "\t",
+	$client, "\t",
+	$rate, "\n";
+    close (FILE);
+}
+else { # incorrect input: error
+}
