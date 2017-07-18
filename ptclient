@@ -287,7 +287,7 @@ sub half_session {
     if ($self->{session_hook}) {
 	system($self->{session_hook});
     }
-    if (($self->{sessions} % 1) != 0) {
+    if ($self->{sessions} =~ /\.5/) {
 	$self->add_to_payperiod;
     }
     return $self;
@@ -433,8 +433,10 @@ sub add_to_payperiod {
 	}
 	my $name = $self->{name};
 	my $rate = $self->{rate};
+	my $ord = $self->{sessions} . '/' . $self->{purchase};
+	if ($rate = 22.05 && $self->{sessions} < 5) { $ord .= '+'; }
 
-	system ("payperiod $rate $name");
+	system ("payperiod $rate $ord $name");
     }
 
     return $self;

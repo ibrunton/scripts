@@ -27,7 +27,7 @@ if ($ARGV[0] =~ /cheque/) {
     close (FILE);
 
     foreach (@lines) {
-	if ($_ =~ /(\d+(\.\d+))/) {
+	if ($_ =~ /(\d+(\.\d+)?)$/) {
 	    $total += $1;
 	}
     }
@@ -39,11 +39,13 @@ if ($ARGV[0] =~ /cheque/) {
 elsif ($ARGV[0] =~/^\d+(\.\d+)?$/) {
     # Add 1 session at pay rate given in $ARGV[0]
     my $rate = shift (@ARGV);
+    my $ord = shift (@ARGV);
     my $client = "unknown";
     if (@ARGV) { $client = join (' ', @ARGV); }
     open (FILE, ">>", $file) or die ("Cannot open file `$file': $!");
     print FILE $date, ' ', $wkday, "\t",
 	$client, "\t",
+	$ord, "\t",
 	$rate, "\n";
     close (FILE);
 }
