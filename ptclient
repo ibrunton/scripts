@@ -123,6 +123,7 @@ if (@ARGV) {
 	    print 'Status: ' . $client->{status} . "\n";
 	    print 'Sessions used: ' . $client->{sessions} . "\n";
 	    print 'Sessions purchased: ' . $client->{purchase} . "\n";
+	    print 'Pay rate: ' . $client->{rate} . "\n";
 	    print 'Total paid sessions to date: ' . $client->{total} . "\n";
 	    if ($client->{freebies}) {
 		print 'Free sessions awarded: ' . $client->{freebies} . "\n";
@@ -418,7 +419,6 @@ sub get_name {
     print "Enter client's name: ";
     my $input = <STDIN>;
     $input =~ s/\n$//;
-    $input =~ s/\W//g;
     $self->{name} = $input;
 
     return $self;
@@ -431,10 +431,14 @@ sub add_to_payperiod {
 	unless (defined($self->{name})) {
 	    $self->get_name;
 	}
+	unless (defined($self->{rate})) {
+	    $self->set_rate;
+	}
 	my $name = $self->{name};
 	my $rate = $self->{rate};
-	my $ord = $self->{sessions} . '/' . $self->{purchase};
-	if ($rate = 22.05 && $self->{sessions} < 5) { $ord .= '+'; }
+	my $ord = ($self->{sessions} =~ /\.5/ ? $self->{sessions} + 0.5 : $self->{sessions})
+	    . '/' . $self->{purchase};
+	if ($rate == 22.05 && $self->{purchase} < 5) { $ord .= '+'; }
 
 	system ("payperiod $rate $ord $name");
     }
