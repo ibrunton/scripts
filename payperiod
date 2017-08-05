@@ -14,7 +14,7 @@ my $archive = $file . '-archive/';
 if (! -e $archive ) { mkdir $archive; }
 
 my $date = join ('-', &IDB::year ((localtime(time))[5]),
-		    &IDB::double_digit ((localtime(time))[4]),
+		    &IDB::double_digit ((localtime(time))[4] + 1),
 		    &IDB::double_digit ((localtime(time))[3]));
 my $wkday = &IDB::wkday ((localtime)[6]);
 
