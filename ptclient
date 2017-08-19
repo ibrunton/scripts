@@ -107,8 +107,8 @@ if (@ARGV) {
 	    $client->set_inactive();
 	}
 	elsif ($ARGV[$i] eq '-t' || $ARGV[$i] eq '--set-type') {
-	    if ($i != $#ARGV && $ARGV[$i + 1] eq 'A') {
-		$client->set_type ('Abs-O-Lute');
+	    if ($i != $#ARGV && $ARGV[$i + 1] eq 'M') {
+		$client->set_type ('Motiv');
 		++$i;
 	    }
 	    elsif ($i != $#ARGV && $ARGV[$i + 1] eq 'I') {
@@ -362,10 +362,10 @@ sub set_inactive {
 sub get_type {
     my $self = shift;
     
-    print "Enter client type [A]bs-O-Lute or [I]ndependent: ";
+    print "Enter client type [M]otiv or [I]ndependent: ";
     my $input = <STDIN>;
-    if ($input =~ /A/) { $self->set_type ('Abs-O-Lute'); }
-    elsif ($input =~ /I/) { $self->set_type ('Independent'); }
+    if ($input =~ /M/i) { $self->set_type ('Motiv'); }
+    elsif ($input =~ /I/i) { $self->set_type ('Independent'); }
     else { print "Invalid entry.\n"; }
 
     return $self;
@@ -381,7 +381,7 @@ sub set_type {
 sub set_rate {
     my $self = shift;
 
-    if ($self->{type} eq 'Abs-O-Lute') {
+    if ($self->{type} eq 'Motiv') {
     	my $rate = 25.20;
     	if ($self->{rate}) { # if it's already set, don't change it
 	    $rate = $self->{rate};
@@ -427,7 +427,12 @@ sub get_name {
 sub add_to_payperiod {
     my $self = shift;
 
+    # To change gym name automatically:
     if ($self->{type} eq 'Abs-O-Lute') {
+	$self->{type} = 'Motiv';
+    }
+
+    if ($self->{type} eq 'Motiv') {
 	unless (defined($self->{name})) {
 	    $self->get_name;
 	}
@@ -448,6 +453,11 @@ sub add_to_payperiod {
 
 sub write_file {
     my $self = shift;
+
+    # To change gym name automatically:
+    if ($self->{type} eq 'Abs-O-Lute') {
+	$self->{type} = 'Motiv';
+    }
 
     open(FILE, ">", $self->{client_file}) or die("Cannot open file $self->{client_file}: $!");
     print FILE 'name=' . $self->{name} . "\n";

@@ -177,7 +177,7 @@ sub invoice_number {
 
     my $n;
 
-    if ($l =~ /(\d{3,})/) {
+    if ($l =~ /(\d+)/) {
 	$n = $1;
     }
     else { # error
