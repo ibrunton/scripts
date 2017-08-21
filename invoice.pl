@@ -182,9 +182,12 @@ sub invoice_number {
     }
     else { # error
     }
+
+    ++$n;
+    $n = sprintf ("%03d", $n);
     
     open (FILE, ">", $f) or die ("Cannot open file `$f': $!");
-    print FILE ++$n;
+    print FILE $n;
     close (FILE);
 
     return $n;
