@@ -30,7 +30,7 @@ if ($ARGV[0] =~ /cheque/) {
     close (FILE);
 
     foreach (@lines) {
-	if ($_ =~ /(\d+(\.\d+)?)$/) {
+	if ($_ =~ /(\d+(\.\d+)?)$/ && $_ !~ /^#/) {
 	    ++$count;
 	    $total += $1;
 	}
