@@ -383,10 +383,7 @@ sub set_rate {
 
     if ($self->{type} eq 'Motiv') {
     	my $rate = 25.20;
-    	if ($self->{rate}) { # if it's already set, don't change it
-	    $rate = $self->{rate};
-    	}
-    	else { $self->{rate} = $rate; }
+    	$self->{rate} = $rate;
 
     	if ($self->{purchase} >= 5) {
 	    $rate = 22.05;
@@ -395,10 +392,7 @@ sub set_rate {
     }
     elsif ($self->{type} eq 'Independent') {
 	my $rate = 60.00;
-    	if ($self->{rate}) { # if it's already set, don't change it
-	    $rate = $self->{rate};
-    	}
-    	else { $self->{rate} = $rate; }
+    	$self->{rate} = $rate;
 
     	if ($self->{purchase} >= 10) {
 	    $rate = 54.00;
@@ -443,7 +437,6 @@ sub add_to_payperiod {
 	my $rate = $self->{rate};
 	my $ord = ($self->{sessions} =~ /\.5/ ? $self->{sessions} + 0.5 : $self->{sessions})
 	    . '/' . $self->{purchase};
-	if ($rate == 22.05 && $self->{purchase} < 5) { $ord .= '+'; }
 
 	system ("payperiod $rate $ord $name");
     }
