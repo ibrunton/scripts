@@ -312,6 +312,7 @@ sub noshow {
     print FILE $self->{date}, ' ', $self->{weekday}, "\t", $self->{sessions}, '/', $self->{purchase}, "\tno-show\n";
     close (FILE);
     ++$self->{sessions};
+    $self->add_to_payperiod;
     return $self;
 }
 
