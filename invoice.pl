@@ -12,9 +12,26 @@ use OpenOffice::OODoc;
 use IDB;
 
 my $print_to_console = 0;
-my $create_formatted = 1;
+my $create_formatted = 0;
 my $move_to_archive  = 0;
 my $use_config       = 0;
+
+if (@ARGV) {
+    for (my $i = 0; $i <= $#ARGV; ++$i) {
+	if ($ARGV[$i] eq '-c') {
+	    $print_to_console = 1;
+	}
+	elsif ($ARGV[$i] eq '-f') {
+	    $create_formatted = 1;
+	}
+	elsif ($ARGV[$i] eq '-m') {
+	    $move_to_archive = 1;
+	}
+	else {
+	    print "Unknown option: $ARGV[$i]\n";
+	}
+    }
+}
 
 if ($use_config) {
     my $opts = {};
@@ -22,15 +39,6 @@ if ($use_config) {
 
     if (@ARGV) {
     	for (my $i = 0; $i <= $#ARGV; $i++) {
-	    if ($i eq '-c') {
-	    	$rc_file = $ARGV[++$i];
-	    }
-	    elsif ($i eq '-v') {
-	    }
-	    elsif ($i eq '-p') {
-	    }
-	    else {	# invalid option
-	    }
     	}
     }
 
