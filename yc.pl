@@ -7,14 +7,19 @@
 
 use Modern::Perl;
 
-my $weekday = (localtime(time))[6];
-my @daynames = ( 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
-my %classes = ( 'Mon' => '1200 teaching Yoga Fundamentals \(NN\) to 1245',
-    'Tue' => '1900 teaching Yoga for Runners \(NN\) to 2000',
-    'Wed' => '1900 teaching Yoga for Men \(NN\) to 2000',
-    'Fri' => '1200 sub-teaching Yoga for Acadia Community \(NN\) to 1300' );
+if (!$ARGV[0]) {
+    print STDERR "Missing argument: number of students in class.\n";
+    exit (1);
+}
 
 my $attendance = $ARGV[0];
+
+my $weekday = (localtime(time))[6];
+my @daynames = ( 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
+my %classes = (
+    'Wed' => '0900 teaching Yoga Foundations at Lahara \(NN\) to 1000',
+);
+
 
 my $class = $classes{$daynames[$weekday]} || die ("No class defined for today.");
 my $command = "llg " . $class;
