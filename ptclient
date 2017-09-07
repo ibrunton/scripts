@@ -383,31 +383,24 @@ sub set_rate {
     my $self = shift;
 
     if ($self->{type} eq 'Motiv') {
-    	my $rate = 25.20;
-    	if ($self->{rate}) { # if it's already set, don't change it
-	    $rate = $self->{rate};
-    	}
-    	else { $self->{rate} = $rate; }
+    	$self->{rate} = 25.20;
 
     	if ($self->{purchase} >= 5) {
-	    $rate = 22.05;
-	    $self->{rate} = $rate;
+	    $self->{rate} = 22.05;
     	}
+
+	if ($self->{special_rate}) {
+	    $self->{rate} = $self->{special_rate};
+	}
     }
     elsif ($self->{type} eq 'Independent') {
-	my $rate = 60.00;
-    	if ($self->{rate}) { # if it's already set, don't change it
-	    $rate = $self->{rate};
-    	}
-    	else { $self->{rate} = $rate; }
+    	$self->{rate} = 60.00;
 
     	if ($self->{purchase} >= 10) {
-	    $rate = 54.00;
-	    $self->{rate} = $rate;
+	    $self->{rate} = 54.00;
     	}
     	elsif ($self->{purchase} >= 20) {
-	    $rate = 50.00;
-	    $self->{rate} = $rate;
+	    $self->{rate} = 50.00;
     	}
     }
 
@@ -444,7 +437,6 @@ sub add_to_payperiod {
 	my $rate = $self->{rate};
 	my $ord = ($self->{sessions} =~ /\.5/ ? $self->{sessions} + 0.5 : $self->{sessions})
 	    . '/' . $self->{purchase};
-	if ($rate == 22.05 && $self->{purchase} < 5) { $ord .= '+'; }
 
 	system ("payperiod $rate $ord $name");
     }
@@ -466,7 +458,9 @@ sub write_file {
     print FILE 'purchase=' . $self->{purchase} . "\n";
     print FILE 'status=' . $self->{status} . "\n";
     print FILE 'type=' . $self->{type} . "\n";
-    print FILE 'rate=' . $self->{rate} . "\n";
+    if ($self->{special_rate}) {
+	print FILE 'rate=' . $self->{special_rate} . "\n";
+    }
     if ($self->{freebies}) {
 	print FILE 'freebies=' . $self->{freebies} . "\n";
     }
