@@ -365,7 +365,6 @@ sub get_type {
     print "Enter client type [M]otiv or [I]ndependent: ";
     my $input = <STDIN>;
     if ($input =~ /M/i) { $self->set_type ('Motiv'); }
-    elsif ($input =~ /S/i) { $self->set_type ('Special'); }
     elsif ($input =~ /I/i) { $self->set_type ('Independent'); }
     else { print "Invalid entry.\n"; }
 
@@ -394,16 +393,13 @@ sub set_rate {
 	}
     }
     elsif ($self->{type} eq 'Independent') {
-	my $rate = 60.00;
-    	$self->{rate} = $rate;
+    	$self->{rate} = 60.00;
 
     	if ($self->{purchase} >= 10) {
-	    $rate = 54.00;
-	    $self->{rate} = $rate;
+	    $self->{rate} = 54.00;
     	}
     	elsif ($self->{purchase} >= 20) {
-	    $rate = 50.00;
-	    $self->{rate} = $rate;
+	    $self->{rate} = 50.00;
     	}
     }
 
