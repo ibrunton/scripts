@@ -75,7 +75,7 @@ my $date = &IDB::nicedate;
 my $data = {};
 foreach (@records) {
     my ($_date, $_client, $_ord, $_rate) =
-    	($_ =~ /(\d{4}-\d{2}-\d{2} [SMTWF][a-z]{2})\t([A-Za-z ]+)\t(\d+\/\d+\+?)\t(\d{2,}\.\d{2})/);
+    	($_ =~ /(\d{4}-\d{2}-\d{2} [SMTWF][a-z]{2})\t([A-Za-z ]+)\t(\d+\/\d+\+?)\t(\d+\.\d{2})/);
     $_rate = sprintf ("%.2f", $_rate);
     push (@{$data->{rates}->{$_rate}->{items}}, { client => $_client, date => $_date, number => $_ord });
     $data->{rates}->{$_rate}->{subtotal} += $_rate;
