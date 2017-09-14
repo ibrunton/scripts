@@ -44,6 +44,7 @@ if ($ARGV[0] =~ /cheque/) {
 elsif ($ARGV[0] =~/^\d+(\.\d+)?$/) {
     # Add 1 session at pay rate given in $ARGV[0]
     my $rate = shift (@ARGV);
+    $rate = sprintf ("%.2f", $rate);
     my $ord = shift (@ARGV);
     my $client = "unknown";
     if (@ARGV) { $client = join (' ', @ARGV); }
