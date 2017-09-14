@@ -459,7 +459,7 @@ sub write_file {
     print FILE 'status=' . $self->{status} . "\n";
     print FILE 'type=' . $self->{type} . "\n";
     if ($self->{special_rate}) {
-	print FILE 'rate=' . $self->{special_rate} . "\n";
+	print FILE 'special_rate=' . $self->{special_rate} . "\n";
     }
     if ($self->{freebies}) {
 	print FILE 'freebies=' . $self->{freebies} . "\n";
