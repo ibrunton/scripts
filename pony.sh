@@ -1,13 +1,19 @@
 #!/bin/sh
 
 FILE=$HOME/.local/share/volume
+INC=1
+
+if [ ! -z "$2" ]
+then
+	INC="$2"
+fi
 
 case "$1" in
 	up)
-		ponymix increase 1 > $FILE
+		ponymix increase $INC > $FILE
 		;;
 	down)
-		ponymix decrease 1 > $FILE
+		ponymix decrease $INC > $FILE
 		;;
 	mute|unmute|toggle)
 		ponymix toggle > $FILE

@@ -23,7 +23,7 @@ then
 fi
 
 echo "Backing up home directory..."
-rsync -q -r --safe-links --exclude=/build/kernel $source_dir $target_dir 2>> $logfile
+rsync -q -r --safe-links --exclude=/.dropbox --exclude=/build/kernel $source_dir $target_dir 2>> $logfile
 
 # backup system-wide configs
 source_dir=/etc
@@ -81,7 +81,7 @@ if [ "${MOVE_PICS}" == "YES" ]; then
 fi
 
 echo "Backing up data..."
-rsync -q -r --exclude=virtualbox $source_dir $target_dir 2>> $logfile
+rsync -q -r --exclude=git --exclude=virtualbox $source_dir $target_dir 2>> $logfile
 
 mkdir -p $HOME/pics/xedrbh/xedrbh/x
 mkdir -p $HOME/pics/pics/wp
