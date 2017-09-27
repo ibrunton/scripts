@@ -123,7 +123,9 @@ if (@ARGV) {
 	    print 'Status: ' . $client->{status} . "\n";
 	    print 'Sessions used: ' . $client->{sessions} . "\n";
 	    print 'Sessions purchased: ' . $client->{purchase} . "\n";
-	    print 'Pay rate: ' . $client->{rate} . "\n";
+	    if ($client->{special_rate}) {
+	    	print 'Pay rate: ' . $client->{special_rate} . "\n";
+	    }
 	    print 'Total paid sessions to date: ' . $client->{total} . "\n";
 	    if ($client->{freebies}) {
 		print 'Free sessions awarded: ' . $client->{freebies} . "\n";
