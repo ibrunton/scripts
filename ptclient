@@ -310,10 +310,10 @@ sub freebie {
 
 sub noshow {
     my $self = shift;
-    open (FILE, ">>", $self->{sessions_file}) or die ("Cannot open sessions file: $!");
-    print FILE $self->{date}, ' ', $self->{weekday}, "\t", $self->{sessions}, '/', $self->{purchase}, "\tno-show\n";
-    close (FILE);
     ++$self->{sessions};
+    open (FILE, ">>", $self->{sessions_file}) or die ("Cannot open sessions file: $!");
+    print FILE $self->{date}, ' ', $self->{weekday}, "\t", $self->{sessions}, '/', $self->{purchase}, "\tno-show/late cancellation\n";
+    close (FILE);
     $self->add_to_payperiod;
     return $self;
 }
