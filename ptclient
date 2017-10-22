@@ -428,20 +428,19 @@ sub add_to_payperiod {
 	$self->{type} = 'Motiv';
     }
 
-    if ($self->{type} eq 'Motiv') {
-	unless (defined($self->{name})) {
-	    $self->get_name;
-	}
-	unless (defined($self->{rate})) {
-	    $self->set_rate;
-	}
-	my $name = $self->{name};
-	my $rate = $self->{rate};
-	my $ord = ($self->{sessions} =~ /\.5/ ? $self->{sessions} + 0.5 : $self->{sessions})
-	    . '/' . $self->{purchase};
-
-	system ("payperiod $rate $ord $name");
+    unless (defined($self->{name})) {
+	$self->get_name;
     }
+    unless (defined($self->{rate})) {
+	$self->set_rate;
+    }
+    my $name = $self->{name};
+    my $rate = $self->{rate};
+    my $ord = ($self->{sessions} =~ /\.5/ ? $self->{sessions} + 0.5 : $self->{sessions})
+	. '/' . $self->{purchase};
+
+    my $type = lc ($self->{type});
+    system ("payperiod $type $rate $ord $name");
 
     return $self;
 }
