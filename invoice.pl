@@ -299,20 +299,19 @@ suitable for printing.
 
 =item B<-c>
 
-Provide an alternative config file.
+Print invoice to console.
 
-=item B<-v>
+=item B<-f>
 
-Opens the resulting invoice file in the specified viewer.
+Created ODT formatted invoice.
 
-=item B<-p>
+=item B<-m>
 
-Sends the invoice file to the printer.
+Move payperiod file to archive.
 
-=item B<-r>
+=item B<--type>
 
-Outputs the invoice as plain text to STDOUT, as it would appear in the
-final invoice.
+The name of the invoicee, matching a key in the config file.
 
 =back
 
