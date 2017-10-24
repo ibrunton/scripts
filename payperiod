@@ -18,7 +18,7 @@ my $wkday = &IDB::wkday ((localtime)[6]);
 my $type = shift (@ARGV);
 my $rate = shift (@ARGV);
 my $ord = shift (@ARGV) || '1/1';
-my $client = join (@ARGV) || $type;
+my $client = join (' ', @ARGV) || $type;
 
 $file .= '-' . $type;
 
