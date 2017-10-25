@@ -42,6 +42,11 @@ if (@ARGV) {
     }
 }
 
+if (!$opts->{invoicee}) {
+    print STDERR "No invoicee specified.\n";
+    exit (1);
+}
+
 if ($use_config) {
     &parse_rc_file ($opts);
 }
