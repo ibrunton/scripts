@@ -17,7 +17,9 @@ my $attendance = $ARGV[0];
 my $weekday = (localtime(time))[6];
 my @daynames = ( 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
 my %classes = (
-    'Wed' => '0900 teaching Yoga Foundations at Lahara \(NN\) to 1000',
+    'Mon' => '1215 :teaching Restorative Yoga at Lahara \(NN\) to 1300',
+    'Tue' => '1900 :teaching Power Yoga at Motiv \(NN\) to 2000',
+    'Wed' => '0900 :teaching Yoga Foundations at Lahara \(NN\) to 1000',
 );
 
 

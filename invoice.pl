@@ -23,6 +23,9 @@ if (@ARGV) {
 	if ($ARGV[$i] eq '-c') {
 	    $print_to_console = 1;
 	}
+	elsif ($ARGV[$i] eq '-d') {
+	    $debug = 1;
+	}
 	elsif ($ARGV[$i] eq '-f') {
 	    $create_formatted = 1;
 	}
@@ -31,20 +34,32 @@ if (@ARGV) {
 	}
 	elsif ($ARGV[$i] eq '--type') {
 	    $opts->{invoicee} = $ARGV[++$i];
+	    $use_config = 1;
 	}
 	elsif ($ARGV[$i] =~ m/--type=(\w+)/) {
 	    $opts->{invoicee} = $1;
 	    $use_config = 1;
+	}
+	elsif ($ARGV[$i] eq '-h' || $ARGV[$i] eq '-?') {
+	    pod2usage (-exitstatus => 0, -verbose => 2);
 	}
 	else {
 	    print "Unknown option: $ARGV[$i]\n";
 	}
     }
 }
+else {
+    pod2usage (-exitval => 1, -verbose => 1);
+}
 
 if (!$opts->{invoicee}) {
-    print STDERR "No invoicee specified.\n";
-    exit (1);
+    die ("No invoicee specified.");
+}
+
+if ($debug) {
+    foreach (keys %{$opts}) {
+	print "  $_ = $opts->{$_}\n";
+    }
 }
 
 if ($use_config) {
@@ -118,7 +133,7 @@ if ($print_to_console) {
 if ($create_formatted) {
     my $invoice_num = &invoice_number ($opts);
 
-    my $output_file = $opts->{invoice_dir} . $invoice_num . '_' . $filedate .
+    my $output_file = $opts->{invoices_dir} . $invoice_num . '_' . $filedate .
 	'_' . $opts->{invoicee} . '.odt';
 
     my $oofile = odfContainer ($opts->{template_file});
@@ -287,7 +302,7 @@ invoice.pl
 
 =head1 VERSION
 
-0.1
+0.2
 
 =head1 SYNOPSIS
 
@@ -306,9 +321,13 @@ suitable for printing.
 
 Print invoice to console.
 
+=item B<-d>
+
+Debugging output.
+
 =item B<-f>
 
-Created ODT formatted invoice.
+Creat ODT formatted invoice.
 
 =item B<-m>
 
