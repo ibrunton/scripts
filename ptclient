@@ -384,25 +384,27 @@ sub set_type {
 sub set_rate {
     my $self = shift;
 
-    if ($self->{type} eq 'Motiv') {
-    	$self->{rate} = 25.20;
-
-    	if ($self->{purchase} >= 5) {
-	    $self->{rate} = 22.05;
-    	}
-
-	if ($self->{special_rate}) {
-	    $self->{rate} = $self->{special_rate};
-	}
+    if ($self->{special_rate}) {
+	$self->{rate} = $self->{special_rate};
     }
-    elsif ($self->{type} eq 'Independent') {
-    	$self->{rate} = 60.00;
+    else {
+	if ($self->{type} eq 'Motiv') {
+    	    $self->{rate} = 25.20;
 
-    	if ($self->{purchase} >= 10) {
-	    $self->{rate} = 54.00;
+    	    if ($self->{purchase} >= 5) {
+	    	$self->{rate} = 22.05;
+    	    }
+
     	}
-    	elsif ($self->{purchase} >= 20) {
-	    $self->{rate} = 50.00;
+    	elsif ($self->{type} eq 'Independent') {
+    	    $self->{rate} = 60.00;
+
+    	    if ($self->{purchase} >= 10) {
+	    	$self->{rate} = 54.00;
+    	    }
+    	    elsif ($self->{purchase} >= 20) {
+	    	$self->{rate} = 50.00;
+    	    }
     	}
     }
 

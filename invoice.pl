@@ -306,7 +306,7 @@ invoice.pl
 
 =head1 SYNOPSIS
 
-invoice.pl [OPTIONS] [FILE]
+invoice.pl --type=INVOICEE [OPTIONS] [FILE]
 
 =head1 DESCRIPTION
 
@@ -327,7 +327,7 @@ Debugging output.
 
 =item B<-f>
 
-Creat ODT formatted invoice.
+Create ODT formatted invoice.
 
 =item B<-m>
 
@@ -335,7 +335,7 @@ Move payperiod file to archive.
 
 =item B<--type>
 
-The name of the invoicee, matching a key in the config file.
+(Required.)  The name of the invoicee, matching a key in the config file.
 
 =back
 
