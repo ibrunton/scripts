@@ -8,6 +8,11 @@ use Modern::Perl;
 use IDB;
 use File::Copy qw(move);
 
+if (!@ARGV) {
+    print STDERR "Usage: payperiod TYPE RATE ORD CLIENT NAME\n";
+    exit (1);
+}
+
 my $file = $ENV{HOME} . '/Dropbox/docs/training/business/payperiod';
 
 my $date = join ('-', &IDB::year ((localtime(time))[5]),
