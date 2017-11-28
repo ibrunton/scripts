@@ -14,12 +14,17 @@ use IDB;
 my $print_to_console = 0;
 my $create_formatted = 0;
 my $move_to_archive  = 0;
-my $use_config       = 0;
+my $use_config       = 1;
+my $debug            = 0;
+my $opts             = {};
 
 if (@ARGV) {
     for (my $i = 0; $i <= $#ARGV; ++$i) {
 	if ($ARGV[$i] eq '-c') {
 	    $print_to_console = 1;
+	}
+	elsif ($ARGV[$i] eq '-d') {
+	    $debug = 1;
 	}
 	elsif ($ARGV[$i] eq '-f') {
 	    $create_formatted = 1;
@@ -27,27 +32,41 @@ if (@ARGV) {
 	elsif ($ARGV[$i] eq '-m') {
 	    $move_to_archive = 1;
 	}
+	elsif ($ARGV[$i] eq '--type') {
+	    $opts->{invoicee} = $ARGV[++$i];
+	    $use_config = 1;
+	}
+	elsif ($ARGV[$i] =~ m/--type=(\w+)/) {
+	    $opts->{invoicee} = $1;
+	    $use_config = 1;
+	}
+	elsif ($ARGV[$i] eq '-h' || $ARGV[$i] eq '-?') {
+	    pod2usage (-exitstatus => 0, -verbose => 2);
+	}
 	else {
 	    print "Unknown option: $ARGV[$i]\n";
 	}
     }
 }
-
-if ($use_config) {
-    my $opts = {};
-    my $rc_file;
-
-    if (@ARGV) {
-    	for (my $i = 0; $i <= $#ARGV; $i++) {
-    	}
-    }
-
-    &parse_rc ($rc_file);
+else {
+    pod2usage (-exitval => 1, -verbose => 1);
 }
 
-my $payperiod_file = $ENV{HOME} . '/Dropbox/docs/training/business/payperiod';
+if (!$opts->{invoicee}) {
+    die ("No invoicee specified.");
+}
 
-open (FILE, "<", $payperiod_file) or die ("Cannot open file `$payperiod_file': $!");
+if ($debug) {
+    foreach (keys %{$opts}) {
+	print "  $_ = $opts->{$_}\n";
+    }
+}
+
+if ($use_config) {
+    &parse_rc_file ($opts);
+}
+
+open (FILE, "<", $opts->{payperiod_file}) or die ("Cannot open file `$opts->{payperiod_file}': $!");
 my @records = <FILE>;
 close (FILE);
 
@@ -112,12 +131,12 @@ if ($print_to_console) {
 #   (It would be possible to have multiple options for different formats,
 #   but that would require significantly more code for little return.)
 if ($create_formatted) {
-    my $invoice_num = &invoice_number;
-    my $invoice_dir = $ENV{HOME} . '/Dropbox/docs/training/business/invoices/';
-    my $output_file = $invoice_dir . $invoice_num . '_' . $filedate . '.odt'; #$rc->{extension};
-    my $template_file = $invoice_dir . '_template' . '.odt'; #$rc->{extension};
+    my $invoice_num = &invoice_number ($opts);
 
-    my $oofile = odfContainer ($template_file);
+    my $output_file = $opts->{invoices_dir} . $invoice_num . '_' . $filedate .
+	'_' . $opts->{invoicee} . '.odt';
+
+    my $oofile = odfContainer ($opts->{template_file});
     my $doc = odfDocument (
 	container => $oofile,
 	part => 'content'
@@ -137,7 +156,7 @@ if ($create_formatted) {
     my $row = 2;  # first row to modify
     foreach my $_rate (sort keys %{$data->{rates}}) {
 	$doc->insertRow ($t, $row);
-	$doc->updateCell ($t, $row, 0, 'Personal training session');
+	$doc->updateCell ($t, $row, 0, $opts->{$_rate});
 	$doc->updateCell ($t, $row, 1, $#{$data->{rates}->{$_rate}->{items}} + 1);
 	$doc->updateCell ($t, $row, 2, $_rate);
 	$doc->updateCell ($t, $row, 3, $data->{rates}->{$_rate}->{subtotal});
@@ -171,14 +190,14 @@ if ($create_formatted) {
 }
 
 if ($move_to_archive) {
-    my $archivefile = $payperiod_file . '-archive/' . $filedate;
-    move ($payperiod_file, $archivefile);
+    my $archivefile = $opts->{archive_dir} . $filedate . '_' . $opts->{invoicee};
+    move ($opts->{payperiod_file}, $archivefile);
 }
 
 exit (0);
 
 sub invoice_number {
-    my $f = $ENV{HOME} . '/Dropbox/docs/training/business/invoices/_count';
+    my $f = $opts->{count_file};
     open (FILE, "<", $f) or die ("Cannot open file `$f': $!");
     my $l = <FILE>;
     close (FILE);
@@ -210,23 +229,68 @@ sub parse_rc_file {	# currently unused
     $keyfile->load_from_file ($rc_file, 'keep-comments');
 
     if ($keyfile->has_group ('invoice')) {
-	if ($keyfile->has_key ('invoice', 'format')) {
-	    $rc->{format} = $keyfile->get_string ('invoice', 'format');
-	    $rc->{extension} = '.' . lc ($rc->{format});
+	if ($keyfile->has_key ('invoice', 'payperiod_file')) {
+	    $rc->{payperiod_file} = $keyfile->get_string ('invoice', 'payperiod_file');
 	}
 	else {
-	    $rc->{format} = 'html';
-	    $rc->{extension} = '.html';
+	    $rc->{payperiod_file} = '~/Dropbox/docs/training/business/payperiod';
 	}
 
-	if ($keyfile->has_key ('invoice', 'viewer')) {
-	    $rc->{viewer} = $keyfile->get_string ('invoice', 'viewer');
+	if ($keyfile->has_key ('invoice', 'archive_dir')) {
+	    $rc->{archive_dir} = $keyfile->get_string ('invoice', 'archive_dir');
 	}
 	else {
-	    $rc->{viewer} = 'firefox';
+	    $rc->{archive_dir} = '~/Dropbox/docs/training/business/payperiod_archive/';
+	}
+
+	if ($keyfile->has_key ('invoice', 'invoices_dir')) {
+	    $rc->{invoices_dir} = $keyfile->get_string ('invoice', 'invoices_dir');
+	}
+	else {
+	    $rc->{invoices_dir} = '~/Dropbox/docs/training/business/invoices';
+	}
+
+	if ($keyfile->has_key ('invoice', 'count_file')) {
+	    $rc->{count_file} = $keyfile->get_string ('invoice', 'count_file');
+	}
+	else {
+	    $rc->{count_file} = '~/Dropbox/docs/training/business/invoices';
+	}
+
+	if ($keyfile->has_key ('invoice', 'template_file')) {
+	    $rc->{template_file} = $keyfile->get_string ('invoice', 'template_file');
+	}
+	else {
+	    $rc->{template_file} = '~/Dropbox/docs/training/business/invoices/_template.odt';
 	}
     }
     else {}
+
+    my $g = $opts->{invoicee};
+    if ($keyfile->has_group ($g)) {
+	if ($keyfile->has_key ($g, 'template_file')) {
+	    $rc->{template_file} = $keyfile->get_string ($g, 'template_file');
+	}
+
+	$opts->{payperiod_file} .= '-' . $g;
+    }
+
+    $g .= '-rates';
+    if ($keyfile->has_group ($g)) {
+	my @r = $keyfile->get_keys ($g);
+	foreach (@r) {
+	    $opts->{$_} = $keyfile->get_string ($g, $_);
+	}
+    }
+
+    # debugging:
+    if ($debug) {
+    	foreach (sort keys %{$opts}) {
+	    print "$_ = ", $opts->{$_}, "\n";
+    	}
+    }
+
+    # no need to return because $rc is an anon hash
 }
 
 
@@ -238,11 +302,11 @@ invoice.pl
 
 =head1 VERSION
 
-0.1
+0.2
 
 =head1 SYNOPSIS
 
-invoice.pl [OPTIONS] [FILE]
+invoice.pl --type=INVOICEE [OPTIONS] [FILE]
 
 =head1 DESCRIPTION
 
@@ -255,20 +319,23 @@ suitable for printing.
 
 =item B<-c>
 
-Provide an alternative config file.
+Print invoice to console.
 
-=item B<-v>
+=item B<-d>
 
-Opens the resulting invoice file in the specified viewer.
+Debugging output.
 
-=item B<-p>
+=item B<-f>
 
-Sends the invoice file to the printer.
+Create ODT formatted invoice.
 
-=item B<-r>
+=item B<-m>
 
-Outputs the invoice as plain text to STDOUT, as it would appear in the
-final invoice.
+Move payperiod file to archive.
+
+=item B<--type>
+
+(Required.)  The name of the invoicee, matching a key in the config file.
 
 =back
 

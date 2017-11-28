@@ -8,53 +8,37 @@ use Modern::Perl;
 use IDB;
 use File::Copy qw(move);
 
-my $file = $ENV{HOME} . '/Dropbox/docs/training/business/payperiod';
-my $archive = $file . '-archive/';
+if (!@ARGV) {
+    print STDERR "Usage: payperiod TYPE RATE ORD CLIENT NAME\n";
+    exit (1);
+}
 
-if (! -e $archive ) { mkdir $archive; }
+my $file = $ENV{HOME} . '/Dropbox/docs/training/business/payperiod';
 
 my $date = join ('-', &IDB::year ((localtime(time))[5]),
 		    &IDB::double_digit ((localtime(time))[4] + 1),
 		    &IDB::double_digit ((localtime(time))[3]));
 my $wkday = &IDB::wkday ((localtime)[6]);
 
-if ($ARGV[0] =~ /cheque/) {
-    # Begin new pay period.  Move current file to archive.
-    my $archivefile = $archive . $date;
-    move ($file, $archivefile);
+my $type = shift (@ARGV);
+my $rate = shift (@ARGV);
+my $ord = shift (@ARGV) || '1/1';
+my $client = join (' ', @ARGV) || $type;
 
-    my $total = 0;
-    my $count = 0;
-    open (FILE, "<", $archivefile) or die ("Cannot open file `$archivefile': $!");
-    my @lines = <FILE>;
-    close (FILE);
+$file .= '-' . $type;
 
-    foreach (@lines) {
-	if ($_ =~ /(\d+(\.\d+)?)$/ && $_ !~ /^#/) {
-	    ++$count;
-	    $total += $1;
-	}
-    }
+$rate = sprintf ("%.2f", $rate);
 
-    open (FILE, ">>", $archivefile) or die ("Cannot open file `$archivefile': $!");
-    print FILE "\nTotal:\t$total\n";
-    print FILE "Hours:\t$count\n";
-    close (FILE);
-}
-elsif ($ARGV[0] =~/^\d+(\.\d+)?$/) {
-    # Add 1 session at pay rate given in $ARGV[0]
-    my $rate = shift (@ARGV);
-    $rate = sprintf ("%.2f", $rate);
-    my $ord = shift (@ARGV);
-    my $client = "unknown";
-    if (@ARGV) { $client = join (' ', @ARGV); }
-    open (FILE, ">>", $file) or die ("Cannot open file `$file': $!");
-    print FILE $date, ' ', $wkday, "\t",
-	$client, "\t",
-	$ord, "\t",
-	$rate, "\n";
-    close (FILE);
-}
-else { # incorrect input: error
-    die ("Invalid input.  Try again.");
-}
+open (FILE, ">>", $file) or die ("Cannot open file `$file': $!");
+print FILE $date, ' ', $wkday, "\t",
+    $client, "\t",
+    $ord, "\t",
+    $rate, "\n";
+close (FILE);
+
+exit (0);
+
+__END__;
+
+payperiod motiv 22.05 1/12 Judy Saunders
+payperiod iwk 75.00 1/1
