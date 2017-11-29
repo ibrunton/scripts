@@ -18,7 +18,7 @@ my $weekday = (localtime(time))[6];
 my @daynames = ( 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
 my %classes = (
     'Tue' => '1900 :teaching Power Yoga at Motiv \(NN\) to 2000; ptclient power-yoga -p 1 -s',
-    'Wed' => '1415 :teaching Yoga at IWK Youth Centre \(NN\) to 1500',
+    'Wed' => '1415 :teaching Yoga at IWK Youth Centre \(NN\) to 1500; ptclient iwk -p 1 -s',
 );
 
 my $class = $classes{$daynames[$weekday]} || die ("No class defined for today.");
