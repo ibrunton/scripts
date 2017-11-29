@@ -10,7 +10,7 @@ my $editor = $ENV{EDITOR} // '/usr/bin/vim';
 
 if (@ARGV) {
     my $client;
-    if ($ARGV[0] =~ m/\w+-\w+/) { # client-name key, required
+    if ($ARGV[0] =~ m/\w+/) { # client-name key, required
 	##print "Initialising client $ARGV[0].\n";
 	$client = Client->new($ARGV[0]);
 	shift(@ARGV);
