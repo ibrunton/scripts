@@ -17,8 +17,9 @@ my $attendance = $ARGV[0];
 my $weekday = (localtime(time))[6];
 my @daynames = ( 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
 my %classes = (
-    'Mon' => '1330 :teaching Newcomers Yoga at Lahara :newcomers \(NN\) to 1430',
-    'Wed' => '1415 :teaching Yoga at IWK Youth Centre \(NN\) to 1500; ptclient iwk -p 1 -s',
+    'Mon' => '1330 :teaching Newcomers Yoga at Lahara :newcomersa \(NN\) to 1430',
+    #'Wed' => '1415 :teaching Yoga at IWK Youth Centre \(NN\) to 1500; ptclient iwk -p 1 -s',
+    'Thu' => '1330 :teaching Newcomers Yoga group B at Lahara :newcomersb \(NN\) to 1430',
 );
 
 my $class = $classes{$daynames[$weekday]} || die ("No class defined for today.");

@@ -124,6 +124,7 @@ if ($print_to_console) {
 	print "\n";
     }
 
+    print '-' x 55, "\n";
     print "\nTotal:\t\t\t\t\t\t\$ " . $data->{total} . "\n\n";
 }
 
@@ -192,6 +193,9 @@ if ($create_formatted) {
 if ($move_to_archive) {
     my $archivefile = $opts->{archive_dir} . $filedate . '_' . $opts->{invoicee};
     move ($opts->{payperiod_file}, $archivefile);
+    open (FILE, ">>", $archivefile) or die ("Cannot open file $archivefile: $!");
+    print FILE "\nTotal: " . $data->{total} . "\n";
+    close (FILE);
 }
 
 exit (0);

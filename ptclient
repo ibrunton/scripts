@@ -46,6 +46,14 @@ if (@ARGV) {
 	    }
 	    $client->bank($n);
 	}
+	elsif ($ARGV[$i] eq '-m' || $ARGV[$i] eq '--mileage') {
+	    if ($i != $#ARGV && $ARGV[$i + 1] =~ m/^\d+$/) {
+		$client->mileage($ARGV[++$i]);
+	    }
+	    else {
+	    	$client->mileage();
+	    }
+	}
 	elsif ($ARGV[$i] eq '-n' || $ARGV[$i] eq '--new') {
 	    system($editor . ' ' . $client->{contact_file});
 	}
@@ -116,6 +124,9 @@ if (@ARGV) {
 		++$i;
 	    }
 	}
+	elsif ($ARGV[$i] eq '--set-special-rate') {
+	    $client->set_special_rate();
+	}
 	elsif ($ARGV[$i] eq '-v' || $ARGV[$i] eq '--validate') {
 	    $client->validate();
 	}
@@ -123,8 +134,14 @@ if (@ARGV) {
 	    print 'Status: ' . $client->{status} . "\n";
 	    print 'Sessions used: ' . $client->{sessions} . "\n";
 	    print 'Sessions purchased: ' . $client->{purchase} . "\n";
+	    if ($client->{reserve}) {
+		print 'Reserve sessions: '. $client->{reserve} . "\n";
+	    }
 	    if ($client->{special_rate}) {
 	    	print 'Pay rate: ' . $client->{special_rate} . "\n";
+	    }
+	    if ($client->{temp_rate}) {
+		print 'Pay rate (temp): ' . $client->{temp_rate} . "\n";
 	    }
 	    print 'Total paid sessions to date: ' . $client->{total} . "\n";
 	    if ($client->{freebies}) {
@@ -264,14 +281,21 @@ sub session {
     print FILE $self->{date}, ' ', $self->{weekday}, "\t", $self->{sessions}, '/', $self->{purchase}, "\tsession\n";
     close(FILE);
     print 'Session ' . $self->{sessions} . ' of ' . $self->{purchase} . ".\n";
+    $self->add_to_payperiod;
     if ($self->{sessions} >= $self->{purchase}) {
-	print "WARNING: Client has no remaining paid sessions.\n";
+	if ($self->{reserve} && $self->{reserve} != 0) {
+	    $self->{purchase} = $self->{reserve};
+	    $self->{reserve} = 0;
+	    $self->{sessions} = 0;
+	}
+	else {
+	    print "WARNING: Client has no remaining paid sessions.\n";
+	}
     }
     $self->set_active;
     if ($self->{session_hook}) {
 	system($self->{session_hook});
     }
-    $self->add_to_payperiod;
     return $self;
 }
 
@@ -284,7 +308,14 @@ sub half_session {
     close(FILE);
     print 'Session ' . $self->{sessions} . ' of ' . $self->{purchase} . ".\n";
     if ($self->{sessions} >= $self->{purchase}) {
-	print "WARNING: Client has no remaining paid sessions.\n";
+	if ($self->{reserve} != 0) {
+	    $self->{purchase} = $self->{reserve};
+	    $self->{reserve} = 0;
+	    $self->{sessions} = 0;
+	}
+	else {
+	    print "WARNING: Client has no remaining paid sessions.\n";
+	}
     }
     $self->set_active;
     if ($self->{session_hook}) {
@@ -328,7 +359,13 @@ sub assessment {
     close(FILE);
     print 'Session ' . $self->{sessions} . ' of ' . $self->{purchase} . ".\n";
     if ($self->{sessions} >= $self->{purchase}) {
-	print "WARNING: Client has no remaining paid sessions.\n";
+	if ($self->{reserve} != 0) {
+	    $self->{purchase} = $self->{reserve};
+	    $self->{reserve} = 0;
+	}
+	else {
+	    print "WARNING: Client has no remaining paid sessions.\n";
+	}
     }
     $self->add_to_payperiod;
     return $self;
@@ -337,9 +374,15 @@ sub assessment {
 sub purchase {
     my $self = shift;
     my $sessions = shift;
-    $self->{purchase} = $sessions;
-    $self->set_rate;
-    $self->{sessions} = 0;
+    if ($self->{sessions} >= $self->{purchase}) {
+    	$self->{purchase} = $sessions;
+	delete ($self->{temp_rate});
+    	$self->set_rate;
+    	$self->{sessions} = 0;
+    }
+    else {
+	$self->{reserve} = $sessions;
+    }
     return $self;
 }
 
@@ -387,12 +430,20 @@ sub set_rate {
     if ($self->{special_rate}) {
 	$self->{rate} = $self->{special_rate};
     }
+    elsif ($self->{temp_rate}) {
+	$self->{rate} = $self->{temp_rate};
+    }
     else {
 	if ($self->{type} eq 'Motiv') {
-    	    $self->{rate} = 25.20;
+    	    #$self->{rate} = 25.20;
+    	    $self->{rate} = 27.00;
 
-    	    if ($self->{purchase} >= 5) {
-	    	$self->{rate} = 22.05;
+	    if ($self->{purchase} == 12) {
+		$self->{rate} = 20.00;
+	    }
+    	    elsif ($self->{purchase} >= 5) {
+	    	#$self->{rate} = 22.05;
+	    	$self->{rate} = 22.80;
     	    }
 
     	}
@@ -411,6 +462,17 @@ sub set_rate {
     return $self;
 }
 
+sub set_special_rate {
+    my $self = shift;
+
+    print "Enter special rate: ";
+    my $input = <STDIN>;
+    if ($input =~ m/(\d+(\.\d{2}))/) {
+	$self->{special_rate} = $1;
+    }
+    return $self;
+}
+
 sub get_name {
     my $self = shift;
 
@@ -419,6 +481,31 @@ sub get_name {
     $input =~ s/\n$//;
     $self->{name} = $input;
 
+    return $self;
+}
+
+sub mileage {
+    my $self = shift;
+
+    my $m = 0;
+
+    if ($self->{mileage}) {
+	$m = $self->{mileage};
+    }
+    elsif ($self->{type} eq 'Motiv') {
+	$m = 16;
+    }
+    elsif (@_) {
+	$m = shift;
+    }
+    else { # prompt
+	print "Enter mileage: ";
+	$m = <STDIN>;
+    }
+
+    $m =~ s/\D//g;
+
+    system ("mileage $m");
     return $self;
 }
 
@@ -461,8 +548,14 @@ sub write_file {
     print FILE 'purchase=' . $self->{purchase} . "\n";
     print FILE 'status=' . $self->{status} . "\n";
     print FILE 'type=' . $self->{type} . "\n";
+    if ($self->{reserve}) {
+	print FILE 'reserve=' . $self->{reserve} . "\n";
+    }
     if ($self->{special_rate}) {
 	print FILE 'special_rate=' . $self->{special_rate} . "\n";
+    }
+    if ($self->{temp_rate}) {
+	print FILE 'temp_rate=' . $self->{temp_rate} . "\n";
     }
     if ($self->{freebies}) {
 	print FILE 'freebies=' . $self->{freebies} . "\n";

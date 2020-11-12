@@ -10,7 +10,7 @@ if [ ! -e $HOME/Dropbox ] ; then
 	ln -s /mnt/data/build $HOME/build
 	ln -s /mnt/data/docs $HOME/docs
 	ln -s /mnt/data/pics $HOME/pics
-	ln -s /mnt/data/scripts $HOME/scripts
+	#ln -s /mnt/data/scripts $HOME/scripts
 	ln -s /mnt/data/videos $HOME/videos
 	ln -s /mnt/data/music $HOME/music
 	echo "done."
@@ -42,12 +42,12 @@ if [ ! -e $HOME/Dropbox ] ; then
 	ln -s $HOME/Dropbox/.userdata/netrc_wolfshift $HOME/.config/netrc_wolfshift
 	ln -s $HOME/Dropbox/.userdata/netrc $HOME/.netrc
 	#ln -s /mnt/data/config/openbox $HOME/.config/openbox
-	ln -s /mnt/data/config/herbstluftwm $HOME/.config/herbstluftwm
+	#ln -s /mnt/data/config/herbstluftwm $HOME/.config/herbstluftwm
 	#ln -s /mnt/data/Dropbox/config/luakit $HOME/.config/luakit
 	#ln -s /mnt/data/Dropbox/share/luakit $HOME/.local/share/luakit
 	ln -s /mnt/data/config/ncmpcpp $HOME/.ncmpcpp
 	ln -s $HOME/Dropbox/config/zsh $HOME/.config/zsh
-	ln -s $HOME/Dropboxconfig/conky $HOME/.config/conky
+	#ln -s $HOME/Dropboxconfig/conky $HOME/.config/conky
 	echo "done."
 
 fi

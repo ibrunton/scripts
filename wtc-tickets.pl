@@ -3,6 +3,9 @@
 # scripts
 # 2017-08-23 10:16
 # by Ian D Brunton <iandbrunton at gmail dawt com>
+#
+# NOTE: currently, this script must be run with PWD=$HOME/docs/theatre/
+# cd into that directory and pass ONLY the filename, not the full path.
 
 use Glib;
 use Modern::Perl;

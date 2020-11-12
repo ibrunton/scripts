@@ -20,7 +20,7 @@ my $formatted = 1;
 my $dt = DateTime->new (
     time_zone => 'Canada/Atlantic',
     day       => 1,
-    year      => 2018,
+    year      => 2020,
 );
 
 # parse input.
@@ -51,6 +51,11 @@ else {
 $year = $dt->year;
 $month = $dt->month;
 
+my @month_lengths = ( 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 );
+if ($dt->is_leap_year()) { $month_lengths[1] = 29; }
+my $month_length = $dt->_month_length();
+#my $month_length = $month_lengths[$month];
+
 if ($console) {
     print $dt->month_name, ' ', $year, "\n";
 
@@ -73,7 +78,7 @@ if ($console) {
 	    	}
 	    }
 	    print $dt->day;
-	    if ($dt->day < $dt->month_length) {
+	    if ($dt->day < $month_length) {
 	    	$dt->add (days => 1);
 	    }
 	    else {
@@ -113,7 +118,7 @@ if ($formatted) {
 		}
 	    }
 	    $doc->updateCell ($t, $r, $d, $dt->day);
-	    if ($dt->day < $dt->month_length) {
+	    if ($dt->day < $month_length) {
 		$dt->add (days => 1);
 	    }
 	    else {

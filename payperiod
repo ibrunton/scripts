@@ -8,9 +8,33 @@ use Modern::Perl;
 use IDB;
 use File::Copy qw(move);
 
+my $type;
+my $rate;
+my $ord;
+my $client;
+
 if (!@ARGV) {
-    print STDERR "Usage: payperiod TYPE RATE ORD CLIENT NAME\n";
-    exit (1);
+    print "Type: ";
+    $type = <STDIN>;
+    print "Rate: ";
+    $rate = <STDIN>;
+    print "Number (x/y): ";
+    $ord = <STDIN>;
+    print "Client name: ";
+    $client = <STDIN>;
+    chomp $type;
+    chomp $rate;
+    chomp $ord;
+    chomp $client;
+
+    #print STDERR "Usage: payperiod TYPE RATE ORD CLIENT NAME\n";
+    #exit (1);
+}
+else {
+    $type = shift (@ARGV);
+    $rate = shift (@ARGV);
+    $ord = shift (@ARGV) || '1/1';
+    $client = join (' ', @ARGV) || $type;
 }
 
 my $file = $ENV{HOME} . '/Dropbox/docs/training/business/payperiod';
@@ -20,12 +44,8 @@ my $date = join ('-', &IDB::year ((localtime(time))[5]),
 		    &IDB::double_digit ((localtime(time))[3]));
 my $wkday = &IDB::wkday ((localtime)[6]);
 
-my $type = shift (@ARGV);
-my $rate = shift (@ARGV);
-my $ord = shift (@ARGV) || '1/1';
-my $client = join (' ', @ARGV) || $type;
 
-$file .= '-' . $type;
+$file .= '-' . lc ($type);
 
 $rate = sprintf ("%.2f", $rate);
 

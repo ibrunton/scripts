@@ -3,7 +3,7 @@
 hostname=$(hostname)
 mkdir -p $HOME/.logs/rsync
 logfile=$HOME/.logs/rsync/$(date +"%Y-%m-%d")
-TARGET_ROOT=/run/media/ian/VERBATIM-HD/sync
+TARGET_ROOT=/media/ian/VERBATIM-HD/sync
 MOVE_PICS=${MOVE_PICS:-YES}
 
 # backup configs
